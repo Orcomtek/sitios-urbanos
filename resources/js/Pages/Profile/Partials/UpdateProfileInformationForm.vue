@@ -9,8 +9,9 @@ defineProps<{
     mustVerifyEmail?: Boolean;
     status?: String;
 }>();
+import { PageProps } from '@/types';
 
-const user = usePage().props.auth.user;
+const user = usePage<PageProps>().props.auth.user;
 
 const form = useForm({
     name: user.name,

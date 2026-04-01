@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('community_id')->constrained()->cascadeOnDelete();
             $table->enum('role', ['admin', 'resident', 'guard']);
             $table->unsignedBigInteger('unit_id')->nullable();
-            
+
             $table->unique(['user_id', 'community_id']);
         });
     }
