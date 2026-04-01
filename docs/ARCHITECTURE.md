@@ -12,25 +12,34 @@ Sitios Urbanos is a **multi-tenant SaaS application** built with:
 
 ## 2. Multi-Tenancy Strategy
 
-### 2.1 Model
+### 2.1 Model Classification
 
-- Single database
-- Logical isolation using `community_id`
-- Global scopes enforced in all tenant models
+The system architecture enforces three strictly separated model classifications to ensure tenant safety:
+
+#### 1. Tenant Boundary Models
+- `Community` defines the structural tenant boundary.
+- `Community` MUST NOT carry a `community_id`.
+- `Community` MUST NOT have a tenant global scope applied.
+
+#### 2. Global / Control-Plane Models
+- `User` and standard control-plane models are shared resources.
+- Global models MUST NOT carry a `community_id` directly in their structure.
+- Global models' relationships to boundaries MUST occur strictly via pivot structures (e.g., `community_user`).
+
+#### 3. Tenant-Owned Models
+- Tenant-Owned models MUST carry a `community_id`.
+- Tenant-Owned models MUST depend strictly on the `TenantContext` service for their resolution and scoping.
+- Tenant-Owned models MUST NEVER trust a `community_id` submitted via external requests, frontend forms, or API payloads.
 
 ---
 
-### 2.2 Data Isolation
+### 2.2 Database Integrity Rules
 
-All tenant-related tables MUST include:
+To secure the physical data tier, the database schema strictly follows these integrity constraints:
 
-- `community_id`
-
-Rules:
-
-- no query without tenant scope
-- no cross-tenant access
-- no global queries unless explicitly approved
+- **Foreign Keys:** All tenant-owned tables MUST utilize a strict foreign key mapping their `community_id` to `communities.id`.
+- **Global Uniqueness:** Globally unique database constraints SHOULD NOT be applied to tenant-owned data fields unless the data behaves universally (e.g., auto-generated UUIDs).
+- **Composite Uniqueness:** For logical uniqueness isolated to a tenant bounds, composite unique keys utilizing `['community_id', 'target_field']` MUST be preferred (e.g., identifying localized apartment unit tags).
 
 ---
 
@@ -48,21 +57,23 @@ Users can belong to multiple communities:
 
 ## 3. Domain Architecture
 
-### 3.1 Domains
+### 3.1 Domains & Routing
 
-| Domain | Purpose |
+| Entry | Purpose |
 |------|--------|
 | sitiosurbanos.com | marketing / landing |
-| app.sitiosurbanos.com | main application |
-| {slug}.sitiosurbanos.com | tenant access |
+| app.sitiosurbanos.com | main application / control plane |
+| /c/{community_slug} | canonical path-based tenant access |
+
+*(Note: Subdomain-based scoping like `{slug}.sitiosurbanos.com` may be considered in the future, but the current canonical approach is strict Path-Based Scoping).*
 
 ---
 
 ### 3.2 Routing Logic
 
-- domain-based tenant resolution
-- middleware identifies community
-- sets tenant context globally
+- path-based tenant resolution (`/c/{community_slug}`)
+- middleware identifies community via route parameters
+- sets tenant context globally for the request via `TenantContext`
 
 ---
 
@@ -149,7 +160,7 @@ UI must be:
 ## 7. Events & Realtime
 
 - Laravel Reverb for websockets
-- event broadcasting scoped by community
+- *(Future Phase: Event broadcasting scoping strategy will be formally implemented)*
 
 Examples:
 
