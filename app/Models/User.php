@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Enums\CommunityRole;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
@@ -40,5 +41,37 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Community::class)
             ->withPivot(['role', 'unit_id']);
+    }
+
+    /**
+     * Get the user's role in a specific community.
+     */
+    public function roleInCommunity(Community $community): ?CommunityRole
+    {
+        $role = $this->communities
+            ->firstWhere('id', $community->id)
+            ?->pivot
+            ?->role;
+
+        return $role ? CommunityRole::tryFrom($role) : null;
+    }
+
+    /**
+     * Check if the user has a specific role (or one of the roles) in a community.
+     */
+    public function hasRoleInCommunity(Community $community, CommunityRole|string ...$roles): bool
+    {
+        $currentRole = $this->roleInCommunity($community);
+
+        if (! $currentRole) {
+            return false;
+        }
+
+        $rolesToMatch = array_map(
+            fn ($r) => $r instanceof CommunityRole ? $r : CommunityRole::tryFrom($r),
+            $roles
+        );
+
+        return in_array($currentRole, array_filter($rolesToMatch), true);
     }
 }

@@ -3,11 +3,10 @@
 use App\Http\Controllers\CommunityController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 Route::get('/', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth'])->name('dashboard');
+    return redirect()->route('communities.index');
+})->middleware(['auth']);
 
 Route::middleware('auth')->group(function () {
     Route::get('/comunidades', [CommunityController::class, 'index'])->name('communities.index');
