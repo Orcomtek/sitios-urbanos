@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Community;
 use App\Models\Unit;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -18,8 +19,8 @@ class UnitFactory extends Factory
     public function definition(): array
     {
         return [
-            'community_id' => \App\Models\Community::factory(),
-            'identifier' => 'Apto ' . $this->faker->unique()->numberBetween(100, 9999),
+            'community_id' => Community::factory(),
+            'identifier' => 'Apto '.$this->faker->unique()->numberBetween(100, 9999),
             'type' => $this->faker->randomElement(['apartment', 'house', 'local', 'parking', 'storage']),
             'status' => $this->faker->randomElement(['occupied', 'vacant', 'maintenance']),
         ];

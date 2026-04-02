@@ -10,7 +10,8 @@ beforeEach(function () {
     // Define a dummy route with the correct parameter
     Route::get('/c/{community_slug}/test', function () {
         $context = app(TenantContext::class);
-        return 'ok: ' . $context->require()->slug;
+
+        return 'ok: '.$context->require()->slug;
     })->middleware(['web', TenantMiddleware::class])->name('tenant.test');
 
     // Define a dummy route WITHOUT the parameter to test configuration failure
@@ -28,7 +29,7 @@ it('allows access and resolves context for an active community where the user be
 
     $response->assertOk();
     $response->assertSee("ok: {$community->slug}");
-    
+
     // Also verify the context singleton holds the right community
     $context = app(TenantContext::class);
     expect($context->get()->id)->toBe($community->id);
@@ -46,7 +47,7 @@ it('returns 404 when user tries to access an existing community they do not belo
 it('returns 404 when the community slug does not exist', function () {
     $user = User::factory()->create();
 
-    $response = $this->actingAs($user)->get("/c/non-existent-slug/test");
+    $response = $this->actingAs($user)->get('/c/non-existent-slug/test');
 
     $response->assertNotFound();
 });
@@ -55,7 +56,7 @@ it('throws LogicException resulting in 500 when route is missing community_slug 
     $user = User::factory()->create();
 
     $this->withoutExceptionHandling();
-    
+
     expect(fn () => $this->actingAs($user)->get('/invalid-route'))
         ->toThrow(LogicException::class, 'TenantMiddleware applied to a route without a community_slug parameter.');
 });

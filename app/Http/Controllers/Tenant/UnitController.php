@@ -37,7 +37,7 @@ class UnitController extends Controller
         $this->context->require();
 
         return Inertia::render('Tenant/Units/Form', [
-            'unit' => new Unit(),
+            'unit' => new Unit,
         ]);
     }
 
@@ -84,4 +84,3 @@ class UnitController extends Controller
             ->with('success', 'Unidad eliminada exitosamente.');
     }
 }
-

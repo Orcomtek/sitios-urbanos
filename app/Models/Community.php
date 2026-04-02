@@ -6,6 +6,7 @@ use Database\Factories\CommunityFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Community extends Model
 {
@@ -38,10 +39,20 @@ class Community extends Model
     /**
      * The units that belong to the community.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany<Unit, $this>
+     * @return HasMany<Unit, $this>
      */
-    public function units(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function units(): HasMany
     {
         return $this->hasMany(Unit::class);
+    }
+
+    /**
+     * The residents that belong to the community.
+     *
+     * @return HasMany<Resident, $this>
+     */
+    public function residents(): HasMany
+    {
+        return $this->hasMany(Resident::class);
     }
 }

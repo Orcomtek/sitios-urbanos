@@ -2,21 +2,24 @@
 
 namespace App\Models;
 
-use Database\Factories\UnitFactory;
+use Database\Factories\ResidentFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Unit extends Model
+class Resident extends Model
 {
-    /** @use HasFactory<UnitFactory> */
+    /** @use HasFactory<ResidentFactory> */
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'community_id',
-        'identifier',
+        'unit_id',
+        'user_id',
+        'first_name',
+        'last_name',
+        'email',
+        'phone',
         'type',
         'status',
     ];
@@ -30,10 +33,18 @@ class Unit extends Model
     }
 
     /**
-     * @return HasMany<Resident, $this>
+     * @return BelongsTo<Unit, $this>
      */
-    public function residents(): HasMany
+    public function unit(): BelongsTo
     {
-        return $this->hasMany(Resident::class);
+        return $this->belongsTo(Unit::class);
+    }
+
+    /**
+     * @return BelongsTo<User, $this>
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 }

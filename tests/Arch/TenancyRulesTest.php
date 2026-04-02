@@ -2,8 +2,9 @@
 
 use App\Actions\ResolveUserCommunityBySlugAction;
 use Illuminate\Support\Facades\Schema;
+use Tests\TestCase;
 
-uses(Tests\TestCase::class);
+uses(TestCase::class);
 
 it('ensures controllers do not bypass middleware for tenant resolution')
     ->expect('App\Http\Controllers')

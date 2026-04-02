@@ -65,11 +65,11 @@ it('strictly validates identifier uniqueness per tenant', function () {
     $this->actingAs($user)
         ->post(route('units.store', ['community_slug' => $community->slug]), $payload)
         ->assertSessionHasErrors(['identifier']);
-        
+
     // Allow duplicate in different community
     $communityB = Community::factory()->create();
     $communityB->users()->attach($user, ['role' => 'admin']);
-    
+
     $this->actingAs($user)
         ->post(route('units.store', ['community_slug' => $communityB->slug]), $payload)
         ->assertSessionHasNoErrors();
@@ -91,7 +91,7 @@ it('protects against updating units outside the tenant context', function () {
     $this->actingAs($user)
         ->put(route('units.update', [
             'community_slug' => $community->slug,
-            'unit' => $otherUnit->id
+            'unit' => $otherUnit->id,
         ]), $payload)
         ->assertStatus(404); // Bound by single unit fetch inside controller assert
 });
@@ -112,7 +112,7 @@ it('can update a unit within the active community', function () {
     $this->actingAs($user)
         ->put(route('units.update', [
             'community_slug' => $community->slug,
-            'unit' => $unit->id
+            'unit' => $unit->id,
         ]), $payload)
         ->assertRedirect(route('units.index', ['community_slug' => $community->slug]));
 
@@ -132,7 +132,7 @@ it('can delete a unit securely', function () {
     $this->actingAs($user)
         ->delete(route('units.destroy', [
             'community_slug' => $community->slug,
-            'unit' => $unit->id
+            'unit' => $unit->id,
         ]))
         ->assertRedirect(route('units.index', ['community_slug' => $community->slug]));
 

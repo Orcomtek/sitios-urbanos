@@ -5,8 +5,8 @@ use App\Models\Community;
 use App\Services\TenantContext;
 
 it('sets and gets a community', function () {
-    $context = new TenantContext();
-    $community = new Community();
+    $context = new TenantContext;
+    $community = new Community;
 
     $context->set($community);
 
@@ -14,14 +14,14 @@ it('sets and gets a community', function () {
 });
 
 it('returns null when getting an unset community', function () {
-    $context = new TenantContext();
+    $context = new TenantContext;
 
     expect($context->get())->toBeNull();
 });
 
 it('requires a community and returns it when set', function () {
-    $context = new TenantContext();
-    $community = new Community();
+    $context = new TenantContext;
+    $community = new Community;
 
     $context->set($community);
 
@@ -29,7 +29,7 @@ it('requires a community and returns it when set', function () {
 });
 
 it('throws TenantContextMissingException when requiring an unset community', function () {
-    $context = new TenantContext();
+    $context = new TenantContext;
 
     expect(fn () => $context->require())
         ->toThrow(
