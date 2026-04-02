@@ -16,4 +16,13 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+use App\Http\Controllers\Tenant\UnitController;
+use App\Http\Middleware\TenantMiddleware;
+
+Route::middleware(['auth', TenantMiddleware::class])
+    ->prefix('c/{community_slug}')
+    ->group(function () {
+        Route::resource('units', UnitController::class);
+    });
+
 require __DIR__.'/auth.php';

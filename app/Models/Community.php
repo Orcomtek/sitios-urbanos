@@ -34,4 +34,14 @@ class Community extends Model
         return $this->belongsToMany(User::class)
             ->withPivot(['role', 'unit_id']);
     }
+
+    /**
+     * The units that belong to the community.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<Unit, $this>
+     */
+    public function units(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Unit::class);
+    }
 }
