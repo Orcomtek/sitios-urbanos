@@ -576,3 +576,31 @@ Next Step
 
 👉 RIGOR 3.0 — Block 5 (Financial Engine Foundation)
 
+Current Phase
+
+RIGOR 3.0 — Block 5 (Financial Engine Foundation) ✅ COMPLETED
+
+Completed Work
+Invoice, Payment, LedgerEntry models implemented
+resident_id used as operational payer reference
+issued_at added to Invoice
+strict enums for statuses and methods
+integer-based monetary handling (COP)
+unit-centric ledger implemented
+ledger immutability enforced
+idempotency implemented via idempotency_key
+1 payment → 1 invoice enforced
+transactional integrity using DB::transaction()
+System State
+Stable
+Financial foundation operational
+Ledger integrity enforced
+Ready for payment gateway integration (future block)
+Risks / Notes
+No refund engine yet
+No multi-invoice payments yet
+No overdue logic yet
+ePayco integration pending
+Next Step
+
+👉 RIGOR 3.0 — Block 6 (Payments Integration + Notifications)
