@@ -103,12 +103,12 @@ const roleLabel = (role: string): string => {
                         <div
                             class="mt-auto flex justify-end border-t border-gray-100 pt-4"
                         >
-                            <button
-                                disabled
-                                class="cursor-not-allowed text-sm font-medium text-indigo-400"
+                            <a
+                                :href="route('communities.enter', community.slug)"
+                                class="text-sm font-medium text-indigo-600 hover:text-indigo-500"
                             >
                                 Ingresar &rarr;
-                            </button>
+                            </a>
                         </div>
                     </article>
                 </div>

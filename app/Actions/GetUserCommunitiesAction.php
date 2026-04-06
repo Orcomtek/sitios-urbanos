@@ -8,10 +8,10 @@ use Illuminate\Database\Eloquent\Collection;
 class GetUserCommunitiesAction
 {
     /**
-     * Retrieve all communities assigned to the given user.
+     * Retrieve all active communities assigned to the given user.
      */
     public function execute(User $user): Collection
     {
-        return $user->communities()->get();
+        return $user->communities()->where('status', 'active')->get();
     }
 }

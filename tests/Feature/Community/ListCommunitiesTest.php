@@ -35,8 +35,12 @@ it('displays only the communities assigned to the authenticated user', function 
 
 it('does not display communities assigned to other users', function () {
     $userA = User::factory()->create();
-    $communityA = Community::factory()->create();
-    $userA->communities()->attach($communityA->id, ['role' => 'resident']);
+    $communityA1 = Community::factory()->create();
+    $communityA2 = Community::factory()->create();
+    $userA->communities()->attach([
+        $communityA1->id => ['role' => 'resident'],
+        $communityA2->id => ['role' => 'resident']
+    ]);
 
     $userB = User::factory()->create();
     $communityB = Community::factory()->create();
@@ -47,7 +51,31 @@ it('does not display communities assigned to other users', function () {
     $response->assertOk()
         ->assertInertia(fn (Assert $page) => $page
             ->component('Communities/Index')
-            ->has('communities', 1)
-            ->where('communities.0.id', $communityA->id)
+            ->has('communities', 2)
+            ->where('communities.0.id', $communityA1->id)
+            ->where('communities.1.id', $communityA2->id)
+        );
+});
+
+it('auto-redirects to the community subdomain if the user has exactly one active community', function () {
+    $user = User::factory()->create();
+    $community = Community::factory()->create(['slug' => 'test-comm']);
+    $user->communities()->attach($community->id, ['role' => 'resident']);
+
+    $response = $this->actingAs($user)->get('/comunidades');
+
+    $centralDomain = config('app.central_domain');
+    $response->assertRedirect('http://test-comm.' . $centralDomain);
+});
+
+it('displays zero communities empty state if the user has no active communities', function () {
+    $user = User::factory()->create();
+
+    $response = $this->actingAs($user)->get('/comunidades');
+
+    $response->assertOk()
+        ->assertInertia(fn (Assert $page) => $page
+            ->component('Communities/Index')
+            ->has('communities', 0)
         );
 });

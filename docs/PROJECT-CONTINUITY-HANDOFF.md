@@ -481,3 +481,24 @@ The project must behave as:
 - a reconstructable system
 
 Not as a chat-dependent process.
+
+Current Phase
+
+# convertir a Markdown desde aqui
+
+RIGOR 3.0 — Block 1 (Infrastructure & Multi-Domain Foundation) ✅ COMPLETED
+
+🔹 Completed Work
+Subdomain architecture implemented
+Control Plane and Tenant Runtime separated
+Session shared across subdomains
+Path-based tenancy removed from runtime
+Tests updated to domain-based routing
+Local development strategy documented
+🔹 System State
+Stable
+Infrastructure ready for authentication layer
+No known tenant leakage risks
+🔹 Next Step
+
+👉 RIGOR 3.0 — Block 2 (Authentication & Entry)

@@ -13,6 +13,7 @@ Route::domain($centralDomain)->group(function () {
 
     Route::middleware('auth')->group(function () {
         Route::get('/comunidades', [CommunityController::class, 'index'])->name('communities.index');
+        Route::get('/comunidades/{slug}/ingresar', [CommunityController::class, 'enter'])->name('communities.enter');
 
         Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
         Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -29,6 +30,10 @@ use App\Http\Middleware\TenantMiddleware;
 Route::domain('{community_slug}.'.$centralDomain)
     ->middleware(['auth', TenantMiddleware::class])
     ->group(function () {
+        Route::get('/', function (string $communitySlug) {
+            return redirect()->route('units.index', ['community_slug' => $communitySlug]);
+        })->name('tenant.dashboard');
+
         Route::resource('units', UnitController::class);
         Route::resource('residents', ResidentController::class);
     });
