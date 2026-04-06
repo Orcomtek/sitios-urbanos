@@ -56,6 +56,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Central Domain (Multitenancy)
+    |--------------------------------------------------------------------------
+    |
+    | The main domain used for the Control Plane (Entry Point).
+    | Tenant subdomains will be derived from this base domain.
+    |
+    */
+
+    'central_domain' => env('CENTRAL_DOMAIN', 'app.localhost'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Timezone
     |--------------------------------------------------------------------------
     |

@@ -8,16 +8,21 @@ use Illuminate\Support\Facades\Route;
 
 beforeEach(function () {
     // Define a dummy route with the correct parameter
-    Route::get('/c/{community_slug}/test', function () {
-        $context = app(TenantContext::class);
+    Route::domain('{community_slug}.' . config('app.central_domain'))
+        ->get('/test', function () {
+            $context = app(TenantContext::class);
 
-        return 'ok: '.$context->require()->slug;
-    })->middleware(['web', TenantMiddleware::class])->name('tenant.test');
+            return 'ok: '.$context->require()->slug;
+        })
+        ->middleware(['web', TenantMiddleware::class])
+        ->name('tenant.test');
 
     // Define a dummy route WITHOUT the parameter to test configuration failure
     Route::get('/invalid-route', function () {
         return 'ok';
     })->middleware(['web', TenantMiddleware::class])->name('invalid.test');
+
+    Route::getRoutes()->refreshNameLookups();
 });
 
 it('allows access and resolves context for an active community where the user belongs', function () {
@@ -25,7 +30,7 @@ it('allows access and resolves context for an active community where the user be
     $community = Community::factory()->create(['status' => 'active']);
     $user->communities()->attach($community, ['role' => 'admin']);
 
-    $response = $this->actingAs($user)->get("/c/{$community->slug}/test");
+    $response = $this->actingAs($user)->get(route('tenant.test', ['community_slug' => $community->slug]));
 
     $response->assertOk();
     $response->assertSee("ok: {$community->slug}");
@@ -39,7 +44,7 @@ it('returns 404 when user tries to access an existing community they do not belo
     $user = User::factory()->create();
     $community = Community::factory()->create(['status' => 'active']);
 
-    $response = $this->actingAs($user)->get("/c/{$community->slug}/test");
+    $response = $this->actingAs($user)->get(route('tenant.test', ['community_slug' => $community->slug]));
 
     $response->assertNotFound();
 });
@@ -47,7 +52,7 @@ it('returns 404 when user tries to access an existing community they do not belo
 it('returns 404 when the community slug does not exist', function () {
     $user = User::factory()->create();
 
-    $response = $this->actingAs($user)->get('/c/non-existent-slug/test');
+    $response = $this->actingAs($user)->get(route('tenant.test', ['community_slug' => 'non-existent-slug']));
 
     $response->assertNotFound();
 });
