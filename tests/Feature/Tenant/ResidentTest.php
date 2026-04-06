@@ -12,7 +12,8 @@ it('can list residents in tenant context', function () {
     $community = Community::factory()->create();
     $user->communities()->attach($community, ['role' => 'admin', 'unit_id' => null]);
     $unit = Unit::factory()->create(['community_id' => $community->id]);
-    Resident::factory()->count(3)->create(['community_id' => $community->id, 'unit_id' => $unit->id]);
+    // Create residents with their own units so they don't violate the DB partial index
+    Resident::factory()->count(3)->create(['community_id' => $community->id]);
 
     $response = $this->actingAs($user)->get(route('residents.index', ['community_slug' => $community->slug]));
 
@@ -51,10 +52,10 @@ it('cannot assign resident to a unit from another community', function () {
 
     $response = $this->actingAs($user)->post(route('residents.store', ['community_slug' => $community1->slug]), [
         'unit_id' => $unit2->id,
-        'first_name' => 'John',
-        'last_name' => 'Doe',
-        'type' => 'tenant',
-        'status' => 'active',
+        'full_name' => 'John Doe',
+        'resident_type' => 'tenant',
+        'is_active' => true,
+        'pays_administration' => false,
     ]);
 
     $response->assertSessionHasErrors(['unit_id']);
@@ -68,18 +69,17 @@ it('can create resident', function () {
 
     $response = $this->actingAs($user)->post(route('residents.store', ['community_slug' => $community->slug]), [
         'unit_id' => $unit->id,
-        'first_name' => 'John',
-        'last_name' => 'Doe',
-        'type' => 'tenant',
-        'status' => 'active',
+        'full_name' => 'John Doe',
+        'resident_type' => 'tenant',
+        'is_active' => true,
+        'pays_administration' => false,
     ]);
 
     $response->assertRedirect(route('residents.index', ['community_slug' => $community->slug]));
     $this->assertDatabaseHas('residents', [
         'community_id' => $community->id,
         'unit_id' => $unit->id,
-        'first_name' => 'John',
-        'last_name' => 'Doe',
+        'full_name' => 'John Doe',
     ]);
 });
 
@@ -98,10 +98,10 @@ it('route bindings protect cross-tenant resident updates', function () {
     // Try to update $resident2 using $community1 context
     $response = $this->actingAs($user)->put(route('residents.update', ['community_slug' => $community1->slug, 'resident' => $resident2->id]), [
         'unit_id' => $unit1->id, // valid unit in community1
-        'first_name' => 'Hacked',
-        'last_name' => 'Name',
-        'type' => 'tenant',
-        'status' => 'active',
+        'full_name' => 'Hacked Name',
+        'resident_type' => 'tenant',
+        'is_active' => true,
+        'pays_administration' => false,
     ]);
 
     $response->assertStatus(404);

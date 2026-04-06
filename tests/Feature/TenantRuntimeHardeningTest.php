@@ -45,8 +45,10 @@ it('resists payload manipulation and assigns the correct tenant automatically on
     $unit = Unit::create([
         'community_id' => $this->communityB->id, // Malicious attempt to inject community B
         'identifier' => '999X',
-        'type' => 'apartment',
+        'property_type' => 'apartment',
         'status' => 'occupied',
+        'has_parking' => false,
+        'has_storage' => false,
     ]);
 
     expect($unit->community_id)->toBe($this->communityA->id);
@@ -55,10 +57,10 @@ it('resists payload manipulation and assigns the correct tenant automatically on
     $resident = Resident::create([
         'community_id' => $this->communityB->id,
         'unit_id' => $unit->id,
-        'first_name' => 'John',
-        'last_name' => 'Doe',
-        'type' => 'tenant',
-        'status' => 'active',
+        'full_name' => 'John Doe',
+        'resident_type' => 'tenant',
+        'is_active' => true,
+        'pays_administration' => false,
     ]);
 
     expect($resident->community_id)->toBe($this->communityA->id);

@@ -33,8 +33,10 @@ it('can store a new unit with strict tenant binding', function () {
 
     $payload = [
         'identifier' => 'Torre A Apto 101',
-        'type' => 'apartment',
-        'status' => 'vacant',
+        'property_type' => 'apartment',
+        'status' => 'available',
+        'has_parking' => false,
+        'has_storage' => false,
     ];
 
     $this->actingAs($user)
@@ -44,7 +46,7 @@ it('can store a new unit with strict tenant binding', function () {
     $this->assertDatabaseHas('units', [
         'community_id' => $community->id,
         'identifier' => 'Torre A Apto 101',
-        'type' => 'apartment',
+        'property_type' => 'apartment',
     ]);
 });
 
@@ -58,8 +60,10 @@ it('strictly validates identifier uniqueness per tenant', function () {
 
     $payload = [
         'identifier' => '101', // Duplicate in same community
-        'type' => 'apartment',
-        'status' => 'vacant',
+        'property_type' => 'apartment',
+        'status' => 'available',
+        'has_parking' => false,
+        'has_storage' => false,
     ];
 
     $this->actingAs($user)
@@ -84,8 +88,10 @@ it('protects against updating units outside the tenant context', function () {
 
     $payload = [
         'identifier' => 'Hacked',
-        'type' => 'apartment',
-        'status' => 'vacant',
+        'property_type' => 'apartment',
+        'status' => 'available',
+        'has_parking' => false,
+        'has_storage' => false,
     ];
 
     $this->actingAs($user)
@@ -105,8 +111,10 @@ it('can update a unit within the active community', function () {
 
     $payload = [
         'identifier' => 'Torre B Apto 202',
-        'type' => 'apartment',
+        'property_type' => 'apartment',
         'status' => 'occupied',
+        'has_parking' => false,
+        'has_storage' => false,
     ];
 
     $this->actingAs($user)

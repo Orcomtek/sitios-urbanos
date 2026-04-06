@@ -15,13 +15,21 @@ class Resident extends Model
     protected $fillable = [
         'unit_id',
         'user_id',
-        'first_name',
-        'last_name',
+        'full_name',
         'email',
         'phone',
-        'type',
-        'status',
+        'resident_type',
+        'is_active',
+        'pays_administration',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'is_active' => 'boolean',
+            'pays_administration' => 'boolean',
+        ];
+    }
 
     /**
      * @return BelongsTo<Community, $this>

@@ -21,8 +21,10 @@ class UnitFactory extends Factory
         return [
             'community_id' => Community::factory(),
             'identifier' => 'Apto '.$this->faker->unique()->numberBetween(100, 9999),
-            'type' => $this->faker->randomElement(['apartment', 'house', 'local', 'parking', 'storage']),
-            'status' => $this->faker->randomElement(['occupied', 'vacant', 'maintenance']),
+            'property_type' => $this->faker->randomElement(['apartment', 'house', 'commercial', 'office', 'warehouse']),
+            'status' => $this->faker->randomElement(['occupied', 'available', 'maintenance']),
+            'has_parking' => false,
+            'has_storage' => false,
         ];
     }
 }

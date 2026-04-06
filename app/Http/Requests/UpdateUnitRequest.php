@@ -28,6 +28,7 @@ class UpdateUnitRequest extends FormRequest
         $unitId = $this->route('unit')->id ?? null;
 
         return [
+
             'identifier' => [
                 'required',
                 'string',
@@ -36,8 +37,16 @@ class UpdateUnitRequest extends FormRequest
                     ->where(fn ($query) => $query->where('community_id', $community->id))
                     ->ignore($unitId),
             ],
-            'type' => ['required', 'string', Rule::in(['apartment', 'house', 'local', 'parking', 'storage'])],
-            'status' => ['required', 'string', Rule::in(['occupied', 'vacant', 'maintenance'])],
+            'property_type' => ['required', 'string', Rule::in(['apartment', 'house', 'commercial', 'office', 'warehouse'])],
+            'status' => ['required', 'string', Rule::in(['occupied', 'available', 'maintenance'])],
+            'has_parking' => ['required', 'boolean'],
+            'parking_count' => ['nullable', 'integer', 'min:1'],
+            'parking_identifiers' => ['nullable', 'array'],
+            'parking_identifiers.*' => ['string'],
+            'has_storage' => ['required', 'boolean'],
+            'storage_count' => ['nullable', 'integer', 'min:1'],
+            'storage_identifiers' => ['nullable', 'array'],
+            'storage_identifiers.*' => ['string'],
         ];
     }
 }

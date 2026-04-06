@@ -22,12 +22,12 @@ class ResidentFactory extends Factory
         return [
             'community_id' => Community::factory(),
             'unit_id' => Unit::factory(),
-            'first_name' => fake()->firstName(),
-            'last_name' => fake()->lastName(),
+            'full_name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
             'phone' => fake()->phoneNumber(),
-            'type' => fake()->randomElement(['tenant', 'owner']),
-            'status' => fake()->randomElement(['active', 'inactive']),
+            'resident_type' => fake()->randomElement(['tenant', 'owner']),
+            'is_active' => fake()->boolean(80),
+            'pays_administration' => fake()->boolean(50),
         ];
     }
 }

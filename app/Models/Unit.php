@@ -15,9 +15,25 @@ class Unit extends Model
 
     protected $fillable = [
         'identifier',
-        'type',
+        'property_type',
         'status',
+        'has_parking',
+        'parking_count',
+        'parking_identifiers',
+        'has_storage',
+        'storage_count',
+        'storage_identifiers',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'has_parking' => 'boolean',
+            'has_storage' => 'boolean',
+            'parking_identifiers' => 'array',
+            'storage_identifiers' => 'array',
+        ];
+    }
 
     /**
      * @return BelongsTo<Community, $this>

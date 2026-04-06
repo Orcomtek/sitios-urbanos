@@ -526,3 +526,53 @@ Next Step
 Risks / Notes
 Tenant runtime still uses temporary landing redirect to units.index
 Full tenant runtime hardening remains pending in Block 3
+
+Current Phase
+
+RIGOR 3.0 — Block 3 (Tenant Runtime Hardening) ✅ COMPLETED
+
+Completed Work
+TenantScope and TenantScoped implemented
+TenantContext enforced as runtime authority
+Unit and Resident models protected via automatic scoping
+community_id removed from fillable
+payload manipulation prevented
+route model binding secured via tenant scope
+middleware priority corrected (TenantMiddleware before SubstituteBindings)
+cross-tenant access denied (404)
+manual validation of tenant isolation performed
+System State
+Stable
+Tenant runtime isolation enforced
+No cross-tenant leakage in HTTP runtime
+Risks / Notes
+Outside TenantContext (queues, artisan, control plane), scope behaves benignly
+Queue tenancy not yet implemented
+Next Step
+
+👉 RIGOR 3.0 — Block 4 (Core Entities Hardening)
+
+Current Phase
+
+RIGOR 3.0 — Block 4 (Core Entities Hardening) ✅ COMPLETED
+
+Completed Work
+Unit aligned with SRS (property_type, parking, storage)
+JSONB identifiers implemented
+Resident aligned with SRS (full_name, resident_type, is_active, pays_administration)
+user_id remains nullable
+one-active-tenant-per-unit enforced (application + DB)
+hard rejection implemented
+factories and tests updated
+constraint validated through automated and manual tests
+System State
+Stable
+Core domain entities aligned with business rules
+Data integrity significantly improved
+Risks / Notes
+Partial unique index only active in PostgreSQL
+SQLite fallback relies on application-level validation
+Next Step
+
+👉 RIGOR 3.0 — Block 5 (Financial Engine Foundation)
+
