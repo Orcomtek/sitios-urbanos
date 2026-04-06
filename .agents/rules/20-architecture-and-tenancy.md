@@ -2,301 +2,395 @@
 trigger: always_on
 ---
 
-# Architecture & Multi-Tenancy Rules — Sitios Urbanos
-
-This document defines the **core architecture and tenant isolation rules** for Sitios Urbanos.
-
-These rules are **CRITICAL** and **NON-NEGOTIABLE**.
+# Architecture and Tenancy — Sitios Urbanos
 
 ---
 
-## Purpose
+## 1. Purpose
 
-This file exists to reinforce the frozen architecture decisions already established in the core project documentation.
+This rule defines the **core architecture and tenant isolation model** of Sitios Urbanos.
 
-It does **NOT** replace:
+It ensures:
 
-- `docs/ARCHITECTURE.md`
-- `docs/PROJECT-CONTINUITY-HANDOFF.md`
-- `docs/PROJECT-CONTINUITY-EXTENDED-CONTEXT.md`
-- other frozen RIGOR decisions
+- strict tenant isolation
+- deterministic tenant resolution
+- backend-controlled ownership
+- audit-safe data access
 
-Its role is to ensure that any assistant or execution agent respects the approved multi-tenancy model without guessing.
+This is a **CRITICAL and NON-NEGOTIABLE rule**.
 
 ---
 
-## Core Multi-Tenant Principle
+## 2. Core Multi-Tenant Principle
 
 Sitios Urbanos is a **multi-tenant SaaS platform**.
 
 The architecture enforces:
 
 - single database
-- logical isolation using `community_id`
-- explicit backend-controlled tenant resolution
-- fail-closed behavior when tenant context is missing or invalid
+- logical isolation via `community_id`
+- backend-controlled tenant resolution
+- fail-closed behavior
 
-Cross-tenant access must never happen by accident, convention, or convenience.
-
----
-
-## Current Tenant Runtime Strategy
-
-The current official runtime strategy is:
-
-- **Path-Based Scoping**
-- canonical tenant runtime path:
-  - `/c/{community_slug}`
-
-This means:
-
-- the active tenant context is derived from the route
-- the backend is the authority for validating the tenant
-- frontend must never define the tenant context
-
-### Important clarification
-
-Subdomain-based tenant scoping is **not** the current runtime authority.
-
-It may be considered in the future, but the current frozen strategy is strictly:
-
-- `/c/{community_slug}`
+Cross-tenant access must NEVER occur.
 
 ---
 
-## Control Plane vs Tenant Runtime
+## 3. Tenant Resolution Strategy (UPDATED — MANDATORY)
 
-These two contexts must remain logically separate.
+---
+
+### 3.1 Official Rule
+
+Tenant MUST be resolved from:
+
+👉 subdomain (`{communitySlug}.app.sitiosurbanos.com`)
+
+---
+
+### 3.2 Forbidden
+
+The system MUST NOT use:
+
+- path-based tenancy (`/c/{slug}`)
+- query-based tenancy (`?tenant=`)
+- session-based authority
+
+---
+
+### 3.3 Internal Fallback
+
+Allowed ONLY:
+
+- server-side
+- controlled
+- never exposed publicly
+
+---
+
+## 4. Control Plane vs Tenant Runtime
+
+---
 
 ### Control Plane
 
-Examples:
-- `/comunidades`
-- global user-facing entry point
-- no active tenant runtime context yet
+- `app.sitiosurbanos.com`
+- no tenant context
+
+---
 
 ### Tenant Runtime
 
-Examples:
-- `/c/{community_slug}/...`
-- tenant-specific flows
-- active tenant context must already be resolved and available
-
-You MUST NOT mix control-plane logic with tenant-runtime logic.
+- `{communitySlug}.app.sitiosurbanos.com`
+- tenant context MUST be active
 
 ---
 
-## Model Classification Rules (CRITICAL)
+### Rule
 
-All models must belong clearly to one of these categories.
+No tenant operation may execute without a valid TenantContext.
 
-### 1. Tenant Boundary Models
+---
+
+## 5. Tenant Context (MANDATORY)
+
+---
+
+### Definition
+
+`TenantContext` is the **single source of truth** for the active tenant.
+
+---
+
+### Rules
+
+- MUST be resolved at request entry
+- MUST be backend-controlled
+- MUST be globally available in request lifecycle
+- MUST fail closed when missing
+
+---
+
+### Forbidden
+
+The system MUST NOT:
+
+- infer tenant from frontend
+- trust request payload
+- override tenant via input
+- use session as authority
+
+---
+
+## 6. Resolver Rules
+
+Tenant resolution MUST:
+
+- use authenticated user relationships (`communities()`)
+- validate subdomain against authorized communities
+- reject invalid access
+
+---
+
+### Must fail with 404 when:
+
+- invalid subdomain
+- user not part of tenant
+- inactive tenant
+
+---
+
+### Forbidden
+
+- global lookup as authority
+- blind slug matching
+
+---
+
+## 7. Middleware Bridge Rules
+
+Tenant middleware is the HTTP boundary.
+
+Responsibilities:
+
+- read subdomain
+- call resolver
+- populate TenantContext
+- translate failures
+
+---
+
+### Rules
+
+- must run AFTER authentication
+- must NOT contain business logic
+- must NOT query arbitrarily
+- must orchestrate only
+
+---
+
+## 8. Model Classification Rules (CRITICAL)
+
+---
+
+### 8.1 Tenant Boundary Models
 
 Example:
-- `Community`
+- Community
 
 Rules:
-- `Community` defines the tenant boundary
-- `Community` MUST NOT carry a `community_id`
-- `Community` MUST NOT be treated as a tenant-owned child model
-- `Community` MUST NOT have a tenant global scope applied
 
-### 2. Global / Control-Plane Models
+- defines tenant boundary
+- MUST NOT contain `community_id`
+- MUST NOT be tenant-scoped
+
+---
+
+### 8.2 Global Models
 
 Example:
-- `User`
+- User
 
 Rules:
-- Global models are not owned by a single tenant
-- Global models MUST NOT carry a `community_id` in their main schema
-- Relationships to communities must occur via pivot structures such as:
-  - `community_user`
 
-### 3. Tenant-Owned Models
+- not owned by a single tenant
+- MUST NOT contain `community_id`
+- relationships via pivot (`community_user`)
+
+---
+
+### 8.3 Tenant-Owned Models
 
 Examples:
-- `Unit`
-- `Resident`
-- `Invoice`
-- `Transaction`
-- `Parcel`
-- `PQRS`
+
+- Unit
+- Resident
+- Invoice
+- Transaction
+- Parcel
+- PQRS
 
 Rules:
-- Tenant-owned models MUST carry a `community_id`
-- Tenant-owned models belong to exactly one `Community`
-- Tenant-owned models MUST depend on backend tenant context
-- Tenant-owned models MUST NEVER trust `community_id` from:
-  - requests
-  - payloads
-  - frontend forms
-  - headers
-  - API clients
 
-Ownership must always be derived and enforced by backend logic.
+- MUST contain `community_id`
+- MUST belong to one tenant
+- MUST be resolved via backend
 
 ---
 
-## Tenant Context Rules
+### Forbidden
 
-The active tenant context is backend-owned.
+Tenant-owned models MUST NOT trust:
 
-This means:
-
-- it must be resolved server-side
-- it must be explicit
-- it must fail closed when missing
-- it must never be inferred from frontend authority
-
-`TenantContext` is the approved runtime holder for the active community during the request lifecycle.
-
-Future tenant-owned flows must rely on that backend context rather than trusting raw request ownership data.
+- request payload
+- frontend data
+- headers
+- API inputs
 
 ---
 
-## Resolver Rules
-
-Tenant resolution must be explicit and pivot-based.
-
-Approved pattern:
-
-- resolve through the authenticated user's `communities()` relationship
-- validate the route slug against authorized community membership
-- fail with 404 for:
-  - invalid slug
-  - user not attached to that community
-  - inactive community
-
-Global `Community` lookup must not be used as the source of truth for tenant access.
+## 9. Database Integrity Rules
 
 ---
 
-## Middleware Bridge Rules
+### Required
 
-The tenant middleware acts as the HTTP bridge between:
-
-- route parameter extraction
-- tenant resolution
-- `TenantContext` population
-
-Its responsibilities are limited to:
-
-- reading `community_slug`
-- delegating to the approved resolver
-- populating `TenantContext`
-- translating failures correctly
-
-The middleware must:
-
-- run strictly after authentication
-- avoid direct database queries
-- remain orchestration-focused
+- all tenant tables MUST include `community_id`
+- MUST have foreign key to `communities.id`
+- global/boundary models MUST NOT include `community_id`
 
 ---
 
-## Database Integrity Rules
+### Uniqueness Rules
 
-The database layer must reinforce tenant isolation structurally.
+When uniqueness is tenant-scoped:
 
-### Required rules
-
-- All tenant-owned tables MUST include `community_id`
-- `community_id` in tenant-owned tables MUST reference `communities.id` through a foreign key
-- Boundary models MUST NOT include `community_id`
-- Global models MUST NOT include `community_id` in their main schema
-
-### Uniqueness rules
-
-- Globally unique constraints SHOULD NOT be used for tenant-owned business data unless the field is universally unique by nature
-- When uniqueness is only meaningful inside a tenant, composite uniqueness with `community_id` is the correct approach
+- MUST use composite keys
 
 Examples:
+
+- `['community_id', 'identifier']`
 - `['community_id', 'unit_number']`
-- `['community_id', 'internal_reference']`
 
 ---
 
-## Data Ownership Assignment Rules
-
-Tenant ownership must never be accepted from the client.
-
-This means:
-
-- do NOT trust raw `community_id` from requests
-- do NOT let frontend decide tenant ownership
-- do NOT allow payload-driven tenant assignment for tenant-owned models
-
-Backend logic must remain the sole authority on ownership.
+## 10. Data Ownership Rules
 
 ---
 
-## Query Safety Rules
+### Rule
 
-Developers and agents must treat tenant queries with caution.
-
-Required mindset:
-
-- assume leakage is possible if boundaries are vague
-- prefer explicit tenant-safe reasoning
-- never rely on convenience over isolation
-
-You MUST NOT casually write unscoped access patterns against tenant-owned data.
-
-If there is any doubt about whether a query respects tenant boundaries:
-
-- stop
-- review the model classification
-- review the active tenant context
-- re-evaluate before proceeding
+Ownership MUST be assigned ONLY in backend.
 
 ---
 
-## Sensitive Domains
+### Forbidden
 
-Extra care is required for tenant isolation in domains such as:
+- accepting `community_id` from client
+- trusting frontend ownership
+- payload-based assignment
+
+---
+
+## 11. Query Safety Rules
+
+---
+
+### Rule
+
+All queries MUST be tenant-scoped.
+
+---
+
+### Mindset
+
+- assume leakage risk
+- prefer explicit scoping
+- never rely on convenience
+
+---
+
+### Forbidden
+
+- global queries
+- unscoped queries
+- ID-only access
+
+---
+
+## 12. Sensitive Domains
+
+Extra care required in:
 
 - payments
-- invoices
 - ledger
-- parcels
+- invoices
 - QR access
+- parcels
 - panic alerts
-- governance records
+- governance
 - reservations
 
-These areas must always respect the tenant boundary explicitly.
+---
+
+## 13. Backend Authority
 
 ---
 
-## Explicitly Deferred from This Rule Set
+### Rule
 
-The following are **not** frozen here as mandatory current implementation mechanisms:
+Backend is the ONLY authority for:
 
-- exact global scope implementation mechanism
-- exact trait mechanism (`CommunityScoped`, `TenantScoped`, etc.)
-- exact `creating` event hook strategy
-- background job tenant rehydration mechanics
-- event broadcasting tenancy mechanics
-- Pest architecture enforcement tests
-- validation strategy details
-
-Those may be addressed in later RIGOR blocks, but they are **not** the core of this document.
+- tenant resolution
+- authorization
+- data access
+- business rules
 
 ---
 
-## Agent Responsibility
+### Forbidden
 
-Any assistant or execution agent working on Sitios Urbanos must:
+Frontend MUST NOT:
 
-- preserve tenant isolation at all times
-- respect the boundary/global/tenant-owned model classification
-- respect path-based tenant runtime strategy
-- avoid trusting frontend ownership input
-- avoid silent scope drift
-- stop when architecture is unclear instead of improvising
+- define tenant
+- assign ownership
+- enforce authorization
+- execute business logic
 
-If unsure:
+---
 
-- STOP
-- ask
-- or escalate for architectural review
+## 14. Fail-Closed Policy
+
+---
+
+### Rule
+
+If tenant cannot be resolved:
+
+- return 404
+- never reveal tenant existence
+
+---
+
+## 15. Testing Requirements
+
+The system MUST validate:
+
+- subdomain resolution
+- tenant isolation
+- rejection of cross-tenant access
+- absence of leakage
+
+---
+
+## 16. Strategic Importance
+
+This rule protects:
+
+- data integrity
+- security
+- SaaS scalability
+- legal defensibility
+
+---
+
+## 17. Consequence of Violation
+
+Breaking this rule leads to:
+
+- data leaks
+- security breaches
+- cross-tenant corruption
+- system instability
+
+---
+
+## 18. Final Principle
+
+Tenant context is:
+
+- mandatory
+- authoritative
+- non-negotiable
+
+The system must NEVER operate without it.

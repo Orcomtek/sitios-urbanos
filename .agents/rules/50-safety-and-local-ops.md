@@ -2,153 +2,328 @@
 trigger: always_on
 ---
 
-# Safety & Local Operations Rules — Sitios Urbanos
-
-This document defines what the agent is allowed and NOT allowed to do in the local environment.
-
-These rules are critical to avoid destructive or unsafe actions.
+# Safety and Local Operations — Sitios Urbanos
 
 ---
 
-## Core Principle
+## 1. Purpose
 
-The agent MUST NOT perform any action that can:
+This rule defines how the system must behave in **real-world operational environments**, especially in:
 
-- break the local environment
-- corrupt data
-- expose secrets
-- alter infrastructure unintentionally
+- Colombia
+- Latin America
+- residential communities with varying levels of organization and infrastructure
 
----
-
-## .env Protection (CRITICAL)
-
-You MUST NOT:
-
-- modify `.env`
-- expose environment variables
-- change database credentials
-- alter API keys
-
-If a change is needed:
-→ ask for explicit approval
+The system must be designed for reality, not ideal conditions.
 
 ---
 
-## Database Safety Rules
+## 2. Core Principle
 
-You MUST NOT:
+The system MUST operate correctly under:
 
-- drop tables
-- truncate tables
-- run destructive migrations
-- alter production-like data
-
-Allowed actions:
-
-- create migrations
-- propose schema changes
-- suggest safe updates
+- imperfect data
+- incomplete processes
+- human error
+- low digital maturity environments
 
 ---
 
-## Migration Rules
+## 3. Operational Reality
 
-Migrations MUST:
+The system MUST assume:
 
-- be reversible
-- be explicit
-- avoid data loss
-
-You MUST NOT:
-
-- delete existing columns without approval
-- rename critical fields without migration strategy
+- inconsistent administrative processes
+- varying levels of technology adoption
+- partial or delayed data entry
+- manual operations coexisting with digital flows
 
 ---
 
-## Command Execution Rules
+## 4. Community Types (MANDATORY SUPPORT)
 
-You MUST NOT run or suggest running commands that:
-
-- delete data
-- reset database without warning
-- force destructive operations
-
-Examples to avoid:
-
-- `php artisan migrate:fresh`
-- `php artisan db:wipe`
-- `rm -rf`
-
-Unless explicitly approved.
+The system MUST support:
 
 ---
 
-## Local Services Protection
+### 4.1 Guarded Communities
 
-The agent MUST NOT:
-
-- modify Herd configuration
-- change DBngin settings
-- alter local ports
-- install/remove system services
+- security staff (portería)
+- manual access validation
+- assisted digital flows
 
 ---
 
-## File System Safety
+### 4.2 Semi-Structured Communities
 
-You MUST NOT:
-
-- delete large parts of the project
-- overwrite critical files blindly
-- remove configuration files
+- partial administration
+- mixed manual/digital processes
+- inconsistent enforcement
 
 ---
 
-## External Services
+### 4.3 Self-Managed Communities
 
-You MUST NOT:
-
-- expose API keys
-- simulate real payment processing without sandbox
-- send real notifications without approval
+- no guards
+- autonomous access
+- residents operate the system directly
 
 ---
 
-## Secrets Handling
+## 5. Critical Rule
 
-Secrets MUST:
+The system MUST deliver value even when:
 
-- never be hardcoded
-- never be logged
-- never be exposed
-
----
-
-## Destructive Actions Policy
-
-If an action can:
-
-- delete data
-- overwrite important structures
-- break environment
-
-You MUST:
-
-1. clearly explain the risk
-2. ask for approval
-3. wait for confirmation
+- there is no security staff
+- there is no strict administration
+- processes are informal
 
 ---
 
-## Agent Responsibility
+## 6. Human Error Handling
 
-You MUST:
+The system MUST:
 
-- act conservatively
-- protect data integrity
-- prioritize safety over speed
+- tolerate user mistakes
+- allow correction of data
+- avoid rigid blocking flows when possible
+- preserve traceability even when corrected
 
-If unsure:
-→ STOP and ask
+---
+
+## 7. Partial Data Scenarios
+
+The system MUST function when:
+
+- residents are not fully registered
+- units are incomplete
+- contact data is missing
+
+---
+
+### Rule
+
+Partial data MUST NOT break the system.
+
+---
+
+## 8. Offline / Delayed Operation Reality
+
+The system MUST consider:
+
+- delayed data entry
+- actions recorded after the fact
+- inconsistent timing of events
+
+---
+
+### Example
+
+- visitor entered but registered later
+- package delivered but logged after
+
+---
+
+### Rule
+
+The system MUST:
+
+- allow delayed recording
+- preserve chronological traceability
+
+---
+
+## 9. Security Without Guards
+
+The system MUST support security flows without physical guards.
+
+Includes:
+
+- self-authorized visits
+- QR-based access
+- notification-based validation
+- digital logs
+
+---
+
+### Rule
+
+Security MUST NOT depend on human gatekeepers.
+
+---
+
+## 10. Panic Button (Operational Reality)
+
+The panic system MUST:
+
+- work under stress conditions
+- trigger fast notifications
+- operate even under limited resources
+
+---
+
+### SMS Constraint
+
+- SMS usage is limited per tenant
+- must enforce fair use
+- must fallback to alternative channels when needed
+
+---
+
+### Critical Rule
+
+The panic button MUST NOT fail silently.
+
+---
+
+## 11. Communication Constraints
+
+The system MUST consider:
+
+- users may ignore notifications
+- users may not respond immediately
+- communication may fail
+
+---
+
+### Rule
+
+The system MUST:
+
+- support retries when applicable
+- provide visibility of pending actions
+- avoid blocking flows unnecessarily
+
+---
+
+## 12. Administrative Variability
+
+The system MUST support:
+
+- strict administrators
+- flexible administrators
+- minimal administration environments
+
+---
+
+### Rule
+
+The system MUST NOT assume:
+
+- perfect enforcement of rules
+- consistent administrative behavior
+
+---
+
+## 13. Operational Flexibility
+
+The system MUST:
+
+- allow configuration per tenant
+- adapt to different community rules
+- avoid rigid global behavior
+
+---
+
+## 14. Data Correction and Auditability
+
+The system MUST allow:
+
+- correction of mistakes
+- updates to records
+
+---
+
+### Critical Rule
+
+All corrections MUST:
+
+- be traceable
+- preserve historical context
+- not overwrite audit history silently
+
+---
+
+## 15. Legal and Operational Safety
+
+The system MUST:
+
+- provide sufficient traceability for incident review
+- support reconstruction of events
+- protect platform from liability due to missing data logs
+
+---
+
+## 16. UX Under Stress
+
+The system MUST:
+
+- be usable under pressure (e.g. panic situations)
+- minimize friction in critical actions
+- avoid complex multi-step flows in emergencies
+
+---
+
+## 17. Tenant-Specific Rules
+
+Operational rules MUST be:
+
+- configurable per community
+- adaptable to agreements with each tenant
+
+---
+
+## 18. Forbidden Assumptions
+
+The system MUST NOT assume:
+
+- all users are trained
+- all processes are followed correctly
+- all data is accurate
+- all actions are timely
+
+---
+
+## 19. Testing Requirements
+
+The system MUST validate:
+
+- flows with incomplete data
+- delayed operations
+- manual corrections
+- no-guard scenarios
+- panic button fallback behavior
+
+---
+
+## 20. Strategic Importance
+
+This rule ensures:
+
+- real-world usability
+- adoption across different community types
+- operational resilience
+- product-market fit
+
+---
+
+## 21. Consequence of Violation
+
+Breaking this rule leads to:
+
+- system rejection by users
+- operational friction
+- low adoption
+- real-world failure
+
+---
+
+## 22. Final Principle
+
+The system must behave as:
+
+- a resilient system
+- a flexible system
+- a real-world system
+
+Not as an idealized or rigid platform.

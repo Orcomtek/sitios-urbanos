@@ -4,164 +4,288 @@ trigger: always_on
 
 # Product Context — Sitios Urbanos
 
-This workspace is for building **Sitios Urbanos**, a premium multi-tenant SaaS platform for managing residential communities (Propiedad Horizontal) in Colombia and Latin America.
+---
+
+## 1. Purpose
+
+This workspace is for building **Sitios Urbanos**, a multi-tenant SaaS platform designed to operate as a **modular super-app for residential communities (Propiedad Horizontal)** in Colombia and Latin America.
+
+The system must not behave as a simple management tool.
+
+It must operate as:
+
+- an operational system
+- a financial system
+- a governance system
+- a security system
+- an economic ecosystem
 
 ---
 
-## Product Vision
+## 2. Product Vision
 
-Sitios Urbanos is designed as a **modular super-app** that digitalizes and centralizes all operations of a residential community.
+Sitios Urbanos is a **multi-tenant SaaS ecosystem** that digitalizes and centralizes all critical operations of a residential community.
 
-It must work for both:
+It must:
 
-1. **Guarded communities (with security staff / portería)**
-2. **Self-managed communities (no guards, automated access, cameras, or low administration)**
-
-The system must deliver value even when there is **no physical security staff**, focusing on:
-
-- governance
-- financial transparency
-- communication
-- community management
+- support multiple communities simultaneously
+- scale across Colombia and LATAM
+- provide real operational value from day one
+- evolve into a network of connected communities
 
 ---
 
-## Core Product Dimensions
+## 3. Supported Community Types
 
-The platform evolves across five dimensions:
+The system MUST work for:
 
-### 1. Core Operations
-- Census 360 (units, residents, family members)
-- Amenities and reservations
-- Community structure and data
+### 3.1 Guarded Communities
+- with security staff (portería)
+- manual + digital validation
 
-### 2. Security Wedge
-- Dynamic QR access (when applicable)
-- Parcel management (manual + OCR async)
-- Panic button with controlled SMS usage
-
-⚠️ Important:
-Security features must be optional and adaptable to communities WITHOUT guards.
+### 3.2 Self-Managed Communities
+- no guards
+- autonomous access
+- cameras / automation
+- low administrative structure
 
 ---
 
-### 3. Financial Engine (Primary Monetization Layer)
+### Core Rule
 
-- Administration fees
-- Extra charges and invoices
-- Payment processing via ePayco Split
-- Transaction ledger and traceability
-
-This is a **core pillar**, not an add-on.
+The system MUST provide value even without physical security staff.
 
 ---
 
-### 4. Governance & Community (CRITICAL for MVP)
+## 4. Core Product Dimensions
 
-- Announcements board
-- PQRS (peticiones, quejas, reclamos, sugerencias)
-- Document repository (acts, rules, files)
-- Simple voting (initial version)
-
-⚠️ Governance is a **primary adoption driver**, especially for communities without security staff.
+The platform operates across five integrated dimensions:
 
 ---
 
-### 5. Local Ecosystem (Future Expansion)
+### 4.1 Core Operations
 
-- Marketplace
-- Local services
-- Classifieds (P2P)
-- Real estate exposure
-
-🚫 NOT part of initial MVP implementation (only architecture-ready).
-
----
-
-## MVP Scope (STRICT BOUNDARY)
-
-The MVP includes ONLY:
-
-- Multi-tenancy by subdomain
-- Universal authentication (single login, multi-community access)
-- Role-based dashboards (Resident, Admin, Guard)
-- Core operations (Census, Amenities)
-- Governance (Announcements, PQRS, Documents, Simple Voting)
-- Financial base (Invoices, payments, ledger)
-- Basic security wedge (QR, parcels, panic button)
+- units (properties)
+- residents
+- ownership and tenancy relationships
+- amenities and reservations
+- community structure
 
 ---
 
-## Explicitly OUT of MVP
+### 4.2 Security Layer (Operational + Auditable)
 
-The following must NOT be implemented in early blocks:
+Includes:
 
-- Full marketplace system
-- Public web builder for communities
-- Advanced AI (RAG, assistants, automation)
-- IoT integrations (hardware devices, sensors)
-- Complex voting with legal certification
-- Cross-community ecosystem features
-
----
-
-## Multi-Tenant Principle
-
-Sitios Urbanos is **multi-tenant by design**.
-
-- Each community is isolated logically
-- All tenant data is scoped by `community_id`
-- Users can belong to multiple communities
-- The system must never mix data between tenants
-
-This is a **non-negotiable constraint**.
+- visitor flows
+- QR-based access (when applicable)
+- identity validation
+- package management
+- panic button
+- full security logs
 
 ---
 
-## Product Behavior Rules
+### Critical Rule
 
-The system must:
+Security must:
+
+- work with or without guards
+- be traceable
+- be auditable
+- support incident reconstruction
+
+Security is a **strategic wedge**, but also an **operational layer**.
+
+---
+
+### 4.3 Financial Engine (Primary Monetization Layer)
+
+Includes:
+
+- administration fees
+- charges and invoices
+- payments via ePayco split
+- external payment registration
+- transaction ledger
+
+---
+
+### Critical Rule
+
+Commissions apply ONLY when transactions occur inside the platform.
+
+All financial behavior MUST be:
+
+- traceable
+- configurable
+- tenant-scoped
+
+---
+
+### 4.4 Governance & Community (Primary Adoption Driver)
+
+Includes:
+
+- announcements
+- PQRS (including anonymous)
+- document management
+- voting (basic MVP level)
+
+---
+
+### Critical Rule
+
+Governance is a **core adoption driver**, especially in communities without security staff.
+
+---
+
+### 4.5 Ecosystem (CRITICAL)
+
+Includes:
+
+- marketplace (basic)
+- service providers
+- P2P (classifieds between neighbors)
+
+---
+
+### Critical Rule
+
+The ecosystem MUST exist in the MVP at a basic level.
+
+This is a key differentiator of the product.
+
+---
+
+## 5. Domain Architecture (Mandatory)
+
+The system MUST follow:
+
+- app.sitiosurbanos.com → entry point
+- {communitySlug}.app.sitiosurbanos.com → tenant runtime
+
+---
+
+### Rules
+
+- tenant is resolved by subdomain
+- NO public community selector
+- authentication is email-first
+- fallback is internal only
+
+---
+
+## 6. MVP Scope (STRICT)
+
+The MVP MUST include:
+
+- multi-tenancy via subdomains
+- email-first authentication
+- multi-community access
+- role-based dashboards
+- core operations (units, residents)
+- governance (PQRS, announcements, documents)
+- financial base (payments, ledger)
+- security layer (visitors, QR, logs, panic button)
+- ecosystem base (marketplace + P2P)
+
+---
+
+## 7. Explicitly OUT of MVP
+
+The system MUST NOT include:
+
+- advanced AI systems
+- IoT integrations
+- advanced OCR
+- complex legal voting systems
+- inter-community marketplace
+- automation-heavy features
+
+---
+
+## 8. Multi-Tenant Principle
+
+Sitios Urbanos is multi-tenant by design.
+
+---
+
+### Rules
+
+- tenant is resolved by subdomain
+- all data is scoped by tenant
+- users may belong to multiple tenants
+- NO data leakage between tenants
+
+---
+
+### This is NON-NEGOTIABLE
+
+---
+
+## 9. Data, Legal and Privacy Layer
+
+The system MUST:
+
+- comply with Colombian data laws
+- protect personal data
+- support anonymization
+- support retention policies
+- support traceable deletion
+
+---
+
+### Applies to ALL modules
+
+---
+
+## 10. Product Behavior Rules
+
+The system MUST:
 
 - prioritize clarity over complexity
 - be usable by non-technical users
-- feel like a high-quality SaaS product, not a legacy admin panel
-- provide immediate value even with minimal configuration
+- behave as a premium SaaS product
+- provide immediate value
 
 ---
 
-## UX Philosophy
+## 11. UX Philosophy
 
-- Spanish-first interface
-- Clean, modern, minimal UI
-- Role-based dashboards
-- Dynamic modules (no hardcoded navigation)
-- Focus on real-time feedback where applicable
+- Spanish-first (Colombia)
+- clean and modern UI
+- role-based dashboards
+- minimal cognitive load
+- fast interaction flows
 
 ---
 
-## Strategic Insight (CRITICAL)
+## 12. Strategic Insight
 
-The product must not depend on security features to succeed.
+The product MUST NOT depend exclusively on security features.
 
 The strongest adoption drivers are:
 
 - financial clarity
 - governance tools
 - communication
-- ease of use
-
-Security is a **wedge**, not the entire product.
+- usability
 
 ---
 
-## Agent Responsibility
+## 13. Agent Responsibility
 
-When working in this workspace, you must:
+When working in this workspace, the agent MUST:
 
-- respect the MVP scope strictly
-- not introduce features outside defined boundaries
-- not assume missing product requirements
-- align all technical decisions with this product context
+- strictly respect SRS
+- strictly respect MVP boundaries
+- NOT invent features
+- NOT assume missing requirements
+- align all technical decisions with product context
 
-If something is unclear:
-→ STOP and ask instead of assuming
+---
+
+### If anything is unclear:
+
+STOP and request clarification.

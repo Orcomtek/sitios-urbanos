@@ -4,140 +4,165 @@ trigger: always_on
 
 # Rule Precedence — Sitios Urbanos
 
-This document defines which rules take priority when multiple instruction sources exist.
+---
 
-These precedence rules are mandatory.
+## 1. Purpose
+
+This rule defines the **priority order between all rules**.
+
+When two or more rules conflict, this precedence MUST be used to resolve the conflict.
 
 ---
 
-## Core Principle
+## 2. Core Principle
 
-If multiple rule sources exist, the agent MUST follow the highest-priority source.
+Higher priority rules override lower priority rules.
 
-If there is any conflict:
-→ follow the higher-priority rule
-→ if still unclear, STOP and ask
+No exceptions.
 
 ---
 
-## Official Priority Order
-
-### Priority 1 — Sitios Urbanos project documents
-
-These are the highest authority:
-
-- docs/PRD.md
-- docs/MVP-BOUNDARY.md
-- docs/ARCHITECTURE.md
-- docs/APP-STRUCTURE.md
-- docs/CODE-CONVENTIONS.md
-- docs/PROJECT-RULES.md
-- docs/BACKLOG-RIGOR.md
-- docs/ANTIGRAVITY-PROJECT-RULES.md
+## 3. Priority Order (Highest to Lowest)
 
 ---
 
-### Priority 2 — Sitios Urbanos agent rules
+### 1. SRS (System Requirements Specification)
 
-These are workspace-specific agent rules:
+- Defines system behavior
+- Defines constraints
+- Defines flows
 
-- .agents/rules/00-product-context.md
-- .agents/rules/10-stack-and-framework.md
-- .agents/rules/20-architecture-and-tenancy.md
-- .agents/rules/30-finance-and-security.md
-- .agents/rules/40-quality-testing-and-reviews.md
-- .agents/rules/50-safety-and-local-ops.md
-- .agents/rules/60-ui-and-module-system.md
-- .agents/rules/70-rule-precedence.md
+👉 This is the **highest authority**
 
 ---
 
-### Priority 3 — Project-level agent/tooling files
+### 2. Domain & Tenant Entry Strategy
 
-These are helpful, but subordinate to Sitios Urbanos rules:
+- Defines domain structure
+- Defines tenant resolution
+- Defines authentication entry
 
-- AGENTS.md
-- GEMINI.md
-- Laravel Boost guidelines
-- skill-specific helper files
-
----
-
-### Priority 4 — Generic framework defaults
-
-These include:
-
-- general Laravel conventions
-- default framework guidance
-- package author recommendations
-- tooling defaults
-
-These are valid ONLY when they do not conflict with higher-priority rules.
+👉 Protects SaaS architecture integrity
 
 ---
 
-## Conflict Resolution Rules
+### 3. Tenant Architecture & Isolation
 
-If Laravel Boost, AGENTS.md, GEMINI.md, skills, or tooling suggest something that conflicts with:
+- Defines multi-tenant behavior
+- Defines isolation rules
 
-- the MVP scope
-- multi-tenancy rules
-- financial integrity rules
-- UI/module system rules
-- RIGOR workflow
-
-You MUST follow Sitios Urbanos rules.
+👉 Protects data separation
 
 ---
 
-## RIGOR Priority
+### 4. Security & Forensic Traceability
 
-If any rule source suggests faster execution, less detail, or skipping planning,
-you MUST ignore that and follow RIGOR.
+- Defines logging
+- Defines attribution
+- Defines audit requirements
 
-RIGOR always requires:
-
-- one task at a time
-- explicit planning
-- explicit approval
-- validation before continuation
+👉 Protects operational and legal integrity
 
 ---
 
-## Business-Critical Priority
+### 5. Data Protection & Legal Compliance
 
-For these domains, Sitios Urbanos rules always override generic framework advice:
+- Defines privacy
+- Defines data handling
+- Defines legal constraints
 
-- multi-tenancy
-- finance
-- payments
-- ledger
-- security
-- role-based UI
-- modules
-- governance MVP
+👉 Protects regulatory compliance
 
 ---
 
-## Documentation Conflicts
+### 6. MVP Boundary
 
-If documentation or rule files disagree, you MUST:
+- Defines scope limits
+- Prevents feature creep
 
-1. stop
-2. identify the conflict clearly
-3. ask for clarification
-
-You MUST NOT guess.
+👉 Protects execution discipline
 
 ---
 
-## Agent Responsibility
+### 7. Execution Backlog (RIGOR Blocks)
 
-You MUST:
+- Defines execution order
+- Defines block dependencies
 
-- respect precedence
-- not merge conflicting instructions silently
-- not prefer convenience over project rules
+👉 Protects development sequence
 
-If unsure:
-→ STOP and ask
+---
+
+### 8. Stack & Framework Rules
+
+- Defines tools and technologies
+
+👉 Supports implementation, not architecture
+
+---
+
+### 9. UI & UX Rules
+
+- Defines presentation layer
+
+👉 Lowest priority
+
+---
+
+## 4. Conflict Resolution Rules
+
+If two rules conflict:
+
+1. Apply the higher priority rule
+2. Ignore the lower priority rule in that context
+3. DO NOT attempt to merge conflicting logic
+
+---
+
+## 5. No Interpretation Rule
+
+The agent MUST NOT:
+
+- reinterpret rule intent
+- “balance” conflicting rules
+- create hybrid solutions
+
+---
+
+## 6. Clarification Requirement
+
+If conflict cannot be resolved clearly:
+
+- STOP execution
+- request clarification
+
+---
+
+## 7. Strategic Importance
+
+This rule ensures:
+
+- consistency
+- predictability
+- architectural integrity
+
+---
+
+## 8. Consequence of Violation
+
+Breaking this rule leads to:
+
+- inconsistent system behavior
+- hidden architectural issues
+- loss of control over development
+
+---
+
+## 9. Final Principle
+
+The system must behave as:
+
+- a rule-driven system
+- a deterministic system
+
+NOT as an improvisational system.

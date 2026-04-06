@@ -2,182 +2,360 @@
 trigger: always_on
 ---
 
-# UI & Module System Rules — Sitios Urbanos
-
-This document defines how UI, dashboards, navigation, and modules must behave.
-
-These rules are critical for scalability.
+# UI and Module System — Sitios Urbanos
 
 ---
 
-## Core Principle
+## 1. Purpose
 
-The UI must be:
+This rule defines the standards for:
 
-- dynamic
-- role-aware
-- module-driven
-- backend-controlled
+- user interface (UI)
+- user experience (UX)
+- module structure
+- frontend responsibilities
 
----
+The goal is to ensure:
 
-## No Hardcoding Rule (CRITICAL)
-
-You MUST NOT:
-
-- hardcode sidebar menus
-- hardcode dashboards
-- hardcode modules
-
-Everything must be driven by backend configuration.
+- clarity
+- consistency
+- scalability
+- usability under real conditions
 
 ---
 
-## Module System (FOUNDATIONAL)
+## 2. Core Principle
 
-The system must support modules such as:
-
-- finance
-- security
-- governance
-- marketplace (future)
-- documents
-- reservations
-
-Each module:
-
-- can be enabled/disabled per community
-- can expose features
-- can modify UI behavior
+The frontend is a **rendering layer**, not a decision-making layer.
 
 ---
 
-## Capabilities-Based UI
+## 3. Frontend Responsibilities
 
-The backend must define:
+The frontend MUST:
 
-- what the user can see
-- what modules are active
-- what actions are allowed
-
-Frontend must ONLY render based on this.
-
----
-
-## Sidebar Behavior
-
-Sidebar MUST be:
-
-- dynamic
-- role-based
-- module-aware
-
-It must:
-
-- show only relevant sections
-- hide unavailable modules
-- adapt to permissions
+- render data
+- trigger actions
+- display state
+- provide feedback to the user
 
 ---
 
-## Dashboard Behavior
+## 4. Forbidden Responsibilities
 
-Dashboards MUST:
+The frontend MUST NOT:
 
-- change based on role (admin, resident, guard)
-- change based on enabled modules
-- display relevant widgets only
-
-You MUST NOT:
-
-- create a single static dashboard for all users
-
----
-
-## Widget System
-
-Dashboards must be composed of widgets such as:
-
-- announcements
-- pending payments
-- parcels
-- reservations
-- PQRS status
-
-Widgets MUST:
-
-- be modular
-- be reusable
-- be dynamically injected
+- define business rules
+- define tenant context
+- assign `community_id`
+- perform authorization logic
+- calculate financial values
+- act as source of truth
 
 ---
 
-## Backend → Frontend Contract
-
-Backend must provide structured data:
-
-- modules enabled
-- permissions
-- navigation structure
-- dashboard configuration
-
-Frontend MUST:
-
-- render based on backend payload
-- not assume structure
+## 5. Spanish-First UX (Colombia)
 
 ---
 
-## Role-Based UI
+### Rule
 
-Different roles MUST have different experiences:
-
-- Admin → full control
-- Resident → personal view
-- Guard → operational view
+All UI MUST be written in **Spanish (Colombia)**.
 
 ---
 
-## UI Consistency Rules
+### Requirements
 
-You MUST:
-
-- follow design system
-- use consistent spacing
-- use consistent typography
-- use consistent iconography
+- use locally appropriate terminology
+- avoid generic or foreign expressions
+- ensure clarity for non-technical users
 
 ---
 
-## Performance Considerations
+### Example
 
-UI MUST:
+- Avoid: "Vacante"
+- Prefer: "Disponible" or context-appropriate labels
 
+---
+
+## 6. Clarity Over Complexity
+
+The UI MUST:
+
+- be intuitive
+- minimize cognitive load
+- avoid unnecessary fields
+- present only relevant information
+
+---
+
+## 7. Consistency Rules
+
+All modules MUST follow consistent patterns:
+
+---
+
+### Forms
+
+- consistent field structure
+- clear labels
+- validation feedback
+- predictable submission behavior
+
+---
+
+### Tables
+
+- consistent layout
+- clear column naming
+- predictable actions (edit, view, etc.)
+
+---
+
+### Actions
+
+- consistent button placement
+- clear call-to-action labels
+- no ambiguous behavior
+
+---
+
+## 8. Module System (CRITICAL)
+
+---
+
+### Rule
+
+The system MUST be modular.
+
+---
+
+### Requirements
+
+- modules must be independently scalable
+- modules must not be hardcoded into navigation
+- modules must follow consistent structure
+
+---
+
+### Examples of modules
+
+- Units
+- Residents
+- Security
+- Finance
+- Governance
+- Ecosystem
+
+---
+
+## 9. Navigation Rules
+
+---
+
+### Rule
+
+Navigation MUST:
+
+- reflect user role
+- reflect tenant context
+- remain clean and minimal
+
+---
+
+### Forbidden
+
+- overloaded menus
+- irrelevant options
+- mixed tenant/global navigation
+
+---
+
+## 10. Role-Based UI
+
+---
+
+### Rule
+
+The UI MUST adapt based on:
+
+- user role (admin, resident, guard, etc.)
+- tenant context
+
+---
+
+### Behavior
+
+- show only relevant modules
+- hide unauthorized actions
+- maintain clarity
+
+---
+
+## 11. UX Under Stress (CRITICAL)
+
+---
+
+### Applies to
+
+- panic button
+- visitor validation
+- security flows
+
+---
+
+### Rule
+
+The UI MUST:
+
+- minimize steps
+- provide immediate feedback
+- avoid complex flows
+- be usable under pressure
+
+---
+
+## 12. Feedback and State
+
+The system MUST provide:
+
+- success feedback
+- error feedback
+- loading states
+- validation messages
+
+---
+
+### Rule
+
+Users must always understand what is happening.
+
+---
+
+## 13. Error Handling UX
+
+---
+
+### Rule
+
+Errors MUST be:
+
+- clear
+- actionable
+- non-technical
+
+---
+
+### Forbidden
+
+- vague errors
+- system-level messages exposed to user
+
+---
+
+## 14. Data Representation
+
+---
+
+### Rule
+
+Data MUST be:
+
+- readable
+- structured
+- contextualized
+
+---
+
+### Example
+
+Instead of raw values:
+
+- show labels
+- show relationships
+- show relevant context
+
+---
+
+## 15. Performance and Responsiveness
+
+---
+
+### Rule
+
+The UI MUST:
+
+- load quickly
 - avoid unnecessary re-renders
-- use efficient data loading
-- cache when appropriate
+- provide smooth interactions
 
 ---
 
-## Future Scalability
-
-The UI must be ready for:
-
-- new modules
-- new roles
-- new widgets
-
-Without major refactors.
+## 16. Accessibility (Basic Level)
 
 ---
 
-## Agent Responsibility
+### Rule
 
-You MUST:
+The UI MUST:
 
-- design UI as a system, not pages
-- avoid shortcuts
-- ensure scalability
+- be readable
+- use clear contrast
+- avoid overly complex interactions
 
-If unsure:
-→ STOP and ask
+---
+
+## 17. Forbidden Patterns
+
+The UI MUST NOT:
+
+- expose internal IDs unnecessarily
+- require technical knowledge
+- depend on perfect user input
+- break when data is incomplete
+
+---
+
+## 18. Testing Requirements
+
+The system MUST validate:
+
+- UI consistency across modules
+- correct rendering per role
+- correct behavior under tenant context
+- usability in critical flows
+
+---
+
+## 19. Strategic Importance
+
+This rule ensures:
+
+- user adoption
+- product clarity
+- scalability of modules
+- professional perception
+
+---
+
+## 20. Consequence of Violation
+
+Breaking this rule leads to:
+
+- confusing UX
+- user rejection
+- increased support burden
+- inconsistent product behavior
+
+---
+
+## 21. Final Principle
+
+The system must behave as:
+
+- a clear system
+- a consistent system
+- a scalable UI system
+
+Not as a collection of disconnected screens.
