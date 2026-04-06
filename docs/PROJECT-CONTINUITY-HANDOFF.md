@@ -502,3 +502,27 @@ No known tenant leakage risks
 🔹 Next Step
 
 👉 RIGOR 3.0 — Block 2 (Authentication & Entry)
+
+Current Phase
+
+RIGOR 3.0 — Block 2 (Authentication & Entry) ✅ COMPLETED
+
+Completed Work
+Login flow anchored in app.sitios-urbanos.test
+Private community selector implemented through backend validation
+Single-community auto-redirect implemented
+Zero-community controlled state implemented
+Tenant runtime root route established with temporary redirect to units.index
+Session persistence across subdomains manually validated in browser
+Root tenant redirect bug fixed by explicitly forwarding community_slug
+System State
+Stable
+Authentication and tenant entry flow operational
+Shared session behavior confirmed
+Next Step
+
+👉 RIGOR 3.0 — Block 3 (Tenant Runtime Hardening)
+
+Risks / Notes
+Tenant runtime still uses temporary landing redirect to units.index
+Full tenant runtime hardening remains pending in Block 3

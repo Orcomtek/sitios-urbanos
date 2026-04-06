@@ -59,10 +59,6 @@ class ResidentController extends Controller
     {
         $community = $this->context->require();
 
-        if ($resident->community_id !== $community->id) {
-            abort(404);
-        }
-
         $units = $community->units()->orderBy('identifier')->get(['id', 'identifier']);
 
         return Inertia::render('Tenant/Residents/Form', [
@@ -73,10 +69,6 @@ class ResidentController extends Controller
 
     public function update(UpdateResidentRequest $request, string $community_slug, Resident $resident, UpdateResidentAction $action): RedirectResponse
     {
-        if ($resident->community_id !== $this->context->require()->id) {
-            abort(404);
-        }
-
         $action->execute($this->context->require(), $resident, $request->validated());
 
         return redirect()->route('residents.index', ['community_slug' => $this->context->require()->slug])
@@ -85,10 +77,6 @@ class ResidentController extends Controller
 
     public function destroy(string $community_slug, Resident $resident, DeleteResidentAction $action): RedirectResponse
     {
-        if ($resident->community_id !== $this->context->require()->id) {
-            abort(404);
-        }
-
         $action->execute($this->context->require(), $resident);
 
         return redirect()->route('residents.index', ['community_slug' => $this->context->require()->slug])

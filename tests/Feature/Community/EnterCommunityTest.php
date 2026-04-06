@@ -11,7 +11,7 @@ it('redirects to the community subdomain if valid', function () {
     $response = $this->actingAs($user)->get(route('communities.enter', 'valid-comm'));
 
     $centralDomain = config('app.central_domain');
-    $response->assertRedirect('http://valid-comm.' . $centralDomain);
+    $response->assertRedirect('http://valid-comm.'.$centralDomain);
 });
 
 it('returns 404 if the user does not belong to the community', function () {
@@ -37,7 +37,7 @@ it('returns 404 if the community is inactive', function () {
         'slug' => 'inactive-comm',
         'status' => 'inactive',
     ]);
-    
+
     $user->communities()->attach($community->id, ['role' => 'resident']);
 
     $response = $this->actingAs($user)->get(route('communities.enter', 'inactive-comm'));

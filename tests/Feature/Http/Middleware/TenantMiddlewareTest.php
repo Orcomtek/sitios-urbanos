@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Route;
 
 beforeEach(function () {
     // Define a dummy route with the correct parameter
-    Route::domain('{community_slug}.' . config('app.central_domain'))
+    Route::domain('{community_slug}.'.config('app.central_domain'))
         ->get('/test', function () {
             $context = app(TenantContext::class);
 

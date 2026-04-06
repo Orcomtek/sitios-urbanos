@@ -51,10 +51,6 @@ class UnitController extends Controller
 
     public function edit(string $community_slug, Unit $unit): Response
     {
-        if ($unit->community_id !== $this->context->require()->id) {
-            abort(404);
-        }
-
         return Inertia::render('Tenant/Units/Form', [
             'unit' => $unit,
         ]);
@@ -62,10 +58,6 @@ class UnitController extends Controller
 
     public function update(UpdateUnitRequest $request, string $community_slug, Unit $unit, UpdateUnitAction $action): RedirectResponse
     {
-        if ($unit->community_id !== $this->context->require()->id) {
-            abort(404);
-        }
-
         $action->execute($this->context->require(), $unit, $request->validated());
 
         return redirect()->route('units.index', ['community_slug' => $this->context->require()->slug])
@@ -74,10 +66,6 @@ class UnitController extends Controller
 
     public function destroy(string $community_slug, Unit $unit, DeleteUnitAction $action): RedirectResponse
     {
-        if ($unit->community_id !== $this->context->require()->id) {
-            abort(404);
-        }
-
         $action->execute($this->context->require(), $unit);
 
         return redirect()->route('units.index', ['community_slug' => $this->context->require()->slug])

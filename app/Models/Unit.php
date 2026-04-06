@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use Database\Factories\UnitFactory;
+use App\Models\Traits\TenantScoped;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,11 +11,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Unit extends Model
 {
-    /** @use HasFactory<UnitFactory> */
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, TenantScoped;
 
     protected $fillable = [
-        'community_id',
         'identifier',
         'type',
         'status',

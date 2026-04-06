@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use Database\Factories\ResidentFactory;
+use App\Models\Traits\TenantScoped;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -10,8 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Resident extends Model
 {
-    /** @use HasFactory<ResidentFactory> */
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, TenantScoped;
 
     protected $fillable = [
         'unit_id',

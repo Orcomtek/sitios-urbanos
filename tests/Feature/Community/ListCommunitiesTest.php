@@ -39,7 +39,7 @@ it('does not display communities assigned to other users', function () {
     $communityA2 = Community::factory()->create();
     $userA->communities()->attach([
         $communityA1->id => ['role' => 'resident'],
-        $communityA2->id => ['role' => 'resident']
+        $communityA2->id => ['role' => 'resident'],
     ]);
 
     $userB = User::factory()->create();
@@ -65,7 +65,7 @@ it('auto-redirects to the community subdomain if the user has exactly one active
     $response = $this->actingAs($user)->get('/comunidades');
 
     $centralDomain = config('app.central_domain');
-    $response->assertRedirect('http://test-comm.' . $centralDomain);
+    $response->assertRedirect('http://test-comm.'.$centralDomain);
 });
 
 it('displays zero communities empty state if the user has no active communities', function () {
