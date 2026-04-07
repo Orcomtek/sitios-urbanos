@@ -7,6 +7,8 @@ use App\Http\Controllers\Api\Governance\AnnouncementController;
 use App\Http\Controllers\Api\Governance\DocumentController;
 use App\Http\Controllers\Api\Governance\PollController;
 use App\Http\Controllers\Api\Governance\PqrsController;
+use App\Http\Controllers\Api\Security\AccessInvitationController;
+use App\Http\Controllers\Api\Security\EmergencyEventController;
 use App\Http\Controllers\Api\Security\PackageController;
 use App\Http\Controllers\Api\Security\VisitorController;
 use App\Http\Controllers\Webhooks\EpaycoWebhookController;
@@ -74,10 +76,17 @@ Route::domain('{community_slug}.'.$centralDomain)
             Route::patch('/packages/{package}/return', [PackageController::class, 'return'])->name('api.security.packages.return');
 
             // Emergencies
-            Route::get('/emergencies', [\App\Http\Controllers\Api\Security\EmergencyEventController::class, 'index'])->name('api.security.emergencies.index');
-            Route::post('/emergencies', [\App\Http\Controllers\Api\Security\EmergencyEventController::class, 'store'])->name('api.security.emergencies.store');
-            Route::get('/emergencies/{emergency}', [\App\Http\Controllers\Api\Security\EmergencyEventController::class, 'show'])->name('api.security.emergencies.show');
-            Route::patch('/emergencies/{emergency}/ack', [\App\Http\Controllers\Api\Security\EmergencyEventController::class, 'acknowledge'])->name('api.security.emergencies.ack');
-            Route::patch('/emergencies/{emergency}/resolve', [\App\Http\Controllers\Api\Security\EmergencyEventController::class, 'resolve'])->name('api.security.emergencies.resolve');
+            Route::get('/emergencies', [EmergencyEventController::class, 'index'])->name('api.security.emergencies.index');
+            Route::post('/emergencies', [EmergencyEventController::class, 'store'])->name('api.security.emergencies.store');
+            Route::get('/emergencies/{emergency}', [EmergencyEventController::class, 'show'])->name('api.security.emergencies.show');
+            Route::patch('/emergencies/{emergency}/ack', [EmergencyEventController::class, 'acknowledge'])->name('api.security.emergencies.ack');
+            Route::patch('/emergencies/{emergency}/resolve', [EmergencyEventController::class, 'resolve'])->name('api.security.emergencies.resolve');
+
+            // Access Invitations
+            Route::get('/invitations', [AccessInvitationController::class, 'index'])->name('api.security.invitations.index');
+            Route::post('/invitations', [AccessInvitationController::class, 'store'])->name('api.security.invitations.store');
+            Route::get('/invitations/{invitation}', [AccessInvitationController::class, 'show'])->name('api.security.invitations.show');
+            Route::patch('/invitations/{invitation}/revoke', [AccessInvitationController::class, 'revoke'])->name('api.security.invitations.revoke');
+            Route::patch('/invitations/{invitation}/consume', [AccessInvitationController::class, 'consume'])->name('api.security.invitations.consume');
         });
     });

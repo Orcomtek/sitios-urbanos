@@ -881,3 +881,29 @@ Next Step
 
 👉 Bloque 17 — Access Extensions (QR / Invitaciones)
 
+Current Phase
+
+RIGOR 3.0 — Block 17 (Access Extensions: QR / Invitations) ✅ COMPLETED
+
+Completed Work
+access invitation subsystem implemented
+secure single-use invitation lifecycle enforced
+expiration and revocation logic implemented
+tenant-safe invitation visibility and consumption implemented
+security logging integrated for creation, consumption, and revocation
+invitation API endpoints implemented
+feature tests covering isolation, ownership, expiration, and single-use constraints completed
+System State
+Stable
+Visitors + Packages + Emergency + Invitations now form a real operational security layer
+Product is increasingly ready for serious pilots
+Risks / Notes
+no hardware integration yet
+no QR scanner integration yet
+no multi-use invitation support yet
+no visitor auto-linking/auto-creation yet
+Next Step
+
+👉 Definir siguiente macrofrente:
+Marketplace / Ecosystem foundation o Admin UX / Operational cockpit
+
