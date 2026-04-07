@@ -2,6 +2,8 @@
 
 namespace App\Models\Governance;
 
+use App\Models\Unit;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -28,11 +30,11 @@ class PollVote extends Model
 
     public function user()
     {
-        return $this->belongsTo(\App\Models\User::class);
+        return $this->belongsTo(User::class);
     }
 
     public function unit()
     {
-        return $this->belongsTo(\App\Models\Unit::class);
+        return $this->belongsTo(Unit::class);
     }
 }

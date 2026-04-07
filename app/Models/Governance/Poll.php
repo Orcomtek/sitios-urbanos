@@ -3,6 +3,7 @@
 namespace App\Models\Governance;
 
 use App\Models\Traits\TenantScoped;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -38,12 +39,12 @@ class Poll extends Model
 
     public function creator()
     {
-        return $this->belongsTo(\App\Models\User::class, 'created_by');
+        return $this->belongsTo(User::class, 'created_by');
     }
 
     public function isOpen(): bool
     {
-        return $this->status === 'open' 
+        return $this->status === 'open'
             && ($this->starts_at === null || $this->starts_at <= now())
             && ($this->ends_at === null || $this->ends_at >= now());
     }

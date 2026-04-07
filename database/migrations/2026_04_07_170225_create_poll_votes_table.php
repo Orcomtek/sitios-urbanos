@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->cascadeOnDelete(); // for traceability
             $table->foreignId('unit_id')->constrained()->cascadeOnDelete(); // Core constraint: one vote per unit
             $table->timestamps();
-            
+
             // Critical rule: one vote per unit per poll.
             $table->unique(['poll_id', 'unit_id']);
         });

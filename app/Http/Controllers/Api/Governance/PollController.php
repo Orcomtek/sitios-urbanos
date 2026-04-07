@@ -23,7 +23,7 @@ class PollController extends Controller
         $community = $this->context->require();
 
         $polls = Poll::where('community_id', $community->id)
-            ->with(['options' => function($q) {
+            ->with(['options' => function ($q) {
                 // Return options with vote counts
                 $q->withCount('votes');
             }])
@@ -87,7 +87,7 @@ class PollController extends Controller
     {
         $community = $this->context->require();
         $poll = Poll::where('community_id', $community->id)
-            ->with(['options' => function($q) {
+            ->with(['options' => function ($q) {
                 $q->withCount('votes');
             }])
             ->findOrFail($poll_id);

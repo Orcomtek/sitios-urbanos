@@ -23,7 +23,7 @@ return new class extends Migration
             $table->timestamp('ends_at')->nullable();
             $table->foreignId('created_by')->constrained('users');
             $table->timestamps();
-            
+
             $table->index(['community_id', 'type']);
             $table->index(['community_id', 'starts_at', 'ends_at']);
         });

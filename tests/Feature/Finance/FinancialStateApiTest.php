@@ -47,7 +47,7 @@ it('can fetch invoice state via tenant API', function () {
                 'status' => InvoiceStatus::PENDING->value,
                 'amount' => 50000,
                 'due_date' => now()->addDays(5)->toDateString(),
-            ]
+            ],
         ]);
 });
 
@@ -90,6 +90,6 @@ it('can fetch payment state via tenant API', function () {
                 'id' => $payment->id,
                 'status' => PaymentStatus::PENDING->value,
                 'amount' => 50000,
-            ]
+            ],
         ]);
 });

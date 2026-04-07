@@ -21,13 +21,13 @@ class VisitorController extends Controller
     {
         $user = $request->user();
         $community = $this->context->require();
-        
+
         $query = Visitor::query()->with(['unit', 'creator']);
 
-        if (!$user->hasRoleInCommunity($community, CommunityRole::Admin, CommunityRole::Guard)) {
+        if (! $user->hasRoleInCommunity($community, CommunityRole::Admin, CommunityRole::Guard)) {
             $userUnitIds = Resident::where('user_id', $user->id)
                 ->pluck('unit_id');
-                
+
             $query->whereIn('unit_id', $userUnitIds);
         }
 
@@ -40,8 +40,8 @@ class VisitorController extends Controller
 
         $validated = $request->validate([
             'unit_id' => [
-                'required', 
-                Rule::exists('units', 'id')->where('community_id', $community->id)
+                'required',
+                Rule::exists('units', 'id')->where('community_id', $community->id),
             ],
             'name' => ['required', 'string', 'max:255'],
             'document_number' => ['nullable', 'string', 'max:255'],
@@ -53,13 +53,13 @@ class VisitorController extends Controller
         $user = $request->user();
 
         $isAdmin = $user->hasRoleInCommunity($community, CommunityRole::Admin);
-        
-        if (!$isAdmin) {
+
+        if (! $isAdmin) {
             $isResident = Resident::where('user_id', $user->id)
                 ->where('unit_id', $validated['unit_id'])
                 ->exists();
-                
-            if (!$isResident) {
+
+            if (! $isResident) {
                 abort(403, 'No tienes permiso para registrar visitantes en esta unidad.');
             }
         }
@@ -83,12 +83,12 @@ class VisitorController extends Controller
         $user = $request->user();
         $community = $this->context->require();
 
-        if (!$user->hasRoleInCommunity($community, CommunityRole::Admin, CommunityRole::Guard)) {
+        if (! $user->hasRoleInCommunity($community, CommunityRole::Admin, CommunityRole::Guard)) {
             $isResident = Resident::where('user_id', $user->id)
                 ->where('unit_id', $visitor->unit_id)
                 ->exists();
-                
-            if (!$isResident) {
+
+            if (! $isResident) {
                 abort(403, 'No tienes permiso para ver este visitante.');
             }
         }

@@ -3,7 +3,12 @@
 use App\Http\Controllers\Api\Finance\AccountStatementController;
 use App\Http\Controllers\Api\Finance\FinancialStateController;
 use App\Http\Controllers\Api\Finance\InvoicePaymentController;
+use App\Http\Controllers\Api\Governance\AnnouncementController;
+use App\Http\Controllers\Api\Governance\DocumentController;
+use App\Http\Controllers\Api\Governance\PollController;
 use App\Http\Controllers\Api\Governance\PqrsController;
+use App\Http\Controllers\Api\Security\PackageController;
+use App\Http\Controllers\Api\Security\VisitorController;
 use App\Http\Controllers\Webhooks\EpaycoWebhookController;
 use App\Http\Middleware\TenantMiddleware;
 use Illuminate\Http\Request;
@@ -22,7 +27,7 @@ Route::domain('{community_slug}.'.$centralDomain)
     ->group(function () {
         Route::get('/finance/invoices/{invoice}', [FinancialStateController::class, 'invoice'])->name('api.finance.invoice');
         Route::get('/finance/payments/{payment}', [FinancialStateController::class, 'payment'])->name('api.finance.payment');
-        
+
         Route::post('/finance/invoices/{invoice}/pay', [InvoicePaymentController::class, 'store'])->name('api.finance.invoices.pay');
 
         Route::get('/finance/units/{unit}/statement', [AccountStatementController::class, 'show'])->name('api.finance.units.statement');
@@ -34,31 +39,38 @@ Route::domain('{community_slug}.'.$centralDomain)
             Route::post('/pqrs', [PqrsController::class, 'store'])->name('api.governance.pqrs.store');
             Route::get('/pqrs/{pqrs}', [PqrsController::class, 'show'])->name('api.governance.pqrs.show');
             Route::patch('/pqrs/{pqrs}/status', [PqrsController::class, 'update_status'])->name('api.governance.pqrs.update_status');
-            
+
             // Announcements
-            Route::get('/announcements', [\App\Http\Controllers\Api\Governance\AnnouncementController::class, 'index'])->name('api.governance.announcements.index');
-            Route::post('/announcements', [\App\Http\Controllers\Api\Governance\AnnouncementController::class, 'store'])->name('api.governance.announcements.store');
-            Route::delete('/announcements/{announcement}', [\App\Http\Controllers\Api\Governance\AnnouncementController::class, 'destroy'])->name('api.governance.announcements.destroy');
+            Route::get('/announcements', [AnnouncementController::class, 'index'])->name('api.governance.announcements.index');
+            Route::post('/announcements', [AnnouncementController::class, 'store'])->name('api.governance.announcements.store');
+            Route::delete('/announcements/{announcement}', [AnnouncementController::class, 'destroy'])->name('api.governance.announcements.destroy');
 
             // Documents
-            Route::get('/documents', [\App\Http\Controllers\Api\Governance\DocumentController::class, 'index'])->name('api.governance.documents.index');
-            Route::post('/documents', [\App\Http\Controllers\Api\Governance\DocumentController::class, 'store'])->name('api.governance.documents.store');
-            Route::delete('/documents/{document}', [\App\Http\Controllers\Api\Governance\DocumentController::class, 'destroy'])->name('api.governance.documents.destroy');
+            Route::get('/documents', [DocumentController::class, 'index'])->name('api.governance.documents.index');
+            Route::post('/documents', [DocumentController::class, 'store'])->name('api.governance.documents.store');
+            Route::delete('/documents/{document}', [DocumentController::class, 'destroy'])->name('api.governance.documents.destroy');
 
             // Polls
-            Route::get('/polls', [\App\Http\Controllers\Api\Governance\PollController::class, 'index'])->name('api.governance.polls.index');
-            Route::post('/polls', [\App\Http\Controllers\Api\Governance\PollController::class, 'store'])->name('api.governance.polls.store');
-            Route::get('/polls/{poll}', [\App\Http\Controllers\Api\Governance\PollController::class, 'show'])->name('api.governance.polls.show');
-            Route::patch('/polls/{poll}/close', [\App\Http\Controllers\Api\Governance\PollController::class, 'close'])->name('api.governance.polls.close');
-            Route::post('/polls/{poll}/vote', [\App\Http\Controllers\Api\Governance\PollController::class, 'vote'])->name('api.governance.polls.vote');
+            Route::get('/polls', [PollController::class, 'index'])->name('api.governance.polls.index');
+            Route::post('/polls', [PollController::class, 'store'])->name('api.governance.polls.store');
+            Route::get('/polls/{poll}', [PollController::class, 'show'])->name('api.governance.polls.show');
+            Route::patch('/polls/{poll}/close', [PollController::class, 'close'])->name('api.governance.polls.close');
+            Route::post('/polls/{poll}/vote', [PollController::class, 'vote'])->name('api.governance.polls.vote');
         });
 
         Route::prefix('security')->group(function () {
             // Visitors
-            Route::get('/visitors', [\App\Http\Controllers\Api\Security\VisitorController::class, 'index'])->name('api.security.visitors.index');
-            Route::post('/visitors', [\App\Http\Controllers\Api\Security\VisitorController::class, 'store'])->name('api.security.visitors.store');
-            Route::get('/visitors/{visitor}', [\App\Http\Controllers\Api\Security\VisitorController::class, 'show'])->name('api.security.visitors.show');
-            Route::patch('/visitors/{visitor}/enter', [\App\Http\Controllers\Api\Security\VisitorController::class, 'enter'])->name('api.security.visitors.enter');
-            Route::patch('/visitors/{visitor}/exit', [\App\Http\Controllers\Api\Security\VisitorController::class, 'exit'])->name('api.security.visitors.exit');
+            Route::get('/visitors', [VisitorController::class, 'index'])->name('api.security.visitors.index');
+            Route::post('/visitors', [VisitorController::class, 'store'])->name('api.security.visitors.store');
+            Route::get('/visitors/{visitor}', [VisitorController::class, 'show'])->name('api.security.visitors.show');
+            Route::patch('/visitors/{visitor}/enter', [VisitorController::class, 'enter'])->name('api.security.visitors.enter');
+            Route::patch('/visitors/{visitor}/exit', [VisitorController::class, 'exit'])->name('api.security.visitors.exit');
+
+            // Packages
+            Route::get('/packages', [PackageController::class, 'index'])->name('api.security.packages.index');
+            Route::post('/packages', [PackageController::class, 'store'])->name('api.security.packages.store');
+            Route::get('/packages/{package}', [PackageController::class, 'show'])->name('api.security.packages.show');
+            Route::patch('/packages/{package}/deliver', [PackageController::class, 'deliver'])->name('api.security.packages.deliver');
+            Route::patch('/packages/{package}/return', [PackageController::class, 'return'])->name('api.security.packages.return');
         });
     });

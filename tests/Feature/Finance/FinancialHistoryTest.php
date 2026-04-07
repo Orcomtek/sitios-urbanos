@@ -1,6 +1,10 @@
 <?php
 
 use App\Enums\CommunityRole;
+use App\Enums\InvoiceStatus;
+use App\Enums\InvoiceType;
+use App\Enums\PaymentMethod;
+use App\Enums\PaymentStatus;
 use App\Models\Community;
 use App\Models\Invoice;
 use App\Models\Payment;
@@ -27,8 +31,8 @@ it('lists invoices for a unit', function () {
         'community_id' => $community->id,
         'unit_id' => $unit->id,
         'amount' => 1000,
-        'status' => \App\Enums\InvoiceStatus::PENDING,
-        'type' => \App\Enums\InvoiceType::ADMIN_FEE,
+        'status' => InvoiceStatus::PENDING,
+        'type' => InvoiceType::ADMIN_FEE,
         'issued_at' => now(),
         'due_date' => now()->addDays(5),
     ]);
@@ -61,8 +65,8 @@ it('lists payments for a unit', function () {
         'community_id' => $community->id,
         'unit_id' => $unit->id,
         'amount' => 500,
-        'status' => \App\Enums\PaymentStatus::CONFIRMED,
-        'method' => \App\Enums\PaymentMethod::INTERNAL_EPAYCO,
+        'status' => PaymentStatus::CONFIRMED,
+        'method' => PaymentMethod::INTERNAL_EPAYCO,
     ]);
 
     $url = route('api.finance.units.payments', [

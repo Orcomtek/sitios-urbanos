@@ -56,7 +56,7 @@ class AnnouncementController extends Controller
             'data' => new AnnouncementResource($announcement),
         ], 201);
     }
-    
+
     public function destroy(Request $request, string $community_slug, Announcement $announcement): JsonResponse
     {
         $community = $this->context->require();

@@ -24,7 +24,7 @@ class TransitionVisitorStatusAction
                     'status' => 'El visitante no está en estado pendiente.',
                 ]);
             }
-            
+
             $visitor->update([
                 'status' => 'entered',
                 'entered_at' => now(),
@@ -35,7 +35,7 @@ class TransitionVisitorStatusAction
                     'status' => 'El visitante no ha ingresado.',
                 ]);
             }
-            
+
             $visitor->update([
                 'status' => 'exited',
                 'exited_at' => now(),

@@ -5,7 +5,6 @@ use App\Models\Community;
 use App\Models\Governance\Announcement;
 use App\Models\Governance\Document;
 use App\Models\Governance\Poll;
-use App\Models\Governance\PollOption;
 use App\Models\Governance\PollVote;
 use App\Models\Resident;
 use App\Models\Unit;
@@ -34,7 +33,7 @@ it('allows admin to create an announcement but denies residents', function () {
 
     // Admin tries and succeeds
     $this->actingAs($admin, 'sanctum')->postJson($url, $data)->assertStatus(201);
-    
+
     expect(Announcement::where('community_id', $community->id)->count())->toBe(1);
 });
 
@@ -76,7 +75,7 @@ it('allows residents to vote but enforces one vote per unit', function () {
     $community->users()->attach($admin, ['role' => CommunityRole::Admin->value]);
 
     $unit = Unit::factory()->create(['community_id' => $community->id]);
-    
+
     // User 1 related to unit
     $residentUser1 = User::factory()->create();
     $community->users()->attach($residentUser1, ['role' => CommunityRole::Resident->value]);
@@ -92,7 +91,7 @@ it('allows residents to vote but enforces one vote per unit', function () {
         'community_id' => $community->id,
         'title' => 'Color of the building',
         'created_by' => $admin->id,
-        'status' => 'open'
+        'status' => 'open',
     ]);
     $optionA = $poll->options()->create(['text' => 'Red']);
     $optionB = $poll->options()->create(['text' => 'Blue']);
@@ -112,7 +111,7 @@ it('allows residents to vote but enforces one vote per unit', function () {
     ]);
     $response2->assertStatus(422)
         ->assertJsonValidationErrors(['unit_id']);
-        
+
     // Verify only one vote exists
     expect(PollVote::where('poll_id', $poll->id)->count())->toBe(1);
     expect(PollVote::first()->poll_option_id)->toBe($optionA->id);
@@ -123,7 +122,7 @@ it('rejects votes when the poll is closed', function () {
     app(TenantContext::class)->set($community);
 
     $admin = User::factory()->create();
-    
+
     $unit = Unit::factory()->create(['community_id' => $community->id]);
     $residentUser = User::factory()->create();
     $community->users()->attach($residentUser, ['role' => CommunityRole::Resident->value]);
@@ -133,7 +132,7 @@ it('rejects votes when the poll is closed', function () {
         'community_id' => $community->id,
         'title' => 'Test Poll',
         'created_by' => $admin->id,
-        'status' => 'closed'
+        'status' => 'closed',
     ]);
     $optionA = $poll->options()->create(['text' => 'A']);
 
@@ -142,6 +141,6 @@ it('rejects votes when the poll is closed', function () {
         'unit_id' => $unit->id,
         'poll_option_id' => $optionA->id,
     ]);
-    
+
     $response->assertStatus(422)->assertJsonValidationErrors(['poll']);
 });

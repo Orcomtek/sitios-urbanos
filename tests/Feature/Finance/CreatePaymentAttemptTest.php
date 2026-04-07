@@ -64,4 +64,4 @@ it('throws exception if invoice is already paid', function () {
     $action = new CreatePaymentAttemptAction($this->tenantContext);
 
     $action->execute($this->invoice);
-})->throws(InvalidArgumentException::class, 'Invoice is already paid.');
+})->throws(InvalidArgumentException::class, 'Only pending invoices are payable.');

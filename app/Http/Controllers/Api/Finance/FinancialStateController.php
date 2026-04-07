@@ -9,7 +9,6 @@ use App\Models\Invoice;
 use App\Models\Payment;
 use App\Models\Unit;
 use App\Services\TenantContext;
-use Illuminate\Http\JsonResponse;
 
 class FinancialStateController extends Controller
 {

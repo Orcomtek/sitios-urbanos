@@ -13,7 +13,7 @@ beforeEach(function () {
 
     $this->residentUser = User::factory()->create();
     $this->community->users()->attach($this->residentUser, ['role' => 'resident']);
-    
+
     $this->unit = Unit::factory()->create(['community_id' => $this->community->id]);
     Resident::factory()->create([
         'unit_id' => $this->unit->id,
@@ -26,7 +26,7 @@ beforeEach(function () {
 
     $this->guardUser = User::factory()->create();
     $this->community->users()->attach($this->guardUser, ['role' => 'guard']);
-    
+
     // Create another community and user for isolation tests
     $this->otherCommunity = Community::factory()->create();
     $this->otherUser = User::factory()->create();
@@ -75,7 +75,7 @@ it('allows residents to create a visitor for their unit', function () {
         ]);
 
     $response->assertStatus(201);
-    
+
     $this->assertDatabaseHas('visitors', [
         'name' => 'John Doe',
         'unit_id' => $this->unit->id,
@@ -148,7 +148,7 @@ it('prevents residents from transitioning visitors', function () {
 
     $response->assertStatus(422)
         ->assertJsonValidationErrors(['status']);
-        
+
     expect($visitor->fresh()->status)->toBe('pending');
 });
 

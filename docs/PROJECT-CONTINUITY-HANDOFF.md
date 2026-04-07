@@ -830,3 +830,28 @@ Next Step
 
 👉 Bloque 15 — Packages (Paquetería)
 
+Current Phase
+
+RIGOR 3.0 — Block 15 (Packages Core) ✅ COMPLETED
+
+Completed Work
+package lifecycle system implemented
+unit-based modeling enforced
+package reception and delivery flows operational
+strict state transitions (received → delivered / returned)
+role-based operations (admin/guard)
+API endpoints implemented
+feature tests covering isolation, access, and transitions
+System State
+Stable
+Visitors + Packages fully operational
+Core operations layer now usable in real communities
+Risks / Notes
+no notifications yet (intentional)
+no OCR or automation
+no analytics
+no audit log integration yet (can come later)
+Next Step
+
+👉 Bloque 16 — Panic Button + Notifications
+

@@ -23,7 +23,7 @@ return new class extends Migration
             $table->json('visibility')->nullable(); // nullable => all residents
             $table->foreignId('created_by')->constrained('users');
             $table->timestamps();
-            
+
             $table->index(['community_id', 'document_type']);
         });
     }

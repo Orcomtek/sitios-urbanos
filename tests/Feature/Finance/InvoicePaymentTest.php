@@ -11,6 +11,7 @@ use App\Models\Payment;
 use App\Models\Resident;
 use App\Models\Unit;
 use App\Models\User;
+
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseCount;
 
@@ -45,7 +46,7 @@ it('allows residents to initiate payment for a pending invoice', function () {
                 'invoice_id' => $invoice->id,
                 'status' => PaymentStatus::PENDING->value,
                 'amount' => 50000,
-            ]
+            ],
         ]);
 });
 
@@ -87,7 +88,7 @@ it('reuses existing pending payment attempt for the same invoice', function () {
         ->assertJson([
             'data' => [
                 'id' => $existingPayment->id,
-            ]
+            ],
         ]);
 
     assertDatabaseCount('payments', 1);

@@ -16,17 +16,17 @@ return new class extends Migration
             $table->foreignId('community_id')->constrained()->cascadeOnDelete();
             $table->foreignId('unit_id')->constrained()->cascadeOnDelete();
             $table->foreignId('created_by')->constrained('users')->cascadeOnDelete();
-            
+
             $table->string('name');
             $table->string('document_number')->nullable();
             $table->enum('type', ['visitor', 'delivery', 'service', 'other']);
             $table->enum('status', ['pending', 'entered', 'exited'])->default('pending');
-            
+
             $table->datetime('expected_at')->nullable();
             $table->datetime('entered_at')->nullable();
             $table->datetime('exited_at')->nullable();
             $table->text('notes')->nullable();
-            
+
             $table->timestamps();
             $table->softDeletes();
         });
