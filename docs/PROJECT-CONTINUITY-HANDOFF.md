@@ -1014,3 +1014,103 @@ Validated:
 ✅ Audit-approved  
 ✅ Ready for cockpit evolution (Block 19)
 
+## BLOCK 19 — Guard / Security Work Queue (COMPLETED)
+
+### Objective
+Provide a unified operational work queue for guard/admin users so they can act on pending security/operations tasks from one place.
+
+### Endpoint
+GET /api/cockpit/work-queue
+
+Tenant-scoped via subdomain.
+
+---
+
+### Architecture
+
+- Controller:
+  - App\Http\Controllers\Api\Cockpit\WorkQueueController
+
+- Action:
+  - App\Actions\Cockpit\GetOperationalWorkQueueAction
+  - Aggregates only actionable items
+  - Reuses existing domain transitions
+  - Avoids controller bloat
+
+- Resource:
+  - App\Http\Resources\WorkQueueResource
+
+---
+
+### Role-Based Access
+
+#### Admin
+- allowed
+- sees full operational queue
+
+#### Guard
+- allowed
+- sees full operational queue
+
+#### Resident
+- forbidden (403)
+
+---
+
+### Included Task Types
+
+#### Visitors
+- status: pending
+- type: visitor_pending
+- action: enter
+
+#### Packages
+- status: received
+- type: package_received
+- action: deliver
+
+#### Invitations
+- status: active and not expired
+- type: invitation_active
+- action: consume
+
+#### Emergencies
+- status: active
+- type: emergency_active
+- action: acknowledge
+
+---
+
+### Queue Limits
+- top 10 items per category
+- max practical payload = 40 tasks
+
+---
+
+### Key Constraints
+- no historical/completed items
+- no financial items
+- no new business logic
+- no frontend introduced
+- strict TenantScoped isolation
+- action names aligned with real domain endpoints
+
+---
+
+### Testing
+tests/Feature/Cockpit/WorkQueueTest.php
+
+Validated:
+- resident forbidden access
+- admin/guard allowed
+- actionable items only
+- correct type/action mapping
+- tenant isolation
+
+---
+
+### Status
+✅ Completed
+✅ Audit-approved
+✅ Ready for admin work queue evolution
+
