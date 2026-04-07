@@ -660,3 +660,26 @@ No advanced UX/UI yet
 Next Step
 
 👉 RIGOR 3.0 — Block 8 (Legal + Data Layer + Compliance Hardening)
+
+Current Phase
+
+RIGOR 3.0 — Block 8 (Legal + Data + Compliance Hardening) ✅ COMPLETED
+
+Completed Work
+append-only security log foundation implemented
+legal consent tracking foundation implemented
+resident anonymization action implemented
+retention manager baseline implemented
+sensitive resident deletion flow now logs security events
+privacy and compliance foundations added without exposing public compliance APIs
+System State
+Stable
+Sensitive actions now have a compliance-ready technical base
+Privacy hardening foundations are active
+Risks / Notes
+No public anonymization endpoint yet
+No full legal/compliance dashboard yet
+Retention manager remains foundational and non-destructive by default
+Next Step
+
+👉 RIGOR 3.0 — Bloque de consolidación / revisión estratégica del roadmap siguiente
