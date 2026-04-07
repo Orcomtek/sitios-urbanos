@@ -72,5 +72,12 @@ Route::domain('{community_slug}.'.$centralDomain)
             Route::get('/packages/{package}', [PackageController::class, 'show'])->name('api.security.packages.show');
             Route::patch('/packages/{package}/deliver', [PackageController::class, 'deliver'])->name('api.security.packages.deliver');
             Route::patch('/packages/{package}/return', [PackageController::class, 'return'])->name('api.security.packages.return');
+
+            // Emergencies
+            Route::get('/emergencies', [\App\Http\Controllers\Api\Security\EmergencyEventController::class, 'index'])->name('api.security.emergencies.index');
+            Route::post('/emergencies', [\App\Http\Controllers\Api\Security\EmergencyEventController::class, 'store'])->name('api.security.emergencies.store');
+            Route::get('/emergencies/{emergency}', [\App\Http\Controllers\Api\Security\EmergencyEventController::class, 'show'])->name('api.security.emergencies.show');
+            Route::patch('/emergencies/{emergency}/ack', [\App\Http\Controllers\Api\Security\EmergencyEventController::class, 'acknowledge'])->name('api.security.emergencies.ack');
+            Route::patch('/emergencies/{emergency}/resolve', [\App\Http\Controllers\Api\Security\EmergencyEventController::class, 'resolve'])->name('api.security.emergencies.resolve');
         });
     });

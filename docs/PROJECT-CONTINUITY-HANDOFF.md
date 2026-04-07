@@ -855,3 +855,29 @@ Next Step
 
 👉 Bloque 16 — Panic Button + Notifications
 
+Current Phase
+
+RIGOR 3.0 — Block 16 (Panic Button + Notifications) ✅ COMPLETED
+
+Completed Work
+emergency event system implemented
+panic trigger flow operational
+strict state machine (active → acknowledged → resolved)
+anti-duplicate logic per unit + type
+role-based operations (resident trigger, admin/guard handle)
+SecurityLog fully integrated
+minimal notification system implemented
+full API + tests
+System State
+Stable
+Operational + security layer now complete
+Platform now supports real-world emergency flows
+Risks / Notes
+no SMS yet (future block)
+no realtime push (future block)
+no escalation logic yet
+no SLA/priority engine yet
+Next Step
+
+👉 Bloque 17 — Access Extensions (QR / Invitaciones)
+
