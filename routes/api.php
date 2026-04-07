@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\Api\Cockpit\AdminWorkQueueController;
 use App\Http\Controllers\Api\Cockpit\DashboardController;
+use App\Http\Controllers\Api\Cockpit\WorkQueueController;
 use App\Http\Controllers\Api\Finance\AccountStatementController;
 use App\Http\Controllers\Api\Finance\FinancialStateController;
 use App\Http\Controllers\Api\Finance\InvoicePaymentController;
@@ -29,7 +31,8 @@ Route::domain('{community_slug}.'.$centralDomain)
     ->middleware(['auth:sanctum', TenantMiddleware::class])
     ->group(function () {
         Route::get('/cockpit/dashboard', [DashboardController::class, 'index'])->name('api.cockpit.dashboard');
-        Route::get('/cockpit/work-queue', [\App\Http\Controllers\Api\Cockpit\WorkQueueController::class, 'index'])->name('api.cockpit.work-queue');
+        Route::get('/cockpit/work-queue', [WorkQueueController::class, 'index'])->name('api.cockpit.work-queue');
+        Route::get('/cockpit/admin-work-queue', [AdminWorkQueueController::class, 'index'])->name('api.cockpit.admin-work-queue');
 
         Route::get('/finance/invoices/{invoice}', [FinancialStateController::class, 'invoice'])->name('api.finance.invoice');
         Route::get('/finance/payments/{payment}', [FinancialStateController::class, 'payment'])->name('api.finance.payment');

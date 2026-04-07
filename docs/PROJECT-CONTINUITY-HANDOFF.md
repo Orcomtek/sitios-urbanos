@@ -1114,3 +1114,99 @@ Validated:
 ✅ Audit-approved
 ✅ Ready for admin work queue evolution
 
+## BLOCK 20 — Admin Work Queue (COMPLETED)
+
+### Objective
+Provide an admin-only operational work queue to centralize actionable administrative tasks in one place.
+
+### Endpoint
+GET /api/cockpit/admin-work-queue
+
+Tenant-scoped via subdomain.
+
+---
+
+### Architecture
+
+- Controller:
+  - App\Http\Controllers\Api\Cockpit\AdminWorkQueueController
+
+- Action:
+  - App\Actions\Cockpit\GetAdminWorkQueueAction
+  - Aggregates admin-only actionable tasks
+  - Reuses existing module states and constraints
+
+- Resource:
+  - App\Http\Resources\AdminWorkQueueResource
+
+---
+
+### Role-Based Access
+
+#### Admin
+- allowed
+- sees full admin queue
+
+#### Guard
+- forbidden (403)
+
+#### Resident
+- forbidden (403)
+
+---
+
+### Included Task Types
+
+#### PQRS
+- statuses: open, in_progress
+- type: pqrs_open
+- action: respond
+
+#### Polls
+- status: open
+- type: poll_active
+- action: review
+
+#### Invoices
+- status: pending
+- type: invoice_pending
+- action: review
+
+#### Announcements
+- active/current
+- type: announcement_active
+- action: view
+
+---
+
+### Queue Limits
+- top 10 items per type
+
+---
+
+### Key Constraints
+- admin-only access
+- no analytics
+- no duplication of domain logic
+- strict tenant isolation
+- no overlap with guard/security queue
+
+---
+
+### Testing
+tests/Feature/Cockpit/AdminWorkQueueTest.php
+
+Validated:
+- admin access allowed
+- guard forbidden
+- resident forbidden
+- correct task filtering
+- tenant isolation
+
+---
+
+### Status
+✅ Completed
+✅ Audit-approved
+✅ Ready for cockpit shell / navigation hardening
+
