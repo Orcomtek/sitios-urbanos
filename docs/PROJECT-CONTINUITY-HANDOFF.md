@@ -604,3 +604,32 @@ ePayco integration pending
 Next Step
 
 👉 RIGOR 3.0 — Block 6 (Payments Integration + Notifications)
+
+Current Phase
+
+RIGOR 3.0 — Block 6 (Aggregator Payments + Split Orchestration) ✅ COMPLETED
+
+Completed Work
+Payment model extended for aggregator orchestration
+external_reference and idempotency_key separated correctly
+webhook endpoint implemented (/api/webhooks/epayco)
+cryptographic signature validation enforced
+strict webhook validation pipeline implemented
+idempotent webhook processing ensured
+Payment → Invoice state synchronization implemented
+ledger entries for payment and platform commission created
+net_amount and platform_commission handled via configuration
+internal vs external payment logic separated
+System State
+Stable
+Payment orchestration functional
+Financial integrity enforced end-to-end
+Ready for real ePayco environment integration
+Risks / Notes
+Commission currently uses placeholder configuration
+No refund engine yet
+No multi-invoice payments yet
+No advanced reconciliation UI yet
+Next Step
+
+👉 RIGOR 3.0 — Block 7 (Notifications + User Financial UX)

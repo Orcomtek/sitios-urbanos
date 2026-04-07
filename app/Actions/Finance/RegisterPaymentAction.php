@@ -42,7 +42,15 @@ class RegisterPaymentAction
                 $unitId = $data['unit_id'] ?? null;
             }
             
-            $commission = $data['platform_commission'] ?? 0;
+            $isInternal = $data['method'] === \App\Enums\PaymentMethod::INTERNAL_EPAYCO->value || $data['method'] === \App\Enums\PaymentMethod::INTERNAL_EPAYCO;
+            
+            if ($isInternal) {
+                $commission = $data['platform_commission'] ?? 0;
+                $netAmount = $data['amount'] - $commission;
+            } else {
+                $commission = 0;
+                $netAmount = $data['amount'];
+            }
             
             $payment = Payment::create([
                 'community_id' => $communityId,
@@ -51,9 +59,11 @@ class RegisterPaymentAction
                 'method' => $data['method'],
                 'amount' => $data['amount'],
                 'platform_commission' => $commission,
+                'net_amount' => $netAmount,
                 'external_reference' => $data['external_reference'] ?? null,
                 'idempotency_key' => $data['idempotency_key'] ?? null,
                 'status' => PaymentStatus::CONFIRMED,
+                'paid_at' => now(),
             ]);
 
             // Ledger entry for the principal payment
