@@ -806,3 +806,27 @@ Next Step
 👉 Definir el siguiente macrofrente:
 Marketplace / Ecosystem foundation o Operations / Security extension
 
+Current Phase
+
+RIGOR 3.0 — Block 14 (Visitors & Access Core) ✅ COMPLETED
+
+Completed Work
+visitor registration system implemented
+visitor state machine implemented (pending → entered → exited)
+tenant-safe visitor access enforced
+role-based operation (resident create, admin/guard operate)
+TransitionVisitorStatusAction implemented
+VisitorResource implemented
+feature tests covering access, isolation and transitions
+System State
+Stable
+Core access/visitor flow operational
+Ready for real-world usage in communities
+Risks / Notes
+No QR or automated validation yet
+No package integration yet
+No panic/emergency flows yet
+Next Step
+
+👉 Bloque 15 — Packages (Paquetería)
+

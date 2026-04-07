@@ -52,4 +52,13 @@ Route::domain('{community_slug}.'.$centralDomain)
             Route::patch('/polls/{poll}/close', [\App\Http\Controllers\Api\Governance\PollController::class, 'close'])->name('api.governance.polls.close');
             Route::post('/polls/{poll}/vote', [\App\Http\Controllers\Api\Governance\PollController::class, 'vote'])->name('api.governance.polls.vote');
         });
+
+        Route::prefix('security')->group(function () {
+            // Visitors
+            Route::get('/visitors', [\App\Http\Controllers\Api\Security\VisitorController::class, 'index'])->name('api.security.visitors.index');
+            Route::post('/visitors', [\App\Http\Controllers\Api\Security\VisitorController::class, 'store'])->name('api.security.visitors.store');
+            Route::get('/visitors/{visitor}', [\App\Http\Controllers\Api\Security\VisitorController::class, 'show'])->name('api.security.visitors.show');
+            Route::patch('/visitors/{visitor}/enter', [\App\Http\Controllers\Api\Security\VisitorController::class, 'enter'])->name('api.security.visitors.enter');
+            Route::patch('/visitors/{visitor}/exit', [\App\Http\Controllers\Api\Security\VisitorController::class, 'exit'])->name('api.security.visitors.exit');
+        });
     });
