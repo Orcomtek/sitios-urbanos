@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class LegalConsent extends Model
 {
     public const CREATED_AT = 'agreed_at';
+
     public const UPDATED_AT = null;
 
     protected $fillable = [

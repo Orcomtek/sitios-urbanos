@@ -5,6 +5,7 @@ namespace App\Services\Privacy;
 use App\Actions\Privacy\AnonymizeResidentAction;
 use App\Models\Resident;
 use App\Models\SecurityLog;
+use Illuminate\Database\Eloquent\Collection;
 
 /**
  * Foundation for managing data retention and privacy compliance.
@@ -27,7 +28,7 @@ class RetentionManager
     public function cleanOldLogs(int $months = 12 * 5): int
     {
         $cutoffDate = now()->subMonths($months);
-        
+
         return SecurityLog::where('created_at', '<', $cutoffDate)->delete();
     }
 
@@ -37,19 +38,19 @@ class RetentionManager
     public function anonymizeDeletedResidents(int $months = 6): int
     {
         $cutoffDate = now()->subMonths($months);
-        
-        /** @var \Illuminate\Database\Eloquent\Collection<int, \App\Models\Resident> $residents */
+
+        /** @var Collection<int, Resident> $residents */
         $residents = Resident::onlyTrashed()
             ->whereNotNull('email') // Simplistic check if it hasn't been anonymized
             ->where('deleted_at', '<', $cutoffDate)
             ->get();
-            
+
         $count = 0;
         foreach ($residents as $resident) {
             $this->anonymizeResidentAction->execute($resident);
             $count++;
         }
-        
+
         return $count;
     }
 }

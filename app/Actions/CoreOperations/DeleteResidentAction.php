@@ -2,9 +2,9 @@
 
 namespace App\Actions\CoreOperations;
 
+use App\Actions\Security\LogSecurityEventAction;
 use App\Models\Community;
 use App\Models\Resident;
-use App\Actions\Security\LogSecurityEventAction;
 use Illuminate\Support\Facades\Auth;
 
 class DeleteResidentAction

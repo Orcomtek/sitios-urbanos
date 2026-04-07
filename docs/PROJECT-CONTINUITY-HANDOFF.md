@@ -707,3 +707,50 @@ Anonymity enforced at model serialization level (future: API Resources)
 Next Step
 
 👉 RIGOR 3.0 — Bloque 10: Governance UX + Notifications + Admin Flow
+
+Current Phase
+
+RIGOR 3.0 — Block 10 (Governance UX + Admin Flow) ✅ COMPLETED
+
+Completed Work
+Full PQRS API implemented (create, list, show, update)
+Role-based visibility enforced per tenant
+Anonymous PQRS fully protected at API layer via Resource
+Admin flow implemented using UpdatePqrsStateAction
+Notifications for PQRS creation and updates implemented
+Tenant-safe routing and access control enforced
+End-to-end feature tests implemented
+System State
+Stable
+PQRS module fully operational
+Governance flow usable end-to-end via API
+Risks / Notes
+No UI yet (intentional)
+No SLA or advanced workflow
+No analytics/reporting layer
+Next Step
+
+Current Phase
+
+RIGOR 3.0 — Block 11 (Financial UX + Account Statement Core) ✅ COMPLETED
+
+Completed Work
+Account Statement API implemented
+Balance derived strictly from LedgerEntry
+Invoice history endpoint implemented
+Payment history endpoint implemented
+PLATFORM_COMMISSION correctly isolated from unit balance
+Tenant-safe financial access enforced
+API Resources implemented for all outputs
+Feature tests and manual validation completed
+System State
+Stable
+Financial engine now visible and understandable for users
+Ready for real-world usage
+Risks / Notes
+No UI yet (intencional)
+No reporting layer
+No export features
+Next Step
+
+👉 Bloque 12 — Financial Operations UX (Payments Flow + UX Real)

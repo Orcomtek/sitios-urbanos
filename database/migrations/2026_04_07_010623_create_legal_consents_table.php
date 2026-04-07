@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('ip_address')->nullable();
             $table->text('user_agent')->nullable();
             $table->timestamp('agreed_at')->useCurrent();
-            
+
             $table->unique(['user_id', 'community_id', 'consent_type', 'version'], 'legal_consents_unique');
         });
     }

@@ -79,7 +79,7 @@ class RegisterPaymentAction
             if ($commission > 0) {
                 LedgerEntry::create([
                     'community_id' => $communityId,
-                    'unit_id' => $unitId,
+                    'unit_id' => null,
                     'payment_id' => $payment->id,
                     'type' => LedgerEntryType::PLATFORM_COMMISSION,
                     'amount' => $commission,

@@ -3,9 +3,9 @@
 use App\Actions\Privacy\AnonymizeResidentAction;
 use App\Models\Community;
 use App\Models\Resident;
+use App\Models\SecurityLog;
 use App\Models\Unit;
 use App\Models\User;
-use App\Models\SecurityLog;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -14,7 +14,7 @@ it('anonymizes a resident securely and logs it', function () {
     $community = Community::factory()->create();
     $unit = Unit::factory()->create(['community_id' => $community->id]);
     $user = User::factory()->create();
-    
+
     $resident = Resident::factory()->create([
         'community_id' => $community->id,
         'unit_id' => $unit->id,
