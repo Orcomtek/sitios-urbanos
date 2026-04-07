@@ -1,12 +1,14 @@
 <?php
 
+use App\Enums\InvoiceStatus;
+use App\Enums\LedgerEntryType;
+use App\Enums\PaymentMethod;
+use App\Enums\PaymentStatus;
 use App\Models\Community;
 use App\Models\Invoice;
-use App\Models\Unit;
-use App\Models\User;
 use App\Models\Payment;
-use App\Enums\PaymentStatus;
-use App\Enums\InvoiceStatus;
+use App\Models\Unit;
+
 use function Pest\Laravel\postJson;
 
 beforeEach(function () {
@@ -28,7 +30,7 @@ beforeEach(function () {
         'amount' => 100000,
         'platform_commission' => 1500,
         'net_amount' => 98500,
-        'method' => \App\Enums\PaymentMethod::INTERNAL_EPAYCO,
+        'method' => PaymentMethod::INTERNAL_EPAYCO,
         'status' => PaymentStatus::PENDING,
         'idempotency_key' => 'intent_123',
     ]);
@@ -54,7 +56,7 @@ it('processes a valid epayco webhook and updates ledger', function () {
         'x_currency_code' => $x_currency_code,
         'x_signature' => $signature,
         'x_id_invoice' => $this->payment->idempotency_key,
-        'x_response' => 'Aceptada'
+        'x_response' => 'Aceptada',
     ];
 
     $response = postJson('/api/webhooks/epayco', $payload);
@@ -73,13 +75,13 @@ it('processes a valid epayco webhook and updates ledger', function () {
 
     $this->assertDatabaseHas('ledger_entries', [
         'payment_id' => $this->payment->id,
-        'type' => \App\Enums\LedgerEntryType::PAYMENT->value,
+        'type' => LedgerEntryType::PAYMENT->value,
         'amount' => -100000,
     ]);
 
     $this->assertDatabaseHas('ledger_entries', [
         'payment_id' => $this->payment->id,
-        'type' => \App\Enums\LedgerEntryType::PLATFORM_COMMISSION->value,
+        'type' => LedgerEntryType::PLATFORM_COMMISSION->value,
         'amount' => 1500,
     ]);
 });
@@ -92,7 +94,7 @@ it('rejects invalid signature', function () {
         'x_currency_code' => 'COP',
         'x_signature' => 'invalid_signature_md5',
         'x_id_invoice' => $this->payment->id,
-        'x_response' => 'Aceptada'
+        'x_response' => 'Aceptada',
     ];
 
     $response = postJson('/api/webhooks/epayco', $payload);
@@ -103,10 +105,10 @@ it('is idempotent for duplicate accepted webhooks', function () {
     $this->payment->update([
         'status' => PaymentStatus::CONFIRMED,
         'external_reference' => 'epayco_ref_890',
-        'gateway_status' => 'Aceptada'
+        'gateway_status' => 'Aceptada',
     ]);
 
-    $signature = hash('md5', "1234^secret_key^epayco_ref_890^tx_123^100000^COP");
+    $signature = hash('md5', '1234^secret_key^epayco_ref_890^tx_123^100000^COP');
 
     $payload = [
         'x_ref_payco' => 'epayco_ref_890',
@@ -115,7 +117,7 @@ it('is idempotent for duplicate accepted webhooks', function () {
         'x_currency_code' => 'COP',
         'x_signature' => $signature,
         'x_id_invoice' => $this->payment->id,
-        'x_response' => 'Aceptada'
+        'x_response' => 'Aceptada',
     ];
 
     $response = postJson('/api/webhooks/epayco', $payload);
@@ -126,7 +128,7 @@ it('is idempotent for duplicate accepted webhooks', function () {
 });
 
 it('fails validation on amount mismatch', function () {
-    $signature = hash('md5', "1234^secret_key^epayco_ref_890^tx_123^999000^COP");
+    $signature = hash('md5', '1234^secret_key^epayco_ref_890^tx_123^999000^COP');
 
     $payload = [
         'x_ref_payco' => 'epayco_ref_890',
@@ -135,7 +137,7 @@ it('fails validation on amount mismatch', function () {
         'x_currency_code' => 'COP',
         'x_signature' => $signature,
         'x_id_invoice' => $this->payment->id,
-        'x_response' => 'Aceptada'
+        'x_response' => 'Aceptada',
     ];
 
     $response = postJson('/api/webhooks/epayco', $payload);

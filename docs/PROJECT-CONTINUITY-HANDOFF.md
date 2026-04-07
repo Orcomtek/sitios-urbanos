@@ -633,3 +633,30 @@ No advanced reconciliation UI yet
 Next Step
 
 👉 RIGOR 3.0 — Block 7 (Notifications + User Financial UX)
+
+Current Phase
+
+RIGOR 3.0 — Block 7 (Notifications + Financial UX Layer) ✅ COMPLETED
+
+Completed Work
+PaymentConfirmed and PaymentFailed domain events implemented
+SendPaymentNotifications listener created
+Mail-based notification system (no database notifications)
+Recipient resolution via Invoice → Resident → User
+FinancialStateController exposing invoice/payment state
+Tenant-scoped API endpoints implemented
+Event dispatch tied strictly to valid financial state transitions
+No notifications on invalid or tampered webhooks
+Full test coverage for events, notifications, and API
+System State
+Stable
+Financial UX layer operational
+Notifications working correctly
+API ready for frontend integration
+Risks / Notes
+No notification inbox/history yet
+No push/SMS yet
+No advanced UX/UI yet
+Next Step
+
+👉 RIGOR 3.0 — Block 8 (Legal + Data Layer + Compliance Hardening)

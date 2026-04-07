@@ -2,18 +2,16 @@
 
 namespace App\Actions\Finance;
 
-use App\Models\Invoice;
-use App\Models\LedgerEntry;
-use Illuminate\Support\Facades\DB;
 use App\Enums\InvoiceStatus;
 use App\Enums\LedgerEntryType;
+use App\Models\Invoice;
+use App\Models\LedgerEntry;
 use App\Services\TenantContext;
+use Illuminate\Support\Facades\DB;
 
 class CreateInvoiceAction
 {
-    public function __construct(private TenantContext $tenantContext)
-    {
-    }
+    public function __construct(private TenantContext $tenantContext) {}
 
     public function execute(array $data): Invoice
     {
@@ -38,7 +36,7 @@ class CreateInvoiceAction
                 'invoice_id' => $invoice->id,
                 'type' => LedgerEntryType::CHARGE,
                 'amount' => $data['amount'],
-                'description' => 'Charge for invoice: ' . $invoice->id,
+                'description' => 'Charge for invoice: '.$invoice->id,
             ]);
 
             return $invoice;

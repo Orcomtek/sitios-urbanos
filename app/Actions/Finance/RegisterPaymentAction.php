@@ -2,38 +2,37 @@
 
 namespace App\Actions\Finance;
 
-use App\Models\Payment;
-use App\Models\Invoice;
-use App\Models\LedgerEntry;
-use Illuminate\Support\Facades\DB;
-use App\Enums\PaymentStatus;
 use App\Enums\InvoiceStatus;
 use App\Enums\LedgerEntryType;
+use App\Enums\PaymentMethod;
+use App\Enums\PaymentStatus;
+use App\Models\Invoice;
+use App\Models\LedgerEntry;
+use App\Models\Payment;
 use App\Services\TenantContext;
+use Illuminate\Support\Facades\DB;
 
 class RegisterPaymentAction
 {
-    public function __construct(private TenantContext $tenantContext)
-    {
-    }
+    public function __construct(private TenantContext $tenantContext) {}
 
     public function execute(array $data): Payment
     {
         $communityId = $this->tenantContext->require()->id;
-        
-        if (!empty($data['idempotency_key'])) {
-             $existing = Payment::where('community_id', $communityId)
+
+        if (! empty($data['idempotency_key'])) {
+            $existing = Payment::where('community_id', $communityId)
                 ->where('idempotency_key', $data['idempotency_key'])
                 ->first();
-             if ($existing) {
-                 return $existing;
-             }
+            if ($existing) {
+                return $existing;
+            }
         }
 
         return DB::transaction(function () use ($data, $communityId) {
             $invoiceId = $data['invoice_id'] ?? null;
             $unitId = null;
-            
+
             if ($invoiceId) {
                 // Fails cleanly if invoice does not belong to active tenant
                 $invoice = Invoice::where('community_id', $communityId)->findOrFail($invoiceId);
@@ -41,9 +40,9 @@ class RegisterPaymentAction
             } else {
                 $unitId = $data['unit_id'] ?? null;
             }
-            
-            $isInternal = $data['method'] === \App\Enums\PaymentMethod::INTERNAL_EPAYCO->value || $data['method'] === \App\Enums\PaymentMethod::INTERNAL_EPAYCO;
-            
+
+            $isInternal = $data['method'] === PaymentMethod::INTERNAL_EPAYCO->value || $data['method'] === PaymentMethod::INTERNAL_EPAYCO;
+
             if ($isInternal) {
                 $commission = $data['platform_commission'] ?? 0;
                 $netAmount = $data['amount'] - $commission;
@@ -51,7 +50,7 @@ class RegisterPaymentAction
                 $commission = 0;
                 $netAmount = $data['amount'];
             }
-            
+
             $payment = Payment::create([
                 'community_id' => $communityId,
                 'unit_id' => $unitId,
@@ -74,9 +73,9 @@ class RegisterPaymentAction
                 'invoice_id' => $invoiceId,
                 'type' => LedgerEntryType::PAYMENT,
                 'amount' => -abs($payment->amount),
-                'description' => 'Payment registered: ' . $payment->id,
+                'description' => 'Payment registered: '.$payment->id,
             ]);
-            
+
             if ($commission > 0) {
                 LedgerEntry::create([
                     'community_id' => $communityId,
@@ -84,10 +83,10 @@ class RegisterPaymentAction
                     'payment_id' => $payment->id,
                     'type' => LedgerEntryType::PLATFORM_COMMISSION,
                     'amount' => $commission,
-                    'description' => 'Platform commission for payment: ' . $payment->id,
+                    'description' => 'Platform commission for payment: '.$payment->id,
                 ]);
             }
-            
+
             if ($invoiceId && isset($invoice)) {
                 $invoice->update(['status' => InvoiceStatus::PAID]);
             }

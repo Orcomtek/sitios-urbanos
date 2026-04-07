@@ -1,5 +1,8 @@
 <?php
 
+use App\Models\Community;
+use App\Models\Resident;
+use App\Models\Unit;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -13,21 +16,21 @@ return new class extends Migration
     {
         Schema::create('invoices', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignIdFor(\App\Models\Community::class)->constrained()->cascadeOnDelete();
-            $table->foreignIdFor(\App\Models\Unit::class)->constrained()->cascadeOnDelete();
-            $table->foreignIdFor(\App\Models\Resident::class)->nullable()->constrained()->nullOnDelete();
-            
+            $table->foreignIdFor(Community::class)->constrained()->cascadeOnDelete();
+            $table->foreignIdFor(Unit::class)->constrained()->cascadeOnDelete();
+            $table->foreignIdFor(Resident::class)->nullable()->constrained()->nullOnDelete();
+
             $table->string('type')->default('admin_fee');
             $table->string('status')->default('pending');
             $table->integer('amount'); // In COP
-            
+
             $table->date('issued_at');
             $table->date('due_date');
             $table->string('description')->nullable();
-            
+
             $table->timestamps();
             $table->softDeletes();
-            
+
             // Unique per community? No, one unit can have multiple admin_fees per month.
             // Indexing for common tenant queries:
             $table->index(['community_id', 'status']);

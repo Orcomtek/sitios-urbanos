@@ -31,7 +31,7 @@ return new class extends Migration
                 'signature_verified',
                 'gateway_payload',
                 'net_amount',
-                'paid_at'
+                'paid_at',
             ]);
         });
     }

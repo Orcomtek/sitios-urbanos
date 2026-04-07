@@ -10,7 +10,7 @@ return [
     | is processed internally via the platform's payment gateway (e.g., ePayco).
     |
     */
-    
+
     'commission' => [
         'type' => env('FINANCE_COMMISSION_TYPE', 'fixed'), // 'fixed' or 'percentage'
         'value' => (int) env('FINANCE_COMMISSION_VALUE', 1500), // Default 1500 COP if fixed

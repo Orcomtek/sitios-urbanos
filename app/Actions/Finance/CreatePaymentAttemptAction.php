@@ -2,30 +2,29 @@
 
 namespace App\Actions\Finance;
 
-use App\Models\Payment;
-use App\Models\Invoice;
-use App\Enums\PaymentStatus;
+use App\Enums\InvoiceStatus;
 use App\Enums\PaymentMethod;
+use App\Enums\PaymentStatus;
+use App\Models\Invoice;
+use App\Models\Payment;
 use App\Services\TenantContext;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
 
 class CreatePaymentAttemptAction
 {
-    public function __construct(private TenantContext $tenantContext)
-    {
-    }
+    public function __construct(private TenantContext $tenantContext) {}
 
     public function execute(Invoice $invoice): Payment
     {
         $communityId = $this->tenantContext->require()->id;
 
         if ($invoice->community_id !== $communityId) {
-            throw new InvalidArgumentException("Invoice does not belong to active community.");
+            throw new InvalidArgumentException('Invoice does not belong to active community.');
         }
 
-        if ($invoice->status === \App\Enums\InvoiceStatus::PAID) {
-            throw new InvalidArgumentException("Invoice is already paid.");
+        if ($invoice->status === InvoiceStatus::PAID) {
+            throw new InvalidArgumentException('Invoice is already paid.');
         }
 
         // Configuration-driven commission logic
@@ -45,7 +44,7 @@ class CreatePaymentAttemptAction
             $netAmount = 0; // Prevent negative net amounts if commission is unusually high
         }
 
-        $idempotencyKey = 'intent_' . Str::uuid()->toString();
+        $idempotencyKey = 'intent_'.Str::uuid()->toString();
 
         return Payment::create([
             'community_id' => $communityId,
