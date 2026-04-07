@@ -16,32 +16,43 @@ class FinancialStateController extends Controller
     /**
      * Get the state of an invoice.
      */
-    public function invoice(string $community_slug, string $invoice): JsonResponse
+    public function invoice(string $community_slug, string $invoice)
     {
-        $invoiceModel = Invoice::findOrFail($invoice);
+        $invoiceModel = Invoice::with('unit')->findOrFail($invoice);
 
-        return response()->json([
-            'id' => $invoiceModel->id,
-            'status' => $invoiceModel->status->value ?? $invoiceModel->status,
-            'amount' => $invoiceModel->amount,
-            'due_date' => $invoiceModel->due_date ? $invoiceModel->due_date->toDateString() : null,
-        ]);
+        $tenantId = app(TenantContext::class)->require()->id;
+
+        if ($invoiceModel->community_id !== $tenantId) {
+            abort(404);
+        }
+
+        $user = request()->user();
+        if (! $invoiceModel->unit->residents()->where('user_id', $user->id)->exists()) {
+            abort(403);
+        }
+
+        return new InvoiceResource($invoiceModel);
     }
 
     /**
      * Get the state of a payment.
      */
-    public function payment(string $community_slug, string $payment): JsonResponse
+    public function payment(string $community_slug, string $payment)
     {
-        $paymentModel = Payment::findOrFail($payment);
+        $paymentModel = Payment::with('unit')->findOrFail($payment);
 
-        return response()->json([
-            'id' => $paymentModel->id,
-            'status' => $paymentModel->status->value ?? $paymentModel->status,
-            'amount' => $paymentModel->amount,
-            'invoice_id' => $paymentModel->invoice_id,
-            'paid_at' => $paymentModel->paid_at ? $paymentModel->paid_at->toDateTimeString() : null,
-        ]);
+        $tenantId = app(TenantContext::class)->require()->id;
+
+        if ($paymentModel->community_id !== $tenantId) {
+            abort(404);
+        }
+
+        $user = request()->user();
+        if (! $paymentModel->unit->residents()->where('user_id', $user->id)->exists()) {
+            abort(403);
+        }
+
+        return new PaymentResource($paymentModel);
     }
 
     public function invoices(string $community_slug, Unit $unit)

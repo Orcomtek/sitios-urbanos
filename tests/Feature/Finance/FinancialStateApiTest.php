@@ -8,6 +8,7 @@ use App\Enums\PaymentStatus;
 use App\Models\Community;
 use App\Models\Invoice;
 use App\Models\Payment;
+use App\Models\Resident;
 use App\Models\Unit;
 use App\Models\User;
 
@@ -19,6 +20,8 @@ it('can fetch invoice state via tenant API', function () {
     $community->users()->attach($user->id, ['role' => CommunityRole::Resident->value]);
 
     $unit = Unit::factory()->create(['community_id' => $community->id]);
+    Resident::factory()->create(['user_id' => $user->id, 'unit_id' => $unit->id, 'community_id' => $community->id]);
+
     $invoice = Invoice::factory()->create([
         'community_id' => $community->id,
         'unit_id' => $unit->id,
@@ -39,10 +42,12 @@ it('can fetch invoice state via tenant API', function () {
 
     $response->assertStatus(200)
         ->assertJson([
-            'id' => $invoice->id,
-            'status' => InvoiceStatus::PENDING->value,
-            'amount' => 50000,
-            'due_date' => now()->addDays(5)->toDateString(),
+            'data' => [
+                'id' => $invoice->id,
+                'status' => InvoiceStatus::PENDING->value,
+                'amount' => 50000,
+                'due_date' => now()->addDays(5)->toDateString(),
+            ]
         ]);
 });
 
@@ -52,6 +57,8 @@ it('can fetch payment state via tenant API', function () {
     $community->users()->attach($user->id, ['role' => CommunityRole::Resident->value]);
 
     $unit = Unit::factory()->create(['community_id' => $community->id]);
+    Resident::factory()->create(['user_id' => $user->id, 'unit_id' => $unit->id, 'community_id' => $community->id]);
+
     $invoice = Invoice::factory()->create([
         'community_id' => $community->id,
         'unit_id' => $unit->id,
@@ -79,8 +86,10 @@ it('can fetch payment state via tenant API', function () {
         ->getJson($url)
         ->assertStatus(200)
         ->assertJson([
-            'id' => $payment->id,
-            'status' => PaymentStatus::PENDING->value,
-            'amount' => 50000,
+            'data' => [
+                'id' => $payment->id,
+                'status' => PaymentStatus::PENDING->value,
+                'amount' => 50000,
+            ]
         ]);
 });

@@ -11,7 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        \Illuminate\Support\Facades\DB::statement('ALTER TABLE ledger_entries ALTER COLUMN unit_id DROP NOT NULL');
+        Schema::table('ledger_entries', function (Blueprint $table) {
+            $table->uuid('unit_id')->nullable()->change();
+        });
     }
 
     /**
@@ -19,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        \Illuminate\Support\Facades\DB::statement('ALTER TABLE ledger_entries ALTER COLUMN unit_id SET NOT NULL');
+        Schema::table('ledger_entries', function (Blueprint $table) {
+            $table->uuid('unit_id')->nullable(false)->change();
+        });
     }
 };

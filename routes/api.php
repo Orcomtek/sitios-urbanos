@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\Finance\AccountStatementController;
 use App\Http\Controllers\Api\Finance\FinancialStateController;
+use App\Http\Controllers\Api\Finance\InvoicePaymentController;
 use App\Http\Controllers\Api\Governance\PqrsController;
 use App\Http\Controllers\Webhooks\EpaycoWebhookController;
 use App\Http\Middleware\TenantMiddleware;
@@ -21,6 +22,8 @@ Route::domain('{community_slug}.'.$centralDomain)
     ->group(function () {
         Route::get('/finance/invoices/{invoice}', [FinancialStateController::class, 'invoice'])->name('api.finance.invoice');
         Route::get('/finance/payments/{payment}', [FinancialStateController::class, 'payment'])->name('api.finance.payment');
+        
+        Route::post('/finance/invoices/{invoice}/pay', [InvoicePaymentController::class, 'store'])->name('api.finance.invoices.pay');
 
         Route::get('/finance/units/{unit}/statement', [AccountStatementController::class, 'show'])->name('api.finance.units.statement');
         Route::get('/finance/units/{unit}/invoices', [FinancialStateController::class, 'invoices'])->name('api.finance.units.invoices');

@@ -23,8 +23,17 @@ class CreatePaymentAttemptAction
             throw new InvalidArgumentException('Invoice does not belong to active community.');
         }
 
-        if ($invoice->status === InvoiceStatus::PAID) {
-            throw new InvalidArgumentException('Invoice is already paid.');
+        if ($invoice->status !== InvoiceStatus::PENDING) {
+            throw new InvalidArgumentException('Only pending invoices are payable.');
+        }
+
+        $existingPayment = Payment::where('invoice_id', $invoice->id)
+            ->where('status', PaymentStatus::PENDING)
+            ->latest()
+            ->first();
+
+        if ($existingPayment) {
+            return $existingPayment;
         }
 
         // Configuration-driven commission logic

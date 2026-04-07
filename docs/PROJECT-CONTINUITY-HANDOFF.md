@@ -754,3 +754,29 @@ No export features
 Next Step
 
 👉 Bloque 12 — Financial Operations UX (Payments Flow + UX Real)
+
+Current Phase
+
+RIGOR 3.0 — Block 12 (Payments UX + Execution Flow) ✅ COMPLETED
+
+Completed Work
+payment initiation endpoint implemented
+pending payment intents safely reused
+payable invoice rule enforced
+tenant-safe payment initiation enforced
+financial state endpoints hardened with ownership validation
+PaymentIntentResource added for frontend-safe handoff
+feature tests for payment initiation and financial state updated
+System State
+Stable
+Residents can now initiate payments safely from pending invoices
+Payment flow is now consumable end-to-end through API
+Risks / Notes
+No expiration engine for pending intents yet
+No payment frontend yet
+No multi-invoice payment support yet
+Next Step
+
+👉 Definir el siguiente frente estratégico:
+Governance extendido o Marketplace / Ecosystem foundation
+
