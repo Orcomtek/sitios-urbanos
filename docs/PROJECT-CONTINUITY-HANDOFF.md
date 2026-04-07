@@ -683,3 +683,27 @@ Retention manager remains foundational and non-destructive by default
 Next Step
 
 👉 RIGOR 3.0 — Bloque de consolidación / revisión estratégica del roadmap siguiente
+
+Current Phase
+
+RIGOR 3.0 — Block 9 (PQRS + Governance Core) ✅ COMPLETED
+
+Completed Work
+PQRS entity implemented with tenant safety
+Resident-based operational identity enforced
+Anonymous PQRS supported with output-level identity protection
+PQRS type and status enums defined
+Admin state transitions and responses implemented via action
+Integration with SecurityLog for traceability
+Tests for tenant isolation, anonymity, transitions and logging
+System State
+Stable
+Governance core operational
+PQRS ready for real usage scenarios
+Risks / Notes
+No advanced workflow (SLA, assignments) yet
+No UI/dashboard yet
+Anonymity enforced at model serialization level (future: API Resources)
+Next Step
+
+👉 RIGOR 3.0 — Bloque 10: Governance UX + Notifications + Admin Flow
