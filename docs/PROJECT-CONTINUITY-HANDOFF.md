@@ -780,3 +780,29 @@ Next Step
 👉 Definir el siguiente frente estratégico:
 Governance extendido o Marketplace / Ecosystem foundation
 
+Current Phase
+
+RIGOR 3.0 — Block 13 (Governance Extended: Announcements + Documents + Voting Core) ✅ COMPLETED
+
+Completed Work
+Announcement module implemented
+Document repository module implemented
+Poll / voting core implemented
+voting eligibility and one-vote-per-unit enforced
+tenant-safe governance APIs implemented
+API Resources for governance entities implemented
+tests for tenant isolation, access rules and voting constraints completed
+System State
+Stable
+Governance extended layer operational
+Community communication and decision foundations active
+Risks / Notes
+No legal/certified voting yet
+No governance analytics yet
+No frontend yet
+Voting remains MVP/simple by design
+Next Step
+
+👉 Definir el siguiente macrofrente:
+Marketplace / Ecosystem foundation o Operations / Security extension
+

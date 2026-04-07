@@ -34,5 +34,22 @@ Route::domain('{community_slug}.'.$centralDomain)
             Route::post('/pqrs', [PqrsController::class, 'store'])->name('api.governance.pqrs.store');
             Route::get('/pqrs/{pqrs}', [PqrsController::class, 'show'])->name('api.governance.pqrs.show');
             Route::patch('/pqrs/{pqrs}/status', [PqrsController::class, 'update_status'])->name('api.governance.pqrs.update_status');
+            
+            // Announcements
+            Route::get('/announcements', [\App\Http\Controllers\Api\Governance\AnnouncementController::class, 'index'])->name('api.governance.announcements.index');
+            Route::post('/announcements', [\App\Http\Controllers\Api\Governance\AnnouncementController::class, 'store'])->name('api.governance.announcements.store');
+            Route::delete('/announcements/{announcement}', [\App\Http\Controllers\Api\Governance\AnnouncementController::class, 'destroy'])->name('api.governance.announcements.destroy');
+
+            // Documents
+            Route::get('/documents', [\App\Http\Controllers\Api\Governance\DocumentController::class, 'index'])->name('api.governance.documents.index');
+            Route::post('/documents', [\App\Http\Controllers\Api\Governance\DocumentController::class, 'store'])->name('api.governance.documents.store');
+            Route::delete('/documents/{document}', [\App\Http\Controllers\Api\Governance\DocumentController::class, 'destroy'])->name('api.governance.documents.destroy');
+
+            // Polls
+            Route::get('/polls', [\App\Http\Controllers\Api\Governance\PollController::class, 'index'])->name('api.governance.polls.index');
+            Route::post('/polls', [\App\Http\Controllers\Api\Governance\PollController::class, 'store'])->name('api.governance.polls.store');
+            Route::get('/polls/{poll}', [\App\Http\Controllers\Api\Governance\PollController::class, 'show'])->name('api.governance.polls.show');
+            Route::patch('/polls/{poll}/close', [\App\Http\Controllers\Api\Governance\PollController::class, 'close'])->name('api.governance.polls.close');
+            Route::post('/polls/{poll}/vote', [\App\Http\Controllers\Api\Governance\PollController::class, 'vote'])->name('api.governance.polls.vote');
         });
     });
