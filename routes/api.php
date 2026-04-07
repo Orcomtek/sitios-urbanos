@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\Cockpit\DashboardController;
 use App\Http\Controllers\Api\Finance\AccountStatementController;
 use App\Http\Controllers\Api\Finance\FinancialStateController;
 use App\Http\Controllers\Api\Finance\InvoicePaymentController;
@@ -27,6 +28,8 @@ $centralDomain = config('app.central_domain', 'sitios-urbanos.test');
 Route::domain('{community_slug}.'.$centralDomain)
     ->middleware(['auth:sanctum', TenantMiddleware::class])
     ->group(function () {
+        Route::get('/cockpit/dashboard', [DashboardController::class, 'index'])->name('api.cockpit.dashboard');
+
         Route::get('/finance/invoices/{invoice}', [FinancialStateController::class, 'invoice'])->name('api.finance.invoice');
         Route::get('/finance/payments/{payment}', [FinancialStateController::class, 'payment'])->name('api.finance.payment');
 

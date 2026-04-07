@@ -907,3 +907,110 @@ Next Step
 👉 Definir siguiente macrofrente:
 Marketplace / Ecosystem foundation o Admin UX / Operational cockpit
 
+## BLOCK 18 — Operational Dashboard Core (COMPLETED)
+
+### Objective
+Provide a unified operational cockpit endpoint aggregating critical tenant activity for Admin and Guard roles, without introducing analytics complexity or frontend dependencies.
+
+### Endpoint
+GET /api/cockpit/dashboard
+
+Tenant-scoped via subdomain:
+{community_slug}.app.sitiosurbanos.com
+
+---
+
+### Architecture
+
+- Controller:
+  - App\Http\Controllers\Api\Cockpit\DashboardController
+
+- Action:
+  - App\Actions\Dashboard\GetOperationalDashboardAction
+  - Centralizes aggregation logic
+  - Prevents controller bloat
+  - Reuses existing domain logic (no duplication)
+
+- Resource:
+  - App\Http\Resources\DashboardResource
+  - Ensures stable and safe response structure
+
+---
+
+### Role-Based Visibility
+
+#### Admin
+Receives full dashboard:
+- emergencies
+- visitors
+- packages
+- pqrs
+- polls
+- finance
+
+#### Guard
+Receives operational subset:
+- emergencies
+- visitors
+- packages
+
+#### Resident
+- Access denied (403 Forbidden)
+
+---
+
+### Widgets Definition
+
+#### Emergencies
+- active_count
+- recent_active
+
+#### Visitors
+- pending_count
+- entered_count
+
+#### Packages
+- pending_pickup_count
+- recent_pending
+
+#### PQRS (Admin only)
+- open_count
+
+#### Polls (Admin only)
+- active_count
+
+#### Finance (Admin only)
+- pending_invoices_count
+- pending_amount
+- recent_confirmed_payments_count
+
+---
+
+### Key Constraints
+
+- No analytics or BI logic
+- No frontend layer introduced
+- No duplication of business logic
+- Strict TenantScoped enforcement
+- Compact, actionable data only
+
+---
+
+### Testing
+
+tests/Feature/Dashboard/DashboardTest.php
+
+Validated:
+- tenant isolation
+- role visibility
+- correct widget counts
+- resident forbidden access
+
+---
+
+### Status
+
+✅ Completed  
+✅ Audit-approved  
+✅ Ready for cockpit evolution (Block 19)
+
