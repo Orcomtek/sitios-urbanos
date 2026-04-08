@@ -69,6 +69,22 @@ class CockpitController extends Controller
         ]);
     }
 
+    public function residentEcosystem(Request $request): Response
+    {
+        $this->authorizeAccess($request, [CommunityRole::Resident]);
+
+        $user = $request->user();
+        $community = $this->context->require();
+
+        $resident = Resident::where('user_id', $user->id)
+            ->where('community_id', $community->id)
+            ->first();
+
+        return Inertia::render('Cockpit/Ecosystem/Index', [
+            'resident_id' => $resident?->id,
+        ]);
+    }
+
     public function activity(Request $request): Response
     {
         $this->authorizeAccess($request, [CommunityRole::Admin, CommunityRole::Guard, CommunityRole::Resident]);

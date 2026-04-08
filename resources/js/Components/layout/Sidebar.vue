@@ -29,6 +29,7 @@ const navigation = computed(() => {
     // Cockpit for Residents only
     if (tenantRole.value === 'resident') {
         items.push({ name: 'Cabina del Residente', href: route('tenant.cockpit.resident', { community_slug: communitySlug.value }) });
+        items.push({ name: 'Ecosistema', href: route('tenant.cockpit.resident.ecosystem', { community_slug: communitySlug.value }) });
     }
 
     // Activity Timeline (All roles)

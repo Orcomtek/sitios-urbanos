@@ -243,7 +243,7 @@ const formatDate = (dateString) => {
                             <div class="px-6 py-4 flex flex-col space-y-1.5 border-b border-gray-100 bg-gray-50/50">
                                 <div class="flex justify-between items-center">
                                     <h3 class="font-semibold leading-none tracking-tight">Tus PQRS en Curso</h3>
-                                    <Link :href="route('tenant.cockpit.resident.pqrs')" class="text-xs font-semibold text-indigo-600 hover:text-indigo-800">
+                                    <Link :href="route('tenant.cockpit.resident.pqrs', { community_slug: $page.props.tenant.community.slug })" class="text-xs font-semibold text-indigo-600 hover:text-indigo-800">
                                         Gestionar PQRS &rarr;
                                     </Link>
                                 </div>

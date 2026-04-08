@@ -38,13 +38,15 @@ class ListingController extends Controller
         $isAdmin = $user->hasRoleInCommunity($community, CommunityRole::Admin);
 
         if (! $isAdmin) {
-            $resident = Resident::where('user_id', $user->id)->first();
+            $resident = Resident::where('user_id', $user->id)
+                ->where('community_id', $community->id)
+                ->first();
             if (! $resident) {
                 abort(403, 'Unauthorized.');
             }
 
             $query->where(function ($q) use ($resident) {
-                $q->where('status', ListingStatus::Active)
+                $q->where('status', ListingStatus::Active->value)
                     ->orWhere('resident_id', $resident->id);
             });
         }
@@ -62,6 +64,7 @@ class ListingController extends Controller
         }
 
         $resident = Resident::where('user_id', $user->id)
+            ->where('community_id', $community->id)
             ->where('is_active', true)
             ->first();
 
@@ -86,7 +89,9 @@ class ListingController extends Controller
         $isAdmin = $user->hasRoleInCommunity($community, CommunityRole::Admin);
 
         if (! $isAdmin) {
-            $resident = Resident::where('user_id', $user->id)->first();
+            $resident = Resident::where('user_id', $user->id)
+                ->where('community_id', $community->id)
+                ->first();
             if (! $resident) {
                 abort(403, 'Unauthorized.');
             }
@@ -102,8 +107,11 @@ class ListingController extends Controller
     public function update(UpdateListingRequest $request, string $community_slug, Listing $listing, UpdateListingAction $action): ListingResource
     {
         $user = $request->user();
+        $community = $this->context->require();
 
-        $resident = Resident::where('user_id', $user->id)->first();
+        $resident = Resident::where('user_id', $user->id)
+            ->where('community_id', $community->id)
+            ->first();
         if (! $resident || $listing->resident_id !== $resident->id) {
             abort(403, 'Unauthorized to update this listing.');
         }

@@ -1853,3 +1853,28 @@ Implement the backend core of the tenant-scoped P2P ecosystem (listings/classifi
 ✅ Audit-approved  
 ✅ Ready for resident-facing P2P UX
 
+## BLOCK 31 — Resident P2P UX (Ecosystem)
+
+### Status
+✅ Completed
+
+### Description
+Implemented the frontend experience for the P2P Ecosystem inside the Resident Cockpit, allowing residents to explore community listings and manage their own classifieds.
+
+### Key Features
+- **Route:** `/cockpit/resident/ecosystem` (Resident-only).
+- **Tabs/Sections:** - `Explorar Comunidad`: Views all active listings in the tenant.
+  - `Mis Anuncios`: Manages the resident's own listings (Create, Edit, Pause).
+- **Privacy Enforcement:** Contact information (email/phone) is gracefully hidden with a fallback message ("Contacto vía administración") if the user opted out (`show_contact_info = false`).
+- **Data Fetching:** Relies strictly on existing APIs (`/api/ecosystem/listings`) using `axios` and a `refetch` pattern to avoid duplicating state logic in Vue.
+
+### Hotfixes Applied (PostgreSQL Stabilization)
+- Migrated the `notifications` table `data` column from `text` to `jsonb` using a raw DB statement to support strict JSON querying (`->>`).
+- Patched `ListingController` to explicitly scope Resident resolution by `community_id` to prevent cross-tenant multi-role bugs.
+- Fixed PHP 8.1 Enum casting in query builders (added `->value`).
+
+### Architecture Constraints Maintained
+- Zero business logic duplicated in Vue.
+- Strict tenant isolation at the API and routing levels.
+- Admin/Guard strictly forbidden from the resident ecosystem view (403).
+
