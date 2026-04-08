@@ -106,4 +106,12 @@ Route::domain('{community_slug}.'.$centralDomain)
             Route::patch('/invitations/{invitation}/revoke', [AccessInvitationController::class, 'revoke'])->name('api.security.invitations.revoke');
             Route::patch('/invitations/{invitation}/consume', [AccessInvitationController::class, 'consume'])->name('api.security.invitations.consume');
         });
+        
+        Route::prefix('ecosystem')->group(function () {
+            Route::get('/listings', [\App\Http\Controllers\Api\Ecosystem\ListingController::class, 'index'])->name('api.ecosystem.listings.index');
+            Route::post('/listings', [\App\Http\Controllers\Api\Ecosystem\ListingController::class, 'store'])->name('api.ecosystem.listings.store');
+            Route::get('/listings/{listing}', [\App\Http\Controllers\Api\Ecosystem\ListingController::class, 'show'])->name('api.ecosystem.listings.show');
+            Route::patch('/listings/{listing}', [\App\Http\Controllers\Api\Ecosystem\ListingController::class, 'update'])->name('api.ecosystem.listings.update');
+            Route::patch('/listings/{listing}/moderate', [\App\Http\Controllers\Api\Ecosystem\ListingController::class, 'moderate'])->name('api.ecosystem.listings.moderate');
+        });
     });

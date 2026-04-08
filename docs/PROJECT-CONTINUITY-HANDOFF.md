@@ -1773,3 +1773,83 @@ Implemented a minimal, tenant-isolated realtime layer using Laravel Reverb and E
 ### Status
 BLOCK 29 fully completed and production-ready.
 
+## BLOCK 30 — P2P Ecosystem Backend Core (COMPLETED)
+
+### Objective
+Implement the backend core of the tenant-scoped P2P ecosystem (listings/classifieds) with strict ownership, moderation, and privacy rules.
+
+### Domain
+- Listing / Classifieds
+- Tenant-scoped by `community_id`
+- Operational ownership via `resident_id`
+
+### Implemented Components
+
+#### Model & Schema
+- `Listing` model created
+- `TenantScoped` applied
+- migration includes:
+  - `community_id`
+  - `resident_id`
+  - `title`
+  - `description`
+  - `price`
+  - `category`
+  - `status`
+  - `show_contact_info`
+
+#### Enums
+- `ListingCategory`
+  - items
+  - services
+  - real_estate
+- `ListingStatus`
+  - active
+  - paused
+  - reported
+  - removed
+
+#### Actions
+- `CreateListingAction`
+  - forces authenticated active resident ownership
+  - ignores malicious `resident_id` payload
+  - starts with `active` status
+- `UpdateListingAction`
+  - resident can update only own listings
+- `ModerateListingAction`
+  - admin-only status moderation
+  - does not edit owner content as if it were theirs
+
+#### API
+- thin `ListingController`
+- validation requests integrated
+- ecosystem routes exposed under tenant-safe API scope
+
+#### Resource
+- `ListingResource`
+- hides contact info when `show_contact_info = false`
+- does not expose unnecessary resident PII
+
+### Access Rules
+- Resident:
+  - can create
+  - can update own listings
+- Admin:
+  - can moderate status (`reported`, `removed`)
+- Guard:
+  - forbidden from listings management in this block
+
+### Testing
+`ListingTest.php` validates:
+- tenant isolation
+- resident ownership
+- spoofed `resident_id` ignored
+- privacy flag behavior
+- guard forbidden
+- admin moderation behavior
+
+### Status
+✅ Completed  
+✅ Audit-approved  
+✅ Ready for resident-facing P2P UX
+
