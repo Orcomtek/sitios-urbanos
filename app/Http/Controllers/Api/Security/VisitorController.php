@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\VisitorResource;
 use App\Models\Resident;
 use App\Models\Visitor;
+use App\Notifications\Security\VisitorRegisteredNotification;
 use App\Services\TenantContext;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -74,6 +75,13 @@ class VisitorController extends Controller
             'expected_at' => $validated['expected_at'] ?? null,
             'notes' => $validated['notes'] ?? null,
         ]);
+
+        $residents = Resident::where('unit_id', $visitor->unit_id)->where('is_active', true)->with('user')->get();
+        foreach ($residents as $resident) {
+            if ($resident->user && $resident->user->id !== $user->id) { // Don't notify the resident who created it
+                $resident->user->notify(new VisitorRegisteredNotification($visitor));
+            }
+        }
 
         return new VisitorResource($visitor->load(['unit', 'creator']));
     }

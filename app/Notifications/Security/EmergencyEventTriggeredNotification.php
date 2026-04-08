@@ -16,7 +16,7 @@ class EmergencyEventTriggeredNotification extends Notification implements Should
 
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        return ['mail', 'database'];
     }
 
     public function toMail(object $notifiable): MailMessage
@@ -36,7 +36,12 @@ class EmergencyEventTriggeredNotification extends Notification implements Should
     public function toArray(object $notifiable): array
     {
         return [
-            'emergency_id' => $this->emergency->id,
+            'community_id' => $this->emergency->community_id,
+            'title' => '¡ALERTA!: Botón de Pánico Activado',
+            'message' => 'Se ha activado una alerta ('.strtoupper($this->emergency->type).').',
+            'type' => 'emergency_triggered',
+            'entity_id' => $this->emergency->id,
+            'entity_type' => 'emergency',
         ];
     }
 }

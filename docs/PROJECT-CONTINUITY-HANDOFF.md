@@ -1659,3 +1659,46 @@ Implemented the resident operational cockpit allowing users to manage invitation
 ### Status
 ✅ Completed and aligned with RIGOR 3.0 constraints
 
+## BLOCK 27 — Unified Notifications Layer
+
+### Status
+✅ Completed
+
+### Description
+Implemented a unified notification system using Laravel database notifications. All core domain events now dispatch structured notifications scoped by tenant.
+
+### Key Features
+- Standardized payload with:
+  - community_id
+  - type (specific)
+  - title, message
+  - entity_id, entity_type
+- API:
+  - GET /api/notifications
+  - PATCH /api/notifications/{id}/read
+  - PATCH /api/notifications/read-all
+- UI:
+  - Notification dropdown in Topbar
+  - Unread badge
+  - Mark-as-read interaction
+
+### Tenant Isolation
+- Enforced via:
+  where('data->community_id', TenantContext::id())
+
+### Hooks Implemented
+- Package received
+- Invitation consumed
+- Visitor registered
+- PQRS created/updated
+- Payment confirmed/failed
+- Emergency triggered
+
+### Constraints
+- No websockets
+- No polling
+- No backend logic duplication
+
+### Ready for
+➡️ Real-time layer (future)
+➡️ Activity timeline (Block 28)

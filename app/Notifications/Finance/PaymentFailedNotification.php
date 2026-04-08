@@ -27,7 +27,7 @@ class PaymentFailedNotification extends Notification implements ShouldQueue
      */
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        return ['mail', 'database'];
     }
 
     /**
@@ -36,7 +36,7 @@ class PaymentFailedNotification extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         $amountCOP = number_format($this->payment->amount, 0, ',', '.');
-        $unitName = $this->payment->unit?->unit_number ?? 'tu unidad';
+        $unitName = $this->payment->unit?->number ?? 'tu unidad';
 
         return (new MailMessage)
             ->subject('Pago Fallido - '.config('app.name'))
@@ -52,8 +52,15 @@ class PaymentFailedNotification extends Notification implements ShouldQueue
      */
     public function toArray(object $notifiable): array
     {
+        $amountCOP = number_format($this->payment->amount, 0, ',', '.');
+
         return [
-            //
+            'community_id' => $this->payment->community_id,
+            'title' => 'Pago Fallido',
+            'message' => "Tu intento de pago por $ {$amountCOP} COP ha fallado.",
+            'type' => 'payment_failed',
+            'entity_id' => $this->payment->id,
+            'entity_type' => 'payment',
         ];
     }
 }

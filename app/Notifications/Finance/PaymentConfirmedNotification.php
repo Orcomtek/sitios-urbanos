@@ -27,7 +27,7 @@ class PaymentConfirmedNotification extends Notification implements ShouldQueue
      */
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        return ['mail', 'database'];
     }
 
     /**
@@ -36,7 +36,7 @@ class PaymentConfirmedNotification extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         $amountCOP = number_format($this->payment->amount, 0, ',', '.');
-        $unitName = $this->payment->unit?->unit_number ?? 'tu unidad';
+        $unitName = $this->payment->unit?->number ?? 'tu unidad';
         $invoiceBase = $this->payment->invoice ? ' de tu cobro' : '';
 
         return (new MailMessage)
@@ -53,8 +53,15 @@ class PaymentConfirmedNotification extends Notification implements ShouldQueue
      */
     public function toArray(object $notifiable): array
     {
+        $amountCOP = number_format($this->payment->amount, 0, ',', '.');
+
         return [
-            //
+            'community_id' => $this->payment->community_id,
+            'title' => 'Pago Confirmado',
+            'message' => "Tu pago por $ {$amountCOP} COP ha sido confirmado.",
+            'type' => 'payment_confirmed',
+            'entity_id' => $this->payment->id,
+            'entity_type' => 'payment',
         ];
     }
 }

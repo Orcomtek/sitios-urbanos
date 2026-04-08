@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { usePage, Link } from '@inertiajs/vue3';
+import NotificationDropdown from '@/Components/Notifications/NotificationDropdown.vue';
 
 const page = usePage();
 const user = (page.props.auth as any)?.user;
@@ -45,6 +46,8 @@ const toggleMenu = () => {
                 <!-- Search or generic placeholder -->
             </div>
             <div class="ml-4 flex items-center md:ml-6">
+                <NotificationDropdown />
+                
                 <!-- Profile dropdown placeholder -->
                 <div class="relative ml-3">
                     <div>

@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\PackageResource;
 use App\Models\Package;
 use App\Models\Resident;
+use App\Notifications\Security\PackageReceivedNotification;
 use App\Services\TenantContext;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -68,6 +69,13 @@ class PackageController extends Controller
             'received_at' => now(),
             'notes' => $validated['notes'] ?? null,
         ]);
+
+        $residents = Resident::where('unit_id', $package->unit_id)->where('is_active', true)->with('user')->get();
+        foreach ($residents as $resident) {
+            if ($resident->user) {
+                $resident->user->notify(new PackageReceivedNotification($package));
+            }
+        }
 
         return new PackageResource($package->load(['unit', 'receiver']));
     }

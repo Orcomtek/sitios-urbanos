@@ -81,6 +81,24 @@ it('allows residents to vote but enforces one vote per unit', function () {
     $community->users()->attach($residentUser1, ['role' => CommunityRole::Resident->value]);
     Resident::factory()->create(['community_id' => $community->id, 'unit_id' => $unit->id, 'user_id' => $residentUser1->id, 'is_active' => true]);
 
+    $poll = Poll::create([
+        'community_id' => $community->id,
+        'title' => 'Test Poll',
+        'created_by' => $admin->id,
+        'status' => 'open',
+    ]);
+    $optionA = $poll->options()->create(['text' => 'A']);
+    $optionB = $poll->options()->create(['text' => 'B']);
+
+    $url = route('api.governance.polls.vote', ['community_slug' => $community->slug, 'poll' => $poll->id]);
+    
+    // User 1 votes for A
+    $response1 = $this->actingAs($residentUser1, 'sanctum')->postJson($url, [
+        'unit_id' => $unit->id,
+        'poll_option_id' => $optionA->id,
+    ]);
+    $response1->assertStatus(200);
+
     // User 1 tries to vote again for the same unit and it must fail
     $response2 = $this->actingAs($residentUser1, 'sanctum')->postJson($url, [
         'unit_id' => $unit->id,

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\Cockpit\AdminWorkQueueController;
 use App\Http\Controllers\Api\Cockpit\DashboardController;
+use App\Http\Controllers\Api\Cockpit\NotificationController;
 use App\Http\Controllers\Api\Cockpit\ResidentCockpitController;
 use App\Http\Controllers\Api\Cockpit\WorkQueueController;
 use App\Http\Controllers\Api\Finance\AccountStatementController;
@@ -35,6 +36,10 @@ Route::domain('{community_slug}.'.$centralDomain)
         Route::get('/cockpit/work-queue', [WorkQueueController::class, 'index'])->name('api.cockpit.work-queue');
         Route::get('/cockpit/admin-work-queue', [AdminWorkQueueController::class, 'index'])->name('api.cockpit.admin-work-queue');
         Route::get('/cockpit/resident', [ResidentCockpitController::class, 'index'])->name('api.cockpit.resident');
+
+        Route::get('/cockpit/notifications', [NotificationController::class, 'index'])->name('api.cockpit.notifications.index');
+        Route::patch('/cockpit/notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('api.cockpit.notifications.read-all');
+        Route::patch('/cockpit/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('api.cockpit.notifications.read');
 
         Route::get('/finance/invoices/{invoice}', [FinancialStateController::class, 'invoice'])->name('api.finance.invoice');
         Route::get('/finance/payments/{payment}', [FinancialStateController::class, 'payment'])->name('api.finance.payment');

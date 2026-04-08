@@ -10,6 +10,8 @@ use App\Http\Requests\StoreAccessInvitationRequest;
 use App\Http\Resources\AccessInvitationResource;
 use App\Models\AccessInvitation;
 use App\Models\Resident;
+use App\Models\User;
+use App\Notifications\Security\InvitationConsumedNotification;
 use App\Services\TenantContext;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -125,6 +127,14 @@ class AccessInvitationController extends Controller
 
         try {
             $action->execute($user, $invitation);
+
+            // Notify creator
+            if ($invitation->created_by) {
+                $creator = User::find($invitation->created_by);
+                if ($creator) {
+                    $creator->notify(new InvitationConsumedNotification($invitation));
+                }
+            }
 
             return response()->json([
                 'message' => 'Invitation consumed successfully.',

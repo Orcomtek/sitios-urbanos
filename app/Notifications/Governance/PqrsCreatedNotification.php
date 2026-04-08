@@ -19,7 +19,7 @@ class PqrsCreatedNotification extends Notification implements ShouldQueue
 
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        return ['mail', 'database'];
     }
 
     public function toMail(object $notifiable): MailMessage
@@ -36,7 +36,12 @@ class PqrsCreatedNotification extends Notification implements ShouldQueue
     public function toArray(object $notifiable): array
     {
         return [
-            'pqrs_id' => $this->pqrs->id,
+            'community_id' => $this->pqrs->community_id,
+            'title' => 'Nuevo PQRS',
+            'message' => 'Se ha registrado un nuevo PQRS: '.$this->pqrs->subject,
+            'type' => 'pqrs_created',
+            'entity_id' => $this->pqrs->id,
+            'entity_type' => 'pqrs',
         ];
     }
 }
