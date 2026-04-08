@@ -2,8 +2,9 @@
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head } from '@inertiajs/vue3';
 import { useApiData } from '@/lib/useApiData';
-import { onMounted, onUnmounted } from 'vue';
+import { onMounted, onUnmounted, ref } from 'vue';
 import { usePage } from '@inertiajs/vue3';
+import axios from 'axios';
 
 const { data, isLoading, error, refetch } = useApiData('/api/cockpit/admin-work-queue');
 const page = usePage();
@@ -36,6 +37,21 @@ onUnmounted(() => {
     }
     if (debounceTimer) clearTimeout(debounceTimer);
 });
+
+const isModerating = ref<Record<number, boolean>>({});
+
+const moderateListing = async (id: number) => {
+    isModerating.value[id] = true;
+    try {
+        await axios.patch(`/api/ecosystem/listings/${id}/moderate`, { status: 'removed' });
+        await refetch();
+    } catch (e) {
+        console.error(e);
+        alert('Hubo un error al moderar el anuncio.');
+    } finally {
+        isModerating.value[id] = false;
+    }
+};
 </script>
 
 <template>
@@ -72,7 +88,17 @@ onUnmounted(() => {
                             
                             <div v-else class="space-y-4">
                                 <div v-for="item in items" :key="item.id || item.reference || Math.random()" class="bg-gray-50 border border-gray-100 rounded p-4 text-sm">
-                                    <pre class="whitespace-pre-wrap text-xs text-gray-700 font-sans">{{ item }}</pre>
+                                    <pre class="whitespace-pre-wrap text-xs text-gray-700 font-sans mb-3">{{ item }}</pre>
+                                    
+                                    <div v-if="item.type === 'listing_active' && item.action === 'moderate'" class="mt-2 text-right">
+                                        <button 
+                                            @click="moderateListing(item.id)" 
+                                            :disabled="isModerating[item.id]"
+                                            class="px-3 py-1 bg-red-600 text-white rounded shadow-sm hover:bg-red-700 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:opacity-50 transition-colors"
+                                        >
+                                            {{ isModerating[item.id] ? 'Procesando...' : 'Ocultar anuncio' }}
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>

@@ -7,6 +7,7 @@ use App\Models\Community;
 use App\Models\Governance\Announcement;
 use App\Models\Governance\Poll;
 use App\Models\Invoice;
+use App\Models\Listing;
 use App\Models\Pqrs;
 use App\Models\Resident;
 use App\Models\Unit;
@@ -119,12 +120,25 @@ class AdminWorkQueueTest extends TestCase
         Announcement::create(['community_id' => $this->community->id, 'title' => 'A2', 'content' => 'x', 'type' => 'general', 'created_by' => $admin->id, 'starts_at' => now()->addDay(), 'ends_at' => null]);
         Announcement::create(['community_id' => $this->community->id, 'title' => 'A3', 'content' => 'x', 'type' => 'general', 'created_by' => $admin->id, 'starts_at' => now()->subDays(2), 'ends_at' => now()->subDay()]);
 
+        // 5. Listings
+        Listing::factory()->create([
+            'community_id' => $this->community->id,
+            'resident_id' => $resident->id,
+            'status' => 'active',
+        ]);
+        Listing::factory()->create([
+            'community_id' => $this->community->id,
+            'resident_id' => $resident->id,
+            'status' => 'reported',
+        ]);
+
         // Data from another community to ensure tenant scoping
         $otherCommunity = Community::factory()->create();
         app(TenantContext::class)->set($otherCommunity);
         $otherUnit = Unit::factory()->create(['community_id' => $otherCommunity->id]);
         $otherResident = Resident::factory()->create(['community_id' => $otherCommunity->id, 'unit_id' => $otherUnit->id, 'user_id' => $otherUser->id]);
         Pqrs::factory()->create(['community_id' => $otherCommunity->id, 'resident_id' => $otherResident->id, 'status' => 'open']);
+        Listing::factory()->create(['community_id' => $otherCommunity->id, 'resident_id' => $otherResident->id, 'status' => 'active']);
 
         // Back to main community
         app(TenantContext::class)->set($this->community);
@@ -135,14 +149,15 @@ class AdminWorkQueueTest extends TestCase
 
         $tasks = $response->json('data.tasks');
 
-        // We should have exactly 4 items
-        $this->assertCount(4, $tasks);
+        // We should have exactly 5 items
+        $this->assertCount(5, $tasks);
 
         $types = collect($tasks)->pluck('type')->toArray();
         $this->assertContains('pqrs_open', $types);
         $this->assertContains('poll_active', $types);
         $this->assertContains('invoice_pending', $types);
         $this->assertContains('announcement_active', $types);
+        $this->assertContains('listing_active', $types);
 
         $response->assertJsonStructure([
             'data' => [
@@ -163,8 +178,9 @@ class AdminWorkQueueTest extends TestCase
         // Ensure actions are exact
         $actions = collect($tasks)->pluck('action')->toArray();
         $this->assertContains('respond', $actions);
-        $this->assertContains('review', $actions);
-        $this->assertContains('review', $actions);
+        $this->assertContains('review', $actions);      // polls
+        $this->assertContains('review', $actions);      // invoices
         $this->assertContains('view', $actions);
+        $this->assertContains('moderate', $actions);
     }
 }

@@ -3,6 +3,8 @@
 namespace App\Actions\Cockpit;
 
 use App\Enums\CommunityRole;
+use App\Enums\ListingStatus;
+use App\Models\Listing;
 use App\Models\Governance\Announcement;
 use App\Models\Governance\Poll;
 use App\Models\Invoice;
@@ -87,6 +89,25 @@ class GetAdminWorkQueueAction
                 'label' => 'Announcement: '.$announcement->title,
                 'action' => 'view',
                 'created_at' => $announcement->created_at->toIso8601String(),
+            ]);
+        }
+
+        // E. Listings: active -> action: moderate
+        $listings = Listing::where('status', ListingStatus::Active->value)
+            ->with(['resident:id,full_name,unit_id', 'resident.unit:id,unit_number'])
+            ->oldest()
+            ->take($limit)
+            ->get();
+
+        foreach ($listings as $listing) {
+            $unit = $listing->resident?->unit;
+            $tasks[] = collect([
+                'id' => $listing->id,
+                'type' => 'listing_active',
+                'unit' => $unit ? ['id' => $unit->id, 'unit_number' => $unit->unit_number] : null,
+                'label' => 'Anuncio: '.$listing->title,
+                'action' => 'moderate',
+                'created_at' => $listing->created_at->toIso8601String(),
             ]);
         }
 

@@ -1878,3 +1878,22 @@ Implemented the frontend experience for the P2P Ecosystem inside the Resident Co
 - Strict tenant isolation at the API and routing levels.
 - Admin/Guard strictly forbidden from the resident ecosystem view (403).
 
+## BLOCK 32 — Ecosystem Admin Moderation UX
+
+### Status
+✅ Completed
+
+### Description
+Integrated P2P listing moderation directly into the existing Admin Work Queue, allowing administrators to review and hide active listings violating community rules without needing a separate dashboard.
+
+### Key Features
+- **Backend Aggregation:** `GetAdminWorkQueueAction` updated to fetch recent `active` listings (Limit: 10).
+- **Task Mapping:** Listings surface with `type: 'listing_active'` and `action: 'moderate'`.
+- **Frontend Action:** Added the "Ocultar anuncio" button to `AdminWorkQueue.vue`, which triggers `PATCH /api/ecosystem/listings/{id}/moderate` with `{ status: 'removed' }`.
+- **State Management:** Implemented individual loading states ("Procesando...") and triggers `debouncedRefetch()` to dynamically clear the moderated item from the UI.
+
+### Architecture Constraints Maintained
+- No new frontend business logic; strictly consumes the endpoint built in Block 30.
+- Preserved strict tenant isolation within the Admin Work Queue.
+- Maintained CI/CD stability by wrapping PostgreSQL-specific migration statements to prevent SQLite memory test failures.
+

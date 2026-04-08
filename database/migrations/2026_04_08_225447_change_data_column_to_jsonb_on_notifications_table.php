@@ -11,7 +11,9 @@ return new class extends Migration
     public function up(): void
     {
         // Safe conversion of text to jsonb in PostgreSQL
-        DB::statement('ALTER TABLE notifications ALTER COLUMN data TYPE jsonb USING data::jsonb;');
+        if (DB::connection()->getDriverName() === 'pgsql') {
+            DB::statement('ALTER TABLE notifications ALTER COLUMN data TYPE jsonb USING data::jsonb;');
+        }
     }
 
     /**
@@ -19,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        DB::statement('ALTER TABLE notifications ALTER COLUMN data TYPE text USING data::text;');
+        if (DB::connection()->getDriverName() === 'pgsql') {
+            DB::statement('ALTER TABLE notifications ALTER COLUMN data TYPE text USING data::text;');
+        }
     }
 };
