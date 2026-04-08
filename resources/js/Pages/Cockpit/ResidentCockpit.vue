@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
-import { Head } from '@inertiajs/vue3';
+import { Head, Link } from '@inertiajs/vue3';
 import axios from 'axios';
 import AppLayout from '@/Layouts/AppLayout.vue';
 
@@ -239,9 +239,14 @@ const formatDate = (dateString) => {
                         </div>
 
                         <!-- PQRS Widget -->
-                        <div class="bg-white border text-card-foreground rounded-lg shadow-sm border-gray-100">
+                        <div class="bg-white border text-card-foreground rounded-lg shadow-sm border-gray-100 flex flex-col">
                             <div class="px-6 py-4 flex flex-col space-y-1.5 border-b border-gray-100 bg-gray-50/50">
-                                <h3 class="font-semibold leading-none tracking-tight">Tus PQRS en Curso</h3>
+                                <div class="flex justify-between items-center">
+                                    <h3 class="font-semibold leading-none tracking-tight">Tus PQRS en Curso</h3>
+                                    <Link :href="route('tenant.cockpit.resident.pqrs')" class="text-xs font-semibold text-indigo-600 hover:text-indigo-800">
+                                        Gestionar PQRS &rarr;
+                                    </Link>
+                                </div>
                                 <p class="text-sm text-gray-500">{{ data.pqrs.length }} solicitud(es) abierta(s)</p>
                             </div>
                             <div class="p-6 pt-0">

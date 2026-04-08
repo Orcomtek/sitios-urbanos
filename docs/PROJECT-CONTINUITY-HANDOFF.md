@@ -1565,3 +1565,51 @@ Also validated:
 ✅ Completed  
 ✅ Audit-approved  
 ✅ Production-safe MVP  
+
+## BLOCK 25 — Resident PQRS UX
+
+### Summary
+Implemented the resident-facing PQRS UX allowing users to create and manage their requests (petitions, complaints, claims, suggestions) through a dedicated cockpit page.
+
+### Key Features
+- Dedicated route: `/cockpit/resident/pqrs`
+- Resident-only access enforced at controller level
+- Full reuse of existing PQRS API endpoints
+- List view with:
+  - subject
+  - type
+  - status
+  - created_at
+  - anonymity flag
+- Inline expansion for:
+  - description
+  - admin response
+- Creation form with:
+  - type
+  - subject
+  - description
+  - is_anonymous
+- UX feedback:
+  - loading state
+  - success message
+  - automatic list refresh
+  - form reset after creation
+
+### Architecture Notes
+- No backend logic duplication
+- UI strictly consumes `/api/governance/pqrs`
+- Anonymity respected and displayed clearly
+- Spanish-first UX
+
+### Access Control
+- Resident: full access
+- Guard/Admin: 403 Forbidden
+
+### Testing
+- Web access tests for resident-only route
+- Existing PQRS feature tests validated no regression
+- Tenant isolation preserved
+
+### Status
+✅ Completed and ready for extension
+

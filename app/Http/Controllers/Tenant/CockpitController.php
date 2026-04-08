@@ -41,6 +41,13 @@ class CockpitController extends Controller
         return Inertia::render('Cockpit/ResidentCockpit');
     }
 
+    public function residentPqrs(Request $request): Response
+    {
+        $this->authorizeAccess($request, [CommunityRole::Resident]);
+
+        return Inertia::render('Cockpit/ResidentPqrs');
+    }
+
     /**
      * Helper to authorize access based on roles array.
      */

@@ -55,4 +55,18 @@ class ResidentCockpitWebTest extends TestCase
         $response = $this->makeRequest($this->adminUser, 'GET', '/cockpit/resident');
         $response->assertStatus(403);
     }
+
+    public function test_resident_can_view_pqrs_page()
+    {
+        $response = $this->makeRequest($this->residentUser, 'GET', '/cockpit/resident/pqrs');
+
+        $response->assertStatus(200);
+        $response->assertInertia(fn ($page) => $page->component('Cockpit/ResidentPqrs'));
+    }
+
+    public function test_admin_forbidden_from_resident_pqrs_page()
+    {
+        $response = $this->makeRequest($this->adminUser, 'GET', '/cockpit/resident/pqrs');
+        $response->assertStatus(403);
+    }
 }
