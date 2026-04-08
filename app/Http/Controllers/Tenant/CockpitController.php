@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Tenant;
 use App\Enums\CommunityRole;
 use App\Http\Controllers\Controller;
 use App\Services\TenantContext;
+use App\Models\Resident;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -46,6 +47,26 @@ class CockpitController extends Controller
         $this->authorizeAccess($request, [CommunityRole::Resident]);
 
         return Inertia::render('Cockpit/ResidentPqrs');
+    }
+
+    public function residentOperations(Request $request): Response
+    {
+        $this->authorizeAccess($request, [CommunityRole::Resident]);
+
+        $community = $this->context->require();
+        $user = $request->user();
+
+        // Get resident's active units with their names/identifiers for the UI selectors
+        $activeUnits = Resident::with('unit')
+            ->where('community_id', $community->id)
+            ->where('user_id', $user->id)
+            ->where('is_active', true)
+            ->get()
+            ->pluck('unit');
+
+        return Inertia::render('Cockpit/ResidentOperations', [
+            'activeUnits' => $activeUnits,
+        ]);
     }
 
     /**

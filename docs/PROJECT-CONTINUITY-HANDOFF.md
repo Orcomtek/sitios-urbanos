@@ -1613,3 +1613,49 @@ Implemented the resident-facing PQRS UX allowing users to create and manage thei
 ### Status
 ✅ Completed and ready for extension
 
+## BLOCK 26 — Resident Operational Actions
+
+### Summary
+Implemented the resident operational cockpit allowing users to manage invitations, register visitors, and view packages through a dedicated page.
+
+### Key Features
+- Route: `/cockpit/resident/operations`
+- Resident-only access (Admin/Guard forbidden)
+- Sections:
+  - Invitations (create + revoke)
+  - Visitors (create + list)
+  - Packages (view only)
+
+### Invitations
+- Creation using existing API payload (no new fields introduced)
+- Revocation of active invitations
+- Default type set to `manual_code`
+- No QR flow introduced
+
+### Visitors
+- Create visitor flow
+- List of visitors with operational status (pending, entered, exited)
+
+### Packages
+- Resident visibility only
+- No operational actions added in this block
+
+### Architecture Notes
+- Strict reuse of existing backend APIs
+- No duplication of business logic
+- Tenant and unit scoping handled by backend
+- Active units injected via controller
+
+### Access Control
+- Resident: allowed
+- Guard/Admin: forbidden (403)
+
+### Testing
+- ResidentOperationsTest:
+  - resident access allowed
+  - admin forbidden
+  - guard forbidden
+
+### Status
+✅ Completed and aligned with RIGOR 3.0 constraints
+
