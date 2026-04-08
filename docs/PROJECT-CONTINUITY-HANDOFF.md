@@ -1478,3 +1478,90 @@ Validated:
 ✅ Audit-approved  
 ✅ Functionally validated
 
+## BLOCK 24 — Resident Payments UX (COMPLETED)
+
+### Objective
+Enable residents to view their pending invoices and initiate payments directly from the cockpit using existing backend financial flows.
+
+---
+
+### Implementation
+
+#### Frontend
+- Updated:
+  - `resources/js/Pages/Cockpit/ResidentCockpit.vue`
+
+- Added:
+  - "Tus Facturas" section inside resident cockpit
+  - list of pending invoices (from `finance.recent_invoices`)
+
+Each invoice shows:
+- amount
+- due date
+- unit reference
+- description
+
+---
+
+### Actions
+
+- Added "Pagar" button per invoice
+- Executes:
+  `POST /api/finance/invoices/{invoice}/pay`
+
+- Uses existing backend logic:
+  - `InvoicePaymentController`
+  - `CreatePaymentAttemptAction`
+
+---
+
+### UX Behavior
+
+- Loading state per invoice:
+  `processingPayment === invoice.id`
+
+- Error handling:
+  - uses Laravel response message
+  - fallback message: "Error al iniciar el pago"
+
+- No frontend financial calculations implemented
+
+---
+
+### Testing
+
+Updated:
+- `tests/Feature/Cockpit/ResidentCockpitApiTest.php`
+
+Validations:
+- only invoices from resident active units returned
+- tenant isolation preserved
+
+Also validated:
+- `InvoicePaymentTest` suite (9 tests, 28 assertions)
+
+---
+
+### Architecture Compliance
+
+- No new backend logic introduced
+- No financial calculations in frontend
+- All actions delegated to backend
+- Strict tenant and unit scoping respected
+
+---
+
+### Notes
+
+- Payment feedback is minimal (MVP-compliant)
+- Recommended future improvement:
+  - refresh invoice list after payment attempt
+  - display updated payment state
+
+---
+
+### Status
+
+✅ Completed  
+✅ Audit-approved  
+✅ Production-safe MVP  

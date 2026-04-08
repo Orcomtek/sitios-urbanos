@@ -139,6 +139,11 @@ class ResidentCockpitApiTest extends TestCase
 
         // Assert it sees invoice for unit 1, package for unit 2, but NOT invoice for unit 3
         $this->assertEquals(50000, $response->json('data.finance.pending_amount'));
+
+        $recentInvoices = $response->json('data.finance.recent_invoices');
+        $this->assertCount(1, $recentInvoices);
+        $this->assertEquals($invoice->id, $recentInvoices[0]['id']);
+
         $this->assertCount(1, $response->json('data.packages'));
         $this->assertEquals($package->id, $response->json('data.packages.0.id'));
     }
