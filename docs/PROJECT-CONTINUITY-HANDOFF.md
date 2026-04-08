@@ -1299,3 +1299,76 @@ Manual validation also confirmed:
 ✅ Completed
 ✅ Functionally validated
 ✅ Ready for future cockpit polish and module expansion
+
+## BLOCK 22 — Guard UX / Operational Actions (COMPLETED)
+
+### Objective
+Turn the guard work queue into a real operational UI so guard/admin users can execute existing backend transitions directly from the cockpit.
+
+### Scope
+This block focused on operational actions inside the existing cockpit work queue, without introducing new backend business logic or new domain features.
+
+### Frontend Area
+- `resources/js/Pages/Cockpit/WorkQueue.vue`
+
+### What Changed
+The previous raw/diagnostic task visualization was replaced with an actionable operational interface using direct action buttons per task type.
+
+### Supported Queue Actions
+
+#### Visitors
+- task type: `visitor_pending`
+- UI action: `Registrar entrada`
+- backend endpoint:
+  - `PATCH /api/security/visitors/{id}/enter`
+
+#### Packages
+- task type: `package_received`
+- UI action: `Marcar entregado`
+- backend endpoint:
+  - `PATCH /api/security/packages/{id}/deliver`
+
+#### Invitations
+- task type: `invitation_active`
+- UI action: `Consumir acceso`
+- backend endpoint:
+  - `PATCH /api/security/invitations/{id}/consume`
+
+#### Emergencies
+- task type: `emergency_active`
+- UI action: `Atender`
+- backend endpoint:
+  - `PATCH /api/security/emergencies/{id}/ack`
+
+### UX Rules Applied
+- per-item loading state
+- direct operational actions
+- no heavy confirmation friction
+- queue refresh after successful action
+- minimal error feedback
+- no duplicated business logic in Vue
+
+### Refresh Strategy
+After a successful action, the queue is refreshed using the existing `useApiData('/api/cockpit/work-queue')` flow via `await refetch()` so the backend remains the single source of truth.
+
+### Error Handling
+- uses backend error message when available
+- safe fallback message:
+  - `Error al ejecutar la acción`
+
+### Architecture Notes
+- no new backend transitions were created
+- existing approved backend endpoints/actions were reused
+- no domain logic was duplicated in frontend
+- no new feature scope was introduced
+
+### Validation Status
+- action mapping validated
+- role scope preserved
+- queue remains tenant-safe through existing backend architecture
+- UI now supports real guard-side operational actions
+
+### Status
+✅ Completed  
+✅ Audit-approved  
+✅ Ready to support resident-facing cockpit evolution next
