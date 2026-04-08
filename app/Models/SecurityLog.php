@@ -42,6 +42,10 @@ class SecurityLog extends Model
         static::deleting(function ($model) {
             return false; // Prevent deletes
         });
+
+        static::created(function ($model) {
+            \App\Events\TenantActivityUpdated::dispatch((string) $model->community_id);
+        });
     }
 
     /**

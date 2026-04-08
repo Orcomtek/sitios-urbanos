@@ -1,13 +1,43 @@
 <script setup lang="ts">
 import AppLayout from '@/Layouts/AppLayout.vue';
+import { onMounted, onUnmounted } from 'vue';
 import { Head, Link, usePage } from '@inertiajs/vue3';
 import { useApiData } from '@/lib/useApiData';
 
-const { data, isLoading, error } = useApiData('/api/cockpit/activity');
-
+const { data, isLoading, error, refetch } = useApiData('/api/cockpit/activity');
 const page = usePage();
 const communitySlug = (page.props.tenant as any)?.community?.slug;
+const communityId = (page.props.tenant as any)?.community?.id;
 const tenantRole = (page.props.tenant as any)?.role;
+
+let debounceTimer: ReturnType<typeof setTimeout> | null = null;
+const debouncedRefetch = () => {
+    if (debounceTimer) clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
+        refetch();
+    }, 300);
+};
+
+onMounted(() => {
+    // @ts-ignore
+    if (communityId && window.Echo) {
+        // @ts-ignore
+        window.Echo.private(`community.${communityId}`)
+            .listen('.TenantActivityUpdated', (e: any) => {
+                debouncedRefetch();
+            });
+    }
+});
+
+onUnmounted(() => {
+    // @ts-ignore
+    if (communityId && window.Echo) {
+        // @ts-ignore
+        window.Echo.leave(`community.${communityId}`);
+    }
+    if (debounceTimer) clearTimeout(debounceTimer);
+});
+
 
 const getSourceColor = (source: string) => {
     return source === 'security_log' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800';

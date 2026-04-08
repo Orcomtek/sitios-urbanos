@@ -7,6 +7,8 @@ const page = usePage();
 const communitySlug = (page.props.tenant as any)?.community?.slug;
 const userRole = (page.props.auth as any)?.user?.roles?.[0]?.name || 'resident'; // approx
 
+const userId = (page.props.auth as any)?.user?.id;
+
 const notifications = ref<any[]>([]);
 const isMenuOpen = ref(false);
 
@@ -22,6 +24,38 @@ const loadNotifications = async () => {
         console.error('Error loading notifications', error);
     }
 };
+
+let debounceTimer: ReturnType<typeof setTimeout> | null = null;
+const debouncedLoadNotifications = () => {
+    if (debounceTimer) clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
+        loadNotifications();
+    }, 300);
+};
+
+onMounted(() => {
+    loadNotifications();
+    document.addEventListener('click', closeMenu);
+    
+    // @ts-ignore
+    if (userId && window.Echo) {
+        // @ts-ignore
+        window.Echo.private(`App.Models.User.${userId}`)
+            .notification((notification: any) => {
+                debouncedLoadNotifications();
+            });
+    }
+});
+
+onUnmounted(() => {
+    document.removeEventListener('click', closeMenu);
+    // @ts-ignore
+    if (userId && window.Echo) {
+        // @ts-ignore
+        window.Echo.leave(`App.Models.User.${userId}`);
+    }
+    if (debounceTimer) clearTimeout(debounceTimer);
+});
 
 const toggleMenu = () => {
     isMenuOpen.value = !isMenuOpen.value;
@@ -86,16 +120,7 @@ const formatDate = (dateString: string) => {
     return date.toLocaleDateString('es-CO', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
 };
 
-onMounted(() => {
-    if (communitySlug) {
-        loadNotifications();
-    }
-    document.addEventListener('click', closeMenu);
-});
 
-onUnmounted(() => {
-    document.removeEventListener('click', closeMenu);
-});
 </script>
 
 <template>

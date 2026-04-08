@@ -1745,3 +1745,31 @@ GET /api/cockpit/activity
 ➡️ Advanced filters/search
 ➡️ Audit exports
 
+## BLOCK 29 — Realtime Layer Foundations (COMPLETED)
+
+### Summary
+Implemented a minimal, tenant-isolated realtime layer using Laravel Reverb and Echo. The system uses a signal-based approach to notify frontend surfaces (notifications, work queues, activity timeline) and trigger safe data refetching via existing API endpoints.
+
+### Key Decisions
+- Realtime is used strictly as a signal mechanism (no business logic in frontend)
+- Two private channels:
+  - User channel for notifications
+  - Tenant channel for admin/guard operational signals
+- Residents are strictly excluded from tenant-level channels
+- Debounce strategy (300ms) prevents excessive refetching
+- Full fallback behavior when realtime is unavailable
+
+### Integrated Surfaces
+- Notification dropdown (user channel)
+- Work Queue (tenant channel)
+- Admin Work Queue (tenant channel)
+- Activity Timeline (tenant channel)
+
+### Architecture Notes
+- No payload-based rendering from broadcast events
+- Frontend relies exclusively on axios refetch for state consistency
+- Strict tenant isolation enforced at channel authorization level
+
+### Status
+BLOCK 29 fully completed and production-ready.
+

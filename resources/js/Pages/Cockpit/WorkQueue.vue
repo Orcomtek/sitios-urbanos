@@ -2,10 +2,42 @@
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head } from '@inertiajs/vue3';
 import { useApiData } from '@/lib/useApiData';
-import { ref } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
+import { usePage } from '@inertiajs/vue3';
 import axios from 'axios';
 
 const { data, isLoading, error, refetch } = useApiData('/api/cockpit/work-queue');
+const page = usePage();
+const communitySlug = (page.props.tenant as any)?.community?.slug;
+const communityId = (page.props.tenant as any)?.community?.id;
+
+let debounceTimer: ReturnType<typeof setTimeout> | null = null;
+const debouncedRefetch = () => {
+    if (debounceTimer) clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
+        refetch();
+    }, 300);
+};
+
+onMounted(() => {
+    // @ts-ignore
+    if (communityId && window.Echo) {
+        // @ts-ignore
+        window.Echo.private(`community.${communityId}`)
+            .listen('.TenantActivityUpdated', (e: any) => {
+                debouncedRefetch();
+            });
+    }
+});
+
+onUnmounted(() => {
+    // @ts-ignore
+    if (communityId && window.Echo) {
+        // @ts-ignore
+        window.Echo.leave(`community.${communityId}`);
+    }
+    if (debounceTimer) clearTimeout(debounceTimer);
+});
 
 const executingItems = ref(new Set<number>());
 const actionError = ref<string | null>(null);
