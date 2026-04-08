@@ -34,6 +34,19 @@ Route::domain('{community_slug}.'.$centralDomain)
             return redirect()->route('units.index', ['community_slug' => $communitySlug]);
         })->name('tenant.dashboard');
 
+        Route::post('/logout', function (\Illuminate\Http\Request $request) {
+            \Illuminate\Support\Facades\Auth::guard('web')->logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+            return \Inertia\Inertia::location(route('login'));
+        })->name('tenant.logout');
+
         Route::resource('units', UnitController::class);
         Route::resource('residents', ResidentController::class);
+
+        Route::prefix('cockpit')->middleware('auth')->group(function () {
+            Route::get('/dashboard', [\App\Http\Controllers\Tenant\CockpitController::class, 'dashboard'])->name('tenant.cockpit.dashboard');
+            Route::get('/work-queue', [\App\Http\Controllers\Tenant\CockpitController::class, 'workQueue'])->name('tenant.cockpit.work-queue');
+            Route::get('/admin-work-queue', [\App\Http\Controllers\Tenant\CockpitController::class, 'adminWorkQueue'])->name('tenant.cockpit.admin-work-queue');
+        });
     });

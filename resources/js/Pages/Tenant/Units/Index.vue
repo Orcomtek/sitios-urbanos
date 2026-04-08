@@ -16,8 +16,7 @@ const props = defineProps<{
 }>();
 
 const page = usePage();
-// Relying on route param if not injected globally
-const communitySlug = computed(() => page.url.split('/')[2]);
+const communitySlug = computed(() => (page.props.tenant as any)?.community?.slug);
 
 </script>
 

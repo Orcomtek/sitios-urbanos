@@ -1210,3 +1210,92 @@ Validated:
 ✅ Audit-approved
 ✅ Ready for cockpit shell / navigation hardening
 
+## BLOCK 21 — UI Shell / Navigation Hardening (COMPLETED)
+
+### Objective
+Provide a minimal but functional cockpit shell so Admin and Guard users can navigate and consume cockpit modules coherently.
+
+### Web Routes
+- /cockpit
+- /cockpit/work-queue
+- /cockpit/admin-work-queue
+
+Tenant runtime:
+{community_slug}.app.sitiosurbanos.com
+
+---
+
+### Architecture
+
+- Controller:
+  - App\Http\Controllers\Tenant\CockpitController
+
+- Layout / Shell:
+  - Cockpit shell integrated into the existing tenant runtime frontend
+  - role-aware sidebar
+  - working topbar/account menu
+  - working logout flow
+
+- Helper:
+  - resources/js/lib/useApiData.ts
+  - reusable frontend fetch helper for cockpit pages
+
+- Pages:
+  - Cockpit/Dashboard.vue
+  - Cockpit/WorkQueue.vue
+  - Cockpit/AdminWorkQueue.vue
+
+---
+
+### Role-Based Visibility
+
+#### Admin
+- Dashboard
+- Work Queue
+- Admin Work Queue
+
+#### Guard
+- Dashboard
+- Work Queue
+
+#### Resident
+- forbidden / out of scope
+
+---
+
+### Key Fixes Included
+- cockpit API data loads correctly in tenant runtime
+- login/logout now reflect state correctly without manual refresh
+- top-right account dropdown restored
+- blank-screen issues in Units and Residents resolved
+- cockpit rendering loops corrected (no string character iteration bug)
+
+---
+
+### UX Status
+- Functionally operational
+- Visually minimal / intentionally basic
+- Ready for future cockpit polish iterations
+
+---
+
+### Testing
+tests/Feature/Tenant/CockpitAccessTest.php
+
+Validated:
+- admin route access
+- guard route restrictions
+- resident forbidden access
+
+Manual validation also confirmed:
+- login
+- logout
+- dashboard rendering
+- queue rendering
+
+---
+
+### Status
+✅ Completed
+✅ Functionally validated
+✅ Ready for future cockpit polish and module expansion

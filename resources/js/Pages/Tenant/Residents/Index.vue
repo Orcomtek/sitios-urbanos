@@ -23,7 +23,7 @@ const props = defineProps<{
 }>();
 
 const page = usePage();
-const communitySlug = computed(() => page.url.split('/')[2]);
+const communitySlug = computed(() => (page.props.tenant as any)?.community?.slug);
 
 </script>
 

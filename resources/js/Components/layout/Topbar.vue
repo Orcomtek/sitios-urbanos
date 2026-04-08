@@ -1,5 +1,18 @@
 <script setup lang="ts">
-// Minimal structural placeholder topbar
+import { ref } from 'vue';
+import { usePage, Link } from '@inertiajs/vue3';
+
+const page = usePage();
+const user = (page.props.auth as any)?.user;
+const initials = user?.name ? user.name.substring(0, 1).toUpperCase() : 'U';
+
+const communitySlug = (page.props.tenant as any)?.community?.slug;
+
+const isMenuOpen = ref(false);
+
+const toggleMenu = () => {
+    isMenuOpen.value = !isMenuOpen.value;
+};
 </script>
 
 <template>
@@ -37,18 +50,44 @@
                     <div>
                         <button
                             type="button"
-                            class="flex max-w-xs items-center rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+                            class="flex max-w-xs items-center rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                             id="user-menu-button"
                             aria-expanded="false"
                             aria-haspopup="true"
+                            @click="toggleMenu"
                         >
                             <span class="sr-only">Abrir menú de usuario</span>
                             <div
-                                class="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 font-medium text-gray-500"
+                                class="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-100 font-medium text-indigo-700 hover:bg-indigo-200"
                             >
-                                U
+                                {{ initials }}
                             </div>
                         </button>
+                    </div>
+
+                    <!-- Dropdown menu -->
+                    <div
+                        v-if="isMenuOpen"
+                        class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                        role="menu"
+                        aria-orientation="vertical"
+                        aria-labelledby="user-menu-button"
+                        tabindex="-1"
+                    >
+                        <div class="px-4 py-2 border-b border-gray-100 mb-1">
+                            <p class="text-sm font-medium text-gray-900 truncate">{{ user?.name }}</p>
+                            <p class="text-xs text-gray-500 truncate">{{ user?.email }}</p>
+                        </div>
+                        <Link
+                            :href="route('tenant.logout', { community_slug: communitySlug })"
+                            method="post"
+                            as="button"
+                            class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                            role="menuitem"
+                            tabindex="-1"
+                        >
+                            Cerrar sesión
+                        </Link>
                     </div>
                 </div>
             </div>

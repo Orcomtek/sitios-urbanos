@@ -14,7 +14,7 @@ class CommunityController extends Controller
     /**
      * Display a listing of the user's communities.
      */
-    public function index(Request $request, GetUserCommunitiesAction $action): Response|RedirectResponse
+    public function index(Request $request, GetUserCommunitiesAction $action): Response|\Symfony\Component\HttpFoundation\Response
     {
         $communities = $action->execute($request->user());
 
@@ -22,7 +22,7 @@ class CommunityController extends Controller
             $community = $communities->first();
             $baseUrl = config('app.central_domain');
 
-            return redirect()->away('http://'.$community->slug.'.'.$baseUrl);
+            return Inertia::location('http://'.$community->slug.'.'.$baseUrl);
         }
 
         return Inertia::render('Communities/Index', [
@@ -33,12 +33,12 @@ class CommunityController extends Controller
     /**
      * Handle the user explicitly entering a specific community.
      */
-    public function enter(string $slug, Request $request, ResolveUserCommunityBySlugAction $resolver): RedirectResponse
+    public function enter(string $slug, Request $request, ResolveUserCommunityBySlugAction $resolver): \Symfony\Component\HttpFoundation\Response
     {
         $community = $resolver->execute($request->user(), $slug);
 
         $baseUrl = config('app.central_domain');
 
-        return redirect()->away('http://'.$community->slug.'.'.$baseUrl);
+        return Inertia::location('http://'.$community->slug.'.'.$baseUrl);
     }
 }
