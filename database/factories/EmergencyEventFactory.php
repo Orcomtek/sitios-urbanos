@@ -3,12 +3,13 @@
 namespace Database\Factories;
 
 use App\Models\Community;
+use App\Models\EmergencyEvent;
 use App\Models\Unit;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\EmergencyEvent>
+ * @extends Factory<EmergencyEvent>
  */
 class EmergencyEventFactory extends Factory
 {

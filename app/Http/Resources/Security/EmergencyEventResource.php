@@ -17,9 +17,9 @@ class EmergencyEventResource extends JsonResource
         return [
             'id' => $this->id,
             'unit_id' => $this->unit_id,
-            'unit_number' => $this->whenLoaded('unit', fn() => $this->unit->number),
+            'unit_number' => $this->whenLoaded('unit', fn () => $this->unit->number),
             'triggered_by' => $this->triggered_by,
-            'triggerer_name' => $this->whenLoaded('triggerer', fn() => $this->triggerer->name),
+            'triggerer_name' => $this->whenLoaded('triggerer', fn () => $this->triggerer->name),
             'type' => $this->type,
             'status' => $this->status,
             'description' => $this->description,

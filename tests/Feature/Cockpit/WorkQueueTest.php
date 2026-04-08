@@ -19,14 +19,15 @@ class WorkQueueTest extends TestCase
     use RefreshDatabase;
 
     private Community $community;
+
     private $centralDomain;
 
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         $this->centralDomain = config('app.central_domain', 'sitios-urbanos.test');
-        
+
         $this->community = Community::factory()->create(['slug' => 'test-workqueue']);
     }
 
@@ -39,6 +40,7 @@ class WorkQueueTest extends TestCase
     {
         $user = User::factory()->create();
         $this->community->users()->attach($user, ['role' => $role->value]);
+
         return $user;
     }
 
@@ -56,14 +58,14 @@ class WorkQueueTest extends TestCase
     {
         // 1. Guard access
         $guard = $this->createUserWithRole(CommunityRole::Guard);
-        
+
         $response = $this->actingAs($guard)->getJson($this->getTenantUrl());
         $response->assertOk();
         $response->assertJsonPath('data.role', CommunityRole::Guard->value);
 
         // 2. Admin access
         $admin = $this->createUserWithRole(CommunityRole::Admin);
-        
+
         $response = $this->actingAs($admin)->getJson($this->getTenantUrl());
         $response->assertOk();
         $response->assertJsonPath('data.role', CommunityRole::Admin->value);
@@ -72,7 +74,7 @@ class WorkQueueTest extends TestCase
     public function test_work_queue_returns_actionable_items_only_and_respects_tenant_isolation()
     {
         $admin = $this->createUserWithRole(CommunityRole::Admin);
-        
+
         app(TenantContext::class)->set($this->community);
 
         $unit = Unit::factory()->create(['community_id' => $this->community->id]);
@@ -82,7 +84,7 @@ class WorkQueueTest extends TestCase
         Visitor::factory()->create(['community_id' => $this->community->id, 'unit_id' => $unit->id, 'status' => 'pending']);
         // Need completed item: should NOT be returned
         Visitor::factory()->create(['community_id' => $this->community->id, 'unit_id' => $unit->id, 'status' => 'entered']);
-        
+
         Package::factory()->create(['community_id' => $this->community->id, 'unit_id' => $unit->id, 'status' => 'received', 'received_by' => $otherUser->id]);
         Package::factory()->create(['community_id' => $this->community->id, 'unit_id' => $unit->id, 'status' => 'delivered', 'received_by' => $otherUser->id]);
 
@@ -105,9 +107,9 @@ class WorkQueueTest extends TestCase
         $response = $this->actingAs($admin)->getJson($this->getTenantUrl());
 
         $response->assertOk();
-        
+
         $tasks = $response->json('data.tasks');
-        
+
         // We should have exactly 4 items
         $this->assertCount(4, $tasks);
 
@@ -127,12 +129,12 @@ class WorkQueueTest extends TestCase
                         'type',
                         'unit' => ['id', 'unit_number'],
                         'label',
-                        'action'
-                    ]
-                ]
-            ]
+                        'action',
+                    ],
+                ],
+            ],
         ]);
-        
+
         // Ensure actions are exact
         $actions = collect($tasks)->pluck('action')->toArray();
         $this->assertContains('enter', $actions);

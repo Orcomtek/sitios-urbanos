@@ -3,14 +3,14 @@
 namespace Tests\Feature\Security;
 
 use App\Enums\CommunityRole;
+use App\Events\Security\EmergencyEventCreated;
 use App\Models\Community;
+use App\Models\EmergencyEvent;
+use App\Models\Resident;
 use App\Models\Unit;
 use App\Models\User;
-use App\Models\Resident;
-use App\Models\EmergencyEvent;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
-use App\Events\Security\EmergencyEventCreated;
 use Tests\TestCase;
 
 class EmergencyEventTest extends TestCase
@@ -18,9 +18,13 @@ class EmergencyEventTest extends TestCase
     use RefreshDatabase;
 
     private Community $community;
+
     private Unit $unit;
+
     private User $resident;
+
     private User $admin;
+
     private User $guard;
 
     protected function setUp(): void
@@ -47,7 +51,7 @@ class EmergencyEventTest extends TestCase
 
     private function getUrl(string $path): string
     {
-        return 'http://' . $this->community->slug . '.' . config('app.central_domain') . $path;
+        return 'http://'.$this->community->slug.'.'.config('app.central_domain').$path;
     }
 
     public function test_resident_can_trigger_emergency()
@@ -88,7 +92,7 @@ class EmergencyEventTest extends TestCase
         ]);
 
         $response->assertStatus(422)
-                 ->assertJsonValidationErrors('type');
+            ->assertJsonValidationErrors('type');
     }
 
     public function test_resident_cannot_trigger_emergency_for_another_unit()
@@ -175,7 +179,7 @@ class EmergencyEventTest extends TestCase
         $otherCommunity = Community::factory()->create();
         $otherUser = User::factory()->create();
         $otherCommunity->users()->attach($otherUser, ['role' => CommunityRole::Guard->value]);
-        
+
         $emergency = EmergencyEvent::factory()->create([
             'community_id' => $this->community->id,
             'unit_id' => $this->unit->id,
@@ -186,7 +190,7 @@ class EmergencyEventTest extends TestCase
 
         // Guard from another community tries to access
         $response = $this->actingAs($otherUser)->patchJson(
-            'http://' . $otherCommunity->slug . '.' . config('app.central_domain') . "/api/security/emergencies/{$emergency->id}/ack"
+            'http://'.$otherCommunity->slug.'.'.config('app.central_domain')."/api/security/emergencies/{$emergency->id}/ack"
         );
 
         $response->assertStatus(404);

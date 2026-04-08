@@ -10,6 +10,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\Security\EmergencyEventResource;
 use App\Models\EmergencyEvent;
 use App\Models\Resident;
+use App\Models\Unit;
 use App\Services\TenantContext;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -62,8 +63,8 @@ class EmergencyEventController extends Controller
             }
         }
 
-        $unit = \App\Models\Unit::findOrFail($validated['unit_id']);
-        
+        $unit = Unit::findOrFail($validated['unit_id']);
+
         $emergency = $action->execute($user, $unit, $validated);
 
         return new EmergencyEventResource($emergency->load(['unit', 'triggerer']));

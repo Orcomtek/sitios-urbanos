@@ -1372,3 +1372,109 @@ After a successful action, the queue is refreshed using the existing `useApiData
 ✅ Completed  
 ✅ Audit-approved  
 ✅ Ready to support resident-facing cockpit evolution next
+
+## BLOCK 23 — Resident Cockpit Core (COMPLETED)
+
+### Objective
+Provide a resident-only cockpit so residents can access their most relevant information from one place without using the admin/guard operational cockpit.
+
+### API Endpoint
+- `GET /api/cockpit/resident`
+
+### Web Route
+- `/cockpit/resident`
+
+Tenant runtime:
+`{community_slug}.app.sitiosurbanos.com`
+
+---
+
+### Architecture
+
+- Controller:
+  - `App\Http\Controllers\Api\Cockpit\ResidentCockpitController`
+  - resident-only access
+  - admin/guard forbidden
+
+- Action:
+  - `App\Actions\Cockpit\GetResidentCockpitAction`
+  - aggregates only resident-relevant data
+  - scopes data to the authenticated user’s active unit(s) in the current tenant
+
+- Frontend Page:
+  - `resources/js/Pages/Cockpit/ResidentCockpit.vue`
+
+- Navigation:
+  - resident sees `Cabina del Residente`
+  - admin/guard do not use this cockpit as their primary cockpit
+
+---
+
+### Included Widgets
+
+#### Finance
+- pending invoices count
+- pending amount
+- compact financial summary
+
+#### Packages
+- received / pending pickup packages only
+- compact recent list
+
+#### Invitations
+- active, non-expired invitations only
+- excludes used / revoked / expired
+
+#### PQRS
+- open / in-progress resident cases
+- compact recent list
+
+#### Visitors
+- compact resident-facing visitor summary
+- intended to reflect operational states (pending / entered)
+- note: copy/labeling may require future polish if wording still references "expected"
+
+---
+
+### Key Constraints
+- resident-only cockpit
+- no admin/guard access
+- no emergency widget in this block
+- no analytics
+- no duplicated backend business logic
+- strict tenant isolation
+- strict active-unit scoping
+
+---
+
+### Testing
+- `tests/Feature/Cockpit/ResidentCockpitApiTest.php`
+- `tests/Feature/Cockpit/ResidentCockpitWebTest.php`
+
+Validated:
+- resident allowed
+- admin forbidden
+- guard forbidden
+- tenant isolation
+- only active resident unit data included
+
+---
+
+### Validation Status
+- resident cockpit renders correctly
+- Vite/Inertia resolution fixed
+- resident shell is functional
+- backend contracts are consumed safely
+- ready for future resident UX expansion
+
+---
+
+### Notes
+- one minor follow-up polish item remains:
+  - keep visitor widget wording fully aligned with operational states (`pending` / `entered`) rather than “expected” wording if still present in UI copy
+
+### Status
+✅ Completed  
+✅ Audit-approved  
+✅ Functionally validated
+

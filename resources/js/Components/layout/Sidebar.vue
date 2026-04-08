@@ -26,6 +26,11 @@ const navigation = computed(() => {
         items.push({ name: 'Cola Administrativa', href: route('tenant.cockpit.admin-work-queue', { community_slug: communitySlug.value }) });
     }
 
+    // Cockpit for Residents only
+    if (tenantRole.value === 'resident') {
+        items.push({ name: 'Cabina del Residente', href: route('tenant.cockpit.resident', { community_slug: communitySlug.value }) });
+    }
+
     return items;
 });
 

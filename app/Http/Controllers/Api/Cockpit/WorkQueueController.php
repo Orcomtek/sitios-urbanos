@@ -6,6 +6,7 @@ use App\Actions\Cockpit\GetOperationalWorkQueueAction;
 use App\Enums\CommunityRole;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\WorkQueueResource;
+use App\Models\User;
 use App\Services\TenantContext;
 use Illuminate\Http\Request;
 
@@ -16,12 +17,12 @@ class WorkQueueController extends Controller
      */
     public function index(Request $request, TenantContext $tenantContext, GetOperationalWorkQueueAction $action)
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = $request->user();
         $community = $tenantContext->require();
         $role = $user->roleInCommunity($community);
 
-        if (!$role || $role === CommunityRole::Resident) {
+        if (! $role || $role === CommunityRole::Resident) {
             abort(403, 'Access denied to the work queue.');
         }
 

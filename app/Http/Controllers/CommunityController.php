@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Actions\GetUserCommunitiesAction;
 use App\Actions\ResolveUserCommunityBySlugAction;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;

@@ -1,11 +1,11 @@
 <?php
 
-use App\Models\Community;
-use App\Models\User;
-use App\Models\Unit;
-use App\Models\Resident;
-use Illuminate\Support\Facades\Hash;
 use App\Enums\CommunityRole;
+use App\Models\Community;
+use App\Models\Resident;
+use App\Models\Unit;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 echo "Starting local Cockpit test setup...\n\n";
 
@@ -40,11 +40,11 @@ $community->users()->syncWithoutDetaching([$residentUser->id => ['role' => Commu
 
 // 5. Link the Resident to a Unit within the community
 $unit = $community->units()->firstOrCreate([
-    'identifier' => 'Apto 101'
+    'identifier' => 'Apto 101',
 ]);
 
 $community->residents()->firstOrCreate([
-    'email' => 'resident@test.com'
+    'email' => 'resident@test.com',
 ], [
     'unit_id' => $unit->id,
     'user_id' => $residentUser->id,

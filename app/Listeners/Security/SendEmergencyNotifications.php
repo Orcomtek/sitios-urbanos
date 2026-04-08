@@ -22,7 +22,7 @@ class SendEmergencyNotifications implements ShouldQueue
         // Let's get users using the relationship or querying whereHas
         $usersToNotify = User::whereHas('communities', function ($query) use ($community) {
             $query->where('community_id', $community->id)
-                  ->whereIn('role', ['admin', 'guard']);
+                ->whereIn('role', ['admin', 'guard']);
         })->get();
 
         Notification::send($usersToNotify, new EmergencyEventTriggeredNotification($event->emergency));

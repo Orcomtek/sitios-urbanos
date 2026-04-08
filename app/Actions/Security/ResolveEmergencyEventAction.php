@@ -3,8 +3,8 @@
 namespace App\Actions\Security;
 
 use App\Models\EmergencyEvent;
-use App\Models\User;
 use App\Models\SecurityLog;
+use App\Models\User;
 use Illuminate\Validation\ValidationException;
 
 class ResolveEmergencyEventAction
@@ -16,7 +16,7 @@ class ResolveEmergencyEventAction
                 'status' => 'Event is already resolved.',
             ]);
         }
-        
+
         $notes = $data['notes'] ?? $emergency->notes;
 
         $emergency->update([

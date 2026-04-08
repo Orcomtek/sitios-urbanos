@@ -2,10 +2,11 @@
 
 namespace App\Actions\Security;
 
+use App\Events\Security\EmergencyEventCreated;
 use App\Models\EmergencyEvent;
+use App\Models\SecurityLog;
 use App\Models\Unit;
 use App\Models\User;
-use App\Models\SecurityLog;
 use Illuminate\Validation\ValidationException;
 
 class TriggerEmergencyEventAction
@@ -49,7 +50,7 @@ class TriggerEmergencyEventAction
             'user_agent' => request()->userAgent(),
         ]);
 
-        \App\Events\Security\EmergencyEventCreated::dispatch($emergency);
+        EmergencyEventCreated::dispatch($emergency);
 
         return $emergency;
     }

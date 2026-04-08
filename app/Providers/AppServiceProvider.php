@@ -2,7 +2,10 @@
 
 namespace App\Providers;
 
+use App\Events\Security\EmergencyEventCreated;
+use App\Listeners\Security\SendEmergencyNotifications;
 use App\Services\TenantContext;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 
@@ -23,9 +26,9 @@ class AppServiceProvider extends ServiceProvider
     {
         Vite::prefetch(concurrency: 3);
 
-        \Illuminate\Support\Facades\Event::listen(
-            \App\Events\Security\EmergencyEventCreated::class,
-            \App\Listeners\Security\SendEmergencyNotifications::class,
+        Event::listen(
+            EmergencyEventCreated::class,
+            SendEmergencyNotifications::class,
         );
     }
 }

@@ -13,7 +13,6 @@ use App\Models\User;
 use App\Models\Visitor;
 use App\Services\TenantContext;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Config;
 use Tests\TestCase;
 
 class DashboardTest extends TestCase
@@ -21,14 +20,15 @@ class DashboardTest extends TestCase
     use RefreshDatabase;
 
     private Community $community;
+
     private $centralDomain;
 
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         $this->centralDomain = config('app.central_domain', 'sitios-urbanos.test');
-        
+
         $this->community = Community::factory()->create(['slug' => 'test-dashboard']);
     }
 
@@ -41,6 +41,7 @@ class DashboardTest extends TestCase
     {
         $user = User::factory()->create();
         $this->community->users()->attach($user, ['role' => $role->value]);
+
         return $user;
     }
 
@@ -83,8 +84,8 @@ class DashboardTest extends TestCase
                     'emergencies' => ['active_count', 'recent_active'],
                     'visitors' => ['pending_count', 'entered_count'],
                     'packages' => ['pending_pickup_count', 'recent_pending'],
-                ]
-            ]
+                ],
+            ],
         ]);
 
         $response->assertJsonMissingPath('data.widgets.pqrs');
@@ -99,18 +100,18 @@ class DashboardTest extends TestCase
     public function test_admin_sees_all_widgets_including_finance()
     {
         $admin = $this->createUserWithRole(CommunityRole::Admin);
-        
+
         app(TenantContext::class)->set($this->community);
 
         $unit = Unit::factory()->create(['community_id' => $this->community->id]);
         Invoice::factory()->create([
-            'community_id' => $this->community->id, 
-            'unit_id' => $unit->id, 
-            'status' => InvoiceStatus::PENDING, 
+            'community_id' => $this->community->id,
+            'unit_id' => $unit->id,
+            'status' => InvoiceStatus::PENDING,
             'amount' => 50000,
             'issued_at' => now(),
             'due_date' => now()->addDays(5),
-            'type' => 'admin_fee'
+            'type' => 'admin_fee',
         ]);
 
         $response = $this->actingAs($admin)->getJson($this->getTenantUrl());
@@ -130,9 +131,9 @@ class DashboardTest extends TestCase
                         'pending_invoices_count',
                         'pending_amount',
                         'recent_confirmed_payments_count',
-                    ]
-                ]
-            ]
+                    ],
+                ],
+            ],
         ]);
 
         $this->assertEquals(1, $response->json('data.widgets.finance.pending_invoices_count'));

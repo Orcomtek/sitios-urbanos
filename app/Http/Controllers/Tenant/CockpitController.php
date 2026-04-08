@@ -34,6 +34,13 @@ class CockpitController extends Controller
         return Inertia::render('Cockpit/AdminWorkQueue');
     }
 
+    public function resident(Request $request): Response
+    {
+        $this->authorizeAccess($request, [CommunityRole::Resident]);
+
+        return Inertia::render('Cockpit/ResidentCockpit');
+    }
+
     /**
      * Helper to authorize access based on roles array.
      */
@@ -42,13 +49,13 @@ class CockpitController extends Controller
         $community = $this->context->require();
         $user = $request->user();
 
-        if (!$user) {
+        if (! $user) {
             abort(401, 'Unauthenticated');
         }
 
         $role = $user->roleInCommunity($community);
 
-        if (!$role || !in_array($role, $allowedRoles, true)) {
+        if (! $role || ! in_array($role, $allowedRoles, true)) {
             abort(403, 'Acceso denegado: Rol no autorizado para este módulo.');
         }
     }

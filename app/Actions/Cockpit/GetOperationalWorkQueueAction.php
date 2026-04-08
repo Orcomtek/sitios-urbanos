@@ -27,7 +27,7 @@ class GetOperationalWorkQueueAction
                 'id' => $visitor->id,
                 'type' => 'visitor_pending',
                 'unit' => $visitor->unit ? ['id' => $visitor->unit->id, 'unit_number' => $visitor->unit->unit_number] : null,
-                'label' => 'Visitor: ' . $visitor->name,
+                'label' => 'Visitor: '.$visitor->name,
                 'action' => 'enter',
                 'created_at' => $visitor->created_at->toIso8601String(),
             ]);
@@ -45,7 +45,7 @@ class GetOperationalWorkQueueAction
                 'id' => $package->id,
                 'type' => 'package_received',
                 'unit' => $package->unit ? ['id' => $package->unit->id, 'unit_number' => $package->unit->unit_number] : null,
-                'label' => 'Package for ' . ($package->recipient_name ?: ($package->unit?->unit_number ?? 'Unknown Unit')),
+                'label' => 'Package for '.($package->recipient_name ?: ($package->unit?->unit_number ?? 'Unknown Unit')),
                 'action' => 'deliver',
                 'created_at' => $package->created_at->toIso8601String(),
             ]);
@@ -64,7 +64,7 @@ class GetOperationalWorkQueueAction
                 'id' => $invitation->id,
                 'type' => 'invitation_active',
                 'unit' => $invitation->unit ? ['id' => $invitation->unit->id, 'unit_number' => $invitation->unit->unit_number] : null,
-                'label' => 'Invitation ' . $invitation->code,
+                'label' => 'Invitation '.$invitation->code,
                 'action' => 'consume',
                 'created_at' => $invitation->created_at->toIso8601String(),
             ]);
@@ -82,7 +82,7 @@ class GetOperationalWorkQueueAction
                 'id' => $emergency->id,
                 'type' => 'emergency_active',
                 'unit' => $emergency->unit ? ['id' => $emergency->unit->id, 'unit_number' => $emergency->unit->unit_number] : null,
-                'label' => 'Emergency: ' . ucfirst($emergency->type),
+                'label' => 'Emergency: '.ucfirst($emergency->type),
                 'action' => 'acknowledge',
                 'created_at' => $emergency->created_at->toIso8601String(),
             ]);

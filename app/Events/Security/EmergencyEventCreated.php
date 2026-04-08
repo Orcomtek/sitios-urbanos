@@ -11,7 +11,5 @@ class EmergencyEventCreated
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public function __construct(public EmergencyEvent $emergency)
-    {
-    }
+    public function __construct(public EmergencyEvent $emergency) {}
 }

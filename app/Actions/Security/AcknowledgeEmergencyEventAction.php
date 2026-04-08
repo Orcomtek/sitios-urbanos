@@ -3,8 +3,8 @@
 namespace App\Actions\Security;
 
 use App\Models\EmergencyEvent;
-use App\Models\User;
 use App\Models\SecurityLog;
+use App\Models\User;
 use Illuminate\Validation\ValidationException;
 
 class AcknowledgeEmergencyEventAction

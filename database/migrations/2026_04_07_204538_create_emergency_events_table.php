@@ -19,11 +19,11 @@ return new class extends Migration
             $table->string('type', 50)->default('panic'); // panic, medical, security, other
             $table->string('status', 50)->default('active'); // active, acknowledged, resolved
             $table->text('description')->nullable();
-            
+
             $table->timestamp('triggered_at');
             $table->timestamp('acknowledged_at')->nullable();
             $table->timestamp('resolved_at')->nullable();
-            
+
             $table->text('notes')->nullable();
             $table->timestamps();
 
