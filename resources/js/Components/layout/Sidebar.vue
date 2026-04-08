@@ -31,6 +31,11 @@ const navigation = computed(() => {
         items.push({ name: 'Cabina del Residente', href: route('tenant.cockpit.resident', { community_slug: communitySlug.value }) });
     }
 
+    // Activity Timeline (All roles)
+    if (['admin', 'guard', 'resident'].includes(tenantRole.value as string)) {
+        items.push({ name: 'Registro de Actividad', href: route('tenant.cockpit.activity', { community_slug: communitySlug.value }) });
+    }
+
     return items;
 });
 

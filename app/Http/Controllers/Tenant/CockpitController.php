@@ -69,6 +69,13 @@ class CockpitController extends Controller
         ]);
     }
 
+    public function activity(Request $request): Response
+    {
+        $this->authorizeAccess($request, [CommunityRole::Admin, CommunityRole::Guard, CommunityRole::Resident]);
+
+        return Inertia::render('Cockpit/Activity');
+    }
+
     /**
      * Helper to authorize access based on roles array.
      */

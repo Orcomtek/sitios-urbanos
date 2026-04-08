@@ -1702,3 +1702,46 @@ Implemented a unified notification system using Laravel database notifications. 
 ### Ready for
 ➡️ Real-time layer (future)
 ➡️ Activity timeline (Block 28)
+
+## BLOCK 28 — Activity Timeline / Audit UX
+
+### Status
+✅ Completed
+
+### Description
+Implemented a unified activity timeline by aggregating existing SecurityLog and Notification data without introducing new persistence layers.
+
+### Role Scoping
+- Admin/Guard:
+  - Tenant-wide operational timeline (SecurityLog)
+- Resident:
+  - Personal timeline (Notifications only)
+
+### Endpoint
+GET /api/cockpit/activity
+
+### Payload
+- source (security_log | notification)
+- type (snake_case event)
+- title
+- message
+- created_at
+- entity_id (optional)
+- entity_type (optional)
+
+### Constraints
+- No new timeline table
+- No duplication of audit logic
+- No realtime/polling
+- Strict tenant isolation
+
+### UI
+- Minimal chronological timeline
+- Spanish-first labels
+- Empty state supported
+
+### Ready for
+➡️ Realtime layer (future)
+➡️ Advanced filters/search
+➡️ Audit exports
+

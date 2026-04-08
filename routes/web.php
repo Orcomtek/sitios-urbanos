@@ -56,5 +56,6 @@ Route::domain('{community_slug}.'.$centralDomain)
             Route::get('/resident', [CockpitController::class, 'resident'])->name('tenant.cockpit.resident');
             Route::get('/resident/pqrs', [CockpitController::class, 'residentPqrs'])->name('tenant.cockpit.resident.pqrs');
             Route::get('/resident/operations', [CockpitController::class, 'residentOperations'])->name('tenant.cockpit.resident.operations');
+            Route::get('/activity', [CockpitController::class, 'activity'])->name('tenant.cockpit.activity');
         });
     });

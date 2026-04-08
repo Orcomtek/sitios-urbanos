@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\Cockpit\ActivityTimelineController;
 use App\Http\Controllers\Api\Cockpit\AdminWorkQueueController;
 use App\Http\Controllers\Api\Cockpit\DashboardController;
 use App\Http\Controllers\Api\Cockpit\NotificationController;
@@ -40,6 +41,8 @@ Route::domain('{community_slug}.'.$centralDomain)
         Route::get('/cockpit/notifications', [NotificationController::class, 'index'])->name('api.cockpit.notifications.index');
         Route::patch('/cockpit/notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('api.cockpit.notifications.read-all');
         Route::patch('/cockpit/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('api.cockpit.notifications.read');
+
+        Route::get('/cockpit/activity', [ActivityTimelineController::class, 'index'])->name('api.cockpit.activity.index');
 
         Route::get('/finance/invoices/{invoice}', [FinancialStateController::class, 'invoice'])->name('api.finance.invoice');
         Route::get('/finance/payments/{payment}', [FinancialStateController::class, 'payment'])->name('api.finance.payment');
