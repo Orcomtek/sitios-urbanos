@@ -1941,3 +1941,9 @@ Implemented the backend core for the Professional Services Directory (Providers 
 - Zero cross-tenant data leakage (verified via Pest tests).
 - Residents strictly blocked from mutating provider data.
 - Historical data preserved via logical deletion (`softDeletes`).
+
+### Block 33.5 — Service Requests Extension
+- **Model:** `ProviderServiceRequest` created with `TenantScoped` to allow residents to request jobs from active providers.
+- **Enums:** `ServiceRequestStatus` (pending, accepted, completed, cancelled) and `ServiceUrgency`.
+- **Security:** Addressed payload spoofing by forcing the backend to infer the `resident_id` directly from the authenticated session context (`$request->user()->currentResident`).
+- **Access Control:** Admins have global read access for auditing. Residents have full CRUD but strictly scoped to their own requests. Guards are explicitly blocked.

@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\Cockpit\ResidentCockpitController;
 use App\Http\Controllers\Api\Cockpit\WorkQueueController;
 use App\Http\Controllers\Api\Ecosystem\ListingController;
 use App\Http\Controllers\Api\Ecosystem\ProviderController;
+use App\Http\Controllers\Api\Ecosystem\ProviderServiceRequestController;
 use App\Http\Controllers\Api\Finance\AccountStatementController;
 use App\Http\Controllers\Api\Finance\FinancialStateController;
 use App\Http\Controllers\Api\Finance\InvoicePaymentController;
@@ -119,5 +120,11 @@ Route::domain('{community_slug}.'.$centralDomain)
 
             // Providers
             Route::apiResource('providers', ProviderController::class)->names('api.ecosystem.providers');
+
+            // Service Requests
+            Route::get('/service-requests', [ProviderServiceRequestController::class, 'index'])->name('api.ecosystem.service-requests.index');
+            Route::post('/service-requests', [ProviderServiceRequestController::class, 'store'])->name('api.ecosystem.service-requests.store');
+            Route::get('/service-requests/{serviceRequest}', [ProviderServiceRequestController::class, 'show'])->name('api.ecosystem.service-requests.show');
+            Route::patch('/service-requests/{serviceRequest}/cancel', [ProviderServiceRequestController::class, 'cancel'])->name('api.ecosystem.service-requests.cancel');
         });
     });
