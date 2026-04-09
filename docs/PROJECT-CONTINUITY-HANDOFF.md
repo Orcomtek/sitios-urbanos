@@ -1920,3 +1920,24 @@ Integrated P2P listing moderation directly into the existing Admin Work Queue, a
 - Preserved strict tenant isolation within the Admin Work Queue.
 - Maintained CI/CD stability by wrapping PostgreSQL-specific migration statements to prevent SQLite memory test failures.
 
+## BLOCK 33 — Providers Ecosystem Backend Core
+
+### Status
+✅ Completed
+
+### Description
+Implemented the backend core for the Professional Services Directory (Providers Ecosystem), allowing the administration to manage a trusted list of external service providers (plumbers, electricians, etc.) for the community.
+
+### Implemented Components
+- **Model & Schema:** `Provider` model with `TenantScoped` and `SoftDeletes`. Uses PostgreSQL `jsonb` for `contact_details`.
+- **Enums:** `ProviderStatus` (active, inactive) and `ProviderCategory` (plumbing, electrical, cleaning, maintenance, others).
+- **Actions:** `RegisterProviderAction`, `UpdateProviderAction`, `DeleteProviderAction` (executes soft delete).
+- **Validation:** `StoreProviderRequest` and `UpdateProviderRequest` strictly enforce the `contact_details` array structure (`type` and `value`).
+- **Access Control (`ProviderPolicy`):** - Admin: Full CRUD.
+  - Resident & Guard: Read-only, restricted to `active` providers.
+- **Routing:** Manual resolution of `$providerId` in `ProviderController` to bypass `SubstituteBindings` race conditions against the `TenantMiddleware`, ensuring bulletproof tenant isolation.
+
+### Architecture Constraints Maintained
+- Zero cross-tenant data leakage (verified via Pest tests).
+- Residents strictly blocked from mutating provider data.
+- Historical data preserved via logical deletion (`softDeletes`).

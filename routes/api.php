@@ -6,6 +6,8 @@ use App\Http\Controllers\Api\Cockpit\DashboardController;
 use App\Http\Controllers\Api\Cockpit\NotificationController;
 use App\Http\Controllers\Api\Cockpit\ResidentCockpitController;
 use App\Http\Controllers\Api\Cockpit\WorkQueueController;
+use App\Http\Controllers\Api\Ecosystem\ListingController;
+use App\Http\Controllers\Api\Ecosystem\ProviderController;
 use App\Http\Controllers\Api\Finance\AccountStatementController;
 use App\Http\Controllers\Api\Finance\FinancialStateController;
 use App\Http\Controllers\Api\Finance\InvoicePaymentController;
@@ -106,12 +108,16 @@ Route::domain('{community_slug}.'.$centralDomain)
             Route::patch('/invitations/{invitation}/revoke', [AccessInvitationController::class, 'revoke'])->name('api.security.invitations.revoke');
             Route::patch('/invitations/{invitation}/consume', [AccessInvitationController::class, 'consume'])->name('api.security.invitations.consume');
         });
-        
+
         Route::prefix('ecosystem')->group(function () {
-            Route::get('/listings', [\App\Http\Controllers\Api\Ecosystem\ListingController::class, 'index'])->name('api.ecosystem.listings.index');
-            Route::post('/listings', [\App\Http\Controllers\Api\Ecosystem\ListingController::class, 'store'])->name('api.ecosystem.listings.store');
-            Route::get('/listings/{listing}', [\App\Http\Controllers\Api\Ecosystem\ListingController::class, 'show'])->name('api.ecosystem.listings.show');
-            Route::patch('/listings/{listing}', [\App\Http\Controllers\Api\Ecosystem\ListingController::class, 'update'])->name('api.ecosystem.listings.update');
-            Route::patch('/listings/{listing}/moderate', [\App\Http\Controllers\Api\Ecosystem\ListingController::class, 'moderate'])->name('api.ecosystem.listings.moderate');
+            // Listings
+            Route::get('/listings', [ListingController::class, 'index'])->name('api.ecosystem.listings.index');
+            Route::post('/listings', [ListingController::class, 'store'])->name('api.ecosystem.listings.store');
+            Route::get('/listings/{listing}', [ListingController::class, 'show'])->name('api.ecosystem.listings.show');
+            Route::patch('/listings/{listing}', [ListingController::class, 'update'])->name('api.ecosystem.listings.update');
+            Route::patch('/listings/{listing}/moderate', [ListingController::class, 'moderate'])->name('api.ecosystem.listings.moderate');
+
+            // Providers
+            Route::apiResource('providers', ProviderController::class)->names('api.ecosystem.providers');
         });
     });
