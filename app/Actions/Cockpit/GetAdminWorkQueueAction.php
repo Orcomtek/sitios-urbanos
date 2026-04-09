@@ -19,7 +19,7 @@ class GetAdminWorkQueueAction
 
         // A. PQRS: open/in_progress -> action: respond
         $pqrsList = Pqrs::whereIn('status', ['open', 'in_progress'])
-            ->with(['resident.unit:id,unit_number', 'resident:id,full_name,unit_id'])
+            ->with(['resident.unit:id,identifier', 'resident:id,full_name,unit_id'])
             ->oldest()
             ->take($limit)
             ->get();
@@ -29,7 +29,7 @@ class GetAdminWorkQueueAction
             $tasks[] = collect([
                 'id' => $pqrs->id,
                 'type' => 'pqrs_open',
-                'unit' => $unit ? ['id' => $unit->id, 'unit_number' => $unit->unit_number] : null,
+                'unit' => $unit ? ['id' => $unit->id, 'unit_number' => $unit->identifier] : null,
                 'label' => 'PQRS: '.$pqrs->subject,
                 'action' => 'respond',
                 'created_at' => $pqrs->created_at->toIso8601String(),
@@ -55,7 +55,7 @@ class GetAdminWorkQueueAction
 
         // C. Invoices: pending -> action: review
         $invoices = Invoice::where('status', 'pending')
-            ->with(['unit:id,unit_number'])
+            ->with(['unit:id,identifier'])
             ->oldest()
             ->take($limit)
             ->get();
@@ -64,7 +64,7 @@ class GetAdminWorkQueueAction
             $tasks[] = collect([
                 'id' => $invoice->id,
                 'type' => 'invoice_pending',
-                'unit' => $invoice->unit ? ['id' => $invoice->unit->id, 'unit_number' => $invoice->unit->unit_number] : null,
+                'unit' => $invoice->unit ? ['id' => $invoice->unit->id, 'unit_number' => $invoice->unit->identifier] : null,
                 'label' => 'Invoice: '.$invoice->description,
                 'action' => 'review',
                 'created_at' => $invoice->created_at->toIso8601String(),
@@ -94,7 +94,7 @@ class GetAdminWorkQueueAction
 
         // E. Listings: active -> action: moderate
         $listings = Listing::where('status', ListingStatus::Active->value)
-            ->with(['resident:id,full_name,unit_id', 'resident.unit:id,unit_number'])
+            ->with(['resident:id,full_name,unit_id', 'resident.unit:id,identifier'])
             ->oldest()
             ->take($limit)
             ->get();
@@ -104,7 +104,7 @@ class GetAdminWorkQueueAction
             $tasks[] = collect([
                 'id' => $listing->id,
                 'type' => 'listing_active',
-                'unit' => $unit ? ['id' => $unit->id, 'unit_number' => $unit->unit_number] : null,
+                'unit' => $unit ? ['id' => $unit->id, 'unit_number' => $unit->identifier] : null,
                 'label' => 'Anuncio: '.$listing->title,
                 'action' => 'moderate',
                 'created_at' => $listing->created_at->toIso8601String(),
