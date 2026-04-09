@@ -29,7 +29,7 @@ class GetActivityTimelineAction
         } elseif ($role === CommunityRole::Resident) {
             // Resident -> rely strictly on tenant-filtered notifications
             $notifications = $user->notifications()
-                ->where('data->community_id', $community->id)
+                ->where('data->community_id', (string) $community->id)
                 ->latest()
                 ->take($limit)
                 ->get();

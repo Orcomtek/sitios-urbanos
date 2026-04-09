@@ -19,15 +19,17 @@ const processing = ref(false);
 const showForm = ref(false);
 const editingListing = ref(null);
 const successMessage = ref('');
+const error = ref('');
 
 const fetchListings = async () => {
     loading.value = true;
+    error.value = '';
     try {
         const response = await axios.get('/api/ecosystem/listings');
         allListings.value = response.data.data;
     } catch (e) {
         console.error('Error fetching listings', e);
-        alert('Error al cargar los anuncios');
+        error.value = 'Error al cargar los anuncios. Por favor, intenta nuevamente.';
     } finally {
         loading.value = false;
     }
@@ -67,7 +69,8 @@ const submitForm = async (formData) => {
         setTimeout(() => { successMessage.value = ''; }, 3000);
     } catch (e) {
         console.error('Error saving listing', e);
-        alert(e.response?.data?.message || 'Error al guardar el anuncio.');
+        error.value = e.response?.data?.message || 'Error al guardar el anuncio.';
+        setTimeout(() => { error.value = ''; }, 5000);
     } finally {
         processing.value = false;
     }
@@ -92,7 +95,8 @@ const toggleStatus = async (listing) => {
         await fetchListings();
     } catch (e) {
         console.error('Error toggling status', e);
-        alert(e.response?.data?.message || 'Error al cambiar el estado del anuncio.');
+        error.value = e.response?.data?.message || 'Error al cambiar el estado del anuncio.';
+        setTimeout(() => { error.value = ''; }, 5000);
     } finally {
         processing.value = false;
     }
@@ -126,6 +130,10 @@ const cancelForm = () => {
                 
                 <div v-if="successMessage" class="bg-green-50 border-l-4 border-green-500 p-4 rounded-md shadow-sm">
                     <p class="text-green-700 text-sm font-medium">{{ successMessage }}</p>
+                </div>
+                
+                <div v-if="error" class="bg-red-50 border-l-4 border-red-500 p-4 rounded-md shadow-sm">
+                    <p class="text-red-700 text-sm font-medium">{{ error }}</p>
                 </div>
 
                 <!-- Form Section -->

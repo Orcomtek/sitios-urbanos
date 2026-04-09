@@ -19,7 +19,7 @@ class NotificationController extends Controller
         // Load notifications for the user scoped to the current community.
         // We use the JSON arrow operator on PostgreSQL 'data' column.
         $notifications = $user->notifications()
-            ->where('data->community_id', $community->id)
+            ->where('data->community_id', (string) $community->id)
             ->latest()
             ->take(50)
             ->get();
@@ -35,7 +35,7 @@ class NotificationController extends Controller
         $user = $request->user();
 
         $notification = $user->notifications()
-            ->where('data->community_id', $community->id)
+            ->where('data->community_id', (string) $community->id)
             ->where('id', $id)
             ->firstOrFail();
 
@@ -53,7 +53,7 @@ class NotificationController extends Controller
         $user = $request->user();
 
         $user->unreadNotifications()
-            ->where('data->community_id', $community->id)
+            ->where('data->community_id', (string) $community->id)
             ->get()
             ->markAsRead();
 

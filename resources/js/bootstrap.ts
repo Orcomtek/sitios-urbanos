@@ -20,4 +20,13 @@ window.Echo = new Echo({
     wssPort: import.meta.env.VITE_REVERB_PORT ?? 443,
     forceTLS: (import.meta.env.VITE_REVERB_SCHEME ?? 'https') === 'https',
     enabledTransports: ['ws', 'wss'],
+    disableStats: true,
+});
+
+// @ts-ignore
+window.Echo.connector.pusher.connection.bind('error', function (payload: any) {
+    if (payload?.error?.data?.code === 1006 || payload?.type === 'WebSocketError') {
+        // Silently catch WebSocket connection errors if Reverb is offline
+        return;
+    }
 });
