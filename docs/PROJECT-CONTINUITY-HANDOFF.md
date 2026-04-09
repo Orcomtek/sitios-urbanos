@@ -1878,6 +1878,29 @@ Implemented the frontend experience for the P2P Ecosystem inside the Resident Co
 - Strict tenant isolation at the API and routing levels.
 - Admin/Guard strictly forbidden from the resident ecosystem view (403).
 
+## BLOCK 31 — Resident P2P UX (Marketplace Core) Mejorado
+
+### Status
+✅ Completed
+
+### Description
+Implemented the frontend experience for the P2P Ecosystem inside the Resident Cockpit, allowing residents to explore community classifieds and manage their own listings in a unified, single-page layout.
+
+### Key Features
+- **Route:** `/cockpit/resident/ecosystem` (Resident-only).
+- **Navigation:** Added "Clasificados" to the resident sidebar.
+- **Layout (Single Page):** - `Explorar anuncios`: Views all active listings in the tenant. If the resident sees their own listing here, it is badged as "Tu anuncio".
+  - `Mis anuncios`: Manages the resident's own listings (Create, Edit, Pause/Reactivate).
+- **Empty States:** Clear Spanish fallbacks when no listings exist ("Aún no hay anuncios...", "Aún no has publicado...").
+- **Privacy Enforcement:** Contact information is gracefully hidden with a fallback message ("Contacto: vía administración") if the user opted out (`show_contact_info = false`).
+- **Data Fetching:** Relies strictly on `axios` and a `refetch()` pattern for mutations without duplicating state logic in Vue.
+
+### Architecture Constraints Maintained
+- Zero business logic duplicated in Vue.
+- Strict tenant isolation at the API and routing levels.
+- Admin/Guard strictly forbidden from the resident ecosystem view (403).
+- Cross-tenant or cross-resident edits strictly blocked and tested (403).
+
 ## BLOCK 32 — Ecosystem Admin Moderation UX
 
 ### Status

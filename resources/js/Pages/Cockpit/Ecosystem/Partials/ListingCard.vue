@@ -9,6 +9,10 @@ const props = defineProps({
     isOwner: {
         type: Boolean,
         default: false
+    },
+    currentResidentId: {
+        type: Number,
+        default: null
     }
 });
 
@@ -35,10 +39,18 @@ const formattedPrice = computed(() => {
         minimumFractionDigits: 0
     }).format(props.listing.price);
 });
+
+const isOwnListing = computed(() => {
+    return props.isOwner || (props.listing.resident && props.listing.resident.id === props.currentResidentId);
+});
 </script>
 
 <template>
-    <div class="bg-white border rounded-lg shadow-sm border-gray-200 overflow-hidden flex flex-col h-full">
+    <div class="bg-white border rounded-lg shadow-sm border-gray-200 overflow-hidden flex flex-col h-full relative">
+        <div v-if="isOwnListing && !isOwner" class="absolute top-0 right-0 bg-indigo-100 text-indigo-800 text-xs font-bold px-2 py-1 rounded-bl-lg z-10">
+            Tu anuncio
+        </div>
+
         <div class="p-5 flex-1 flex flex-col space-y-4">
             <div class="flex justify-between items-start">
                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
@@ -70,8 +82,8 @@ const formattedPrice = computed(() => {
                             <span class="font-medium mr-2">Email:</span> {{ listing.resident.email }}
                         </p>
                     </div>
-                    <div v-else class="text-xs text-gray-500 italic bg-gray-50 p-2 rounded">
-                        Contacto vía administración (Info protegida)
+                    <div v-else class="text-xs text-gray-800 font-medium bg-gray-50 p-2 rounded border border-gray-200 text-center">
+                        Contacto: vía administración
                     </div>
                 </div>
             </div>
