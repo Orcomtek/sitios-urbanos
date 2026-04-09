@@ -24,12 +24,14 @@ const navigation = computed(() => {
     // Cockpit for Admins only
     if (tenantRole.value === 'admin') {
         items.push({ name: 'Cola Administrativa', href: route('tenant.cockpit.admin-work-queue', { community_slug: communitySlug.value }) });
+        items.push({ name: 'Directorio de Proveedores', href: route('tenant.cockpit.admin.providers', { community_slug: communitySlug.value }) });
     }
 
     // Cockpit for Residents only
     if (tenantRole.value === 'resident') {
         items.push({ name: 'Cabina del Residente', href: route('tenant.cockpit.resident', { community_slug: communitySlug.value }) });
         items.push({ name: 'Clasificados', href: route('tenant.cockpit.resident.ecosystem', { community_slug: communitySlug.value }) });
+        items.push({ name: 'Directorio de Proveedores', href: route('tenant.cockpit.resident.providers', { community_slug: communitySlug.value }) });
     }
 
     // Activity Timeline (All roles)

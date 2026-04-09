@@ -85,6 +85,20 @@ class CockpitController extends Controller
         ]);
     }
 
+    public function adminProviders(Request $request): Response
+    {
+        $this->authorizeAccess($request, [CommunityRole::Admin]);
+
+        return Inertia::render('Cockpit/Admin/Providers/Index');
+    }
+
+    public function residentProviders(Request $request): Response
+    {
+        $this->authorizeAccess($request, [CommunityRole::Resident]);
+
+        return Inertia::render('Cockpit/Resident/Providers/Index');
+    }
+
     public function activity(Request $request): Response
     {
         $this->authorizeAccess($request, [CommunityRole::Admin, CommunityRole::Guard, CommunityRole::Resident]);

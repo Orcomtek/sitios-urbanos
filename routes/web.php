@@ -53,10 +53,12 @@ Route::domain('{community_slug}.'.$centralDomain)
             Route::get('/dashboard', [CockpitController::class, 'dashboard'])->name('tenant.cockpit.dashboard');
             Route::get('/work-queue', [CockpitController::class, 'workQueue'])->name('tenant.cockpit.work-queue');
             Route::get('/admin-work-queue', [CockpitController::class, 'adminWorkQueue'])->name('tenant.cockpit.admin-work-queue');
+            Route::get('/admin/providers', [CockpitController::class, 'adminProviders'])->name('tenant.cockpit.admin.providers');
             Route::get('/resident', [CockpitController::class, 'resident'])->name('tenant.cockpit.resident');
             Route::get('/resident/pqrs', [CockpitController::class, 'residentPqrs'])->name('tenant.cockpit.resident.pqrs');
             Route::get('/resident/operations', [CockpitController::class, 'residentOperations'])->name('tenant.cockpit.resident.operations');
             Route::get('/resident/ecosystem', [CockpitController::class, 'residentEcosystem'])->name('tenant.cockpit.resident.ecosystem');
+            Route::get('/resident/providers', [CockpitController::class, 'residentProviders'])->name('tenant.cockpit.resident.providers');
             Route::get('/activity', [CockpitController::class, 'activity'])->name('tenant.cockpit.activity');
         });
     });
