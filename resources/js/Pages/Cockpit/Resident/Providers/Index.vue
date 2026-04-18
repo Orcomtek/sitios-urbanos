@@ -45,13 +45,21 @@ const formErrors = ref<Record<string, string>>({});
 const processing = ref(false);
 const successMessage = ref('');
 
-const categories = [
-    { value: 'plumbing', label: 'Plomería' },
-    { value: 'electrical', label: 'Electricidad' },
-    { value: 'cleaning', label: 'Limpieza' },
-    { value: 'maintenance', label: 'Mantenimiento' },
-    { value: 'others', label: 'Otros' }
-];
+const categories = ref<{ value: string; label: string; }[]>([]);
+const isLoadingCategories = ref(true);
+
+const fetchCategories = async () => {
+    isLoadingCategories.value = true;
+    try {
+        const response = await axios.get('/api/system/taxonomies/provider_category');
+        categories.value = response.data.data;
+    } catch (error) {
+        console.error('Error fetching categories:', error);
+        categories.value = [];
+    } finally {
+        isLoadingCategories.value = false;
+    }
+};
 
 const filteredProviders = computed(() => {
     // Only active providers should be shown
@@ -76,6 +84,7 @@ const fetchProviders = async () => {
 };
 
 onMounted(() => {
+    fetchCategories();
     fetchProviders();
 });
 
@@ -137,7 +146,7 @@ const urgencies = [
 ];
 
 const translateCategory = (catValue: string) => {
-    const category = categories.find(c => c.value === catValue);
+    const category = categories.value.find(c => c.value === catValue);
     return category ? category.label : catValue;
 };
 </script>
@@ -162,14 +171,22 @@ const translateCategory = (catValue: string) => {
                     >
                         Todos
                     </button>
-                    <button 
-                        v-for="cat in categories" :key="cat.value"
-                        @click="selectedCategory = cat.value"
-                        :class="['px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors', 
-                                selectedCategory === cat.value ? 'bg-indigo-600 text-white shadow' : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200']"
-                    >
-                        {{ cat.label }}
-                    </button>
+                    <span v-if="isLoadingCategories" class="px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap bg-gray-100 text-gray-500 border border-gray-200">
+                        Cargando categorías...
+                    </span>
+                    <span v-else-if="categories.length === 0" class="px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap bg-red-50 text-red-500 border border-red-200">
+                        Error al cargar categorías
+                    </span>
+                    <template v-else>
+                        <button 
+                            v-for="cat in categories" :key="cat.value"
+                            @click="selectedCategory = cat.value"
+                            :class="['px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors', 
+                                    selectedCategory === cat.value ? 'bg-indigo-600 text-white shadow' : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200']"
+                        >
+                            {{ cat.label }}
+                        </button>
+                    </template>
                 </div>
 
                 <div v-if="loading" class="flex justify-center items-center py-20">

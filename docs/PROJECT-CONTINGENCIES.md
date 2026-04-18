@@ -41,13 +41,21 @@
 ---
 
 ## 🚨 Contingencia 1.4: Refactorización de Proveedores (Categorías Dinámicas)
-**Estado:** `[Pendiente]`  
+**Estado:** `[Resuelta]`  
 **Origen:** Deuda Técnica (Enum Estático).
 **Diagnóstico:** El Bloque 34 implementó categorías *hardcodeadas* (quemadas) en código. Es inaceptable para la escalabilidad del SaaS.
 **Alcance Técnico:**
 - **Base de Datos:** Eliminar el Enum de la tabla `providers` y establecer llave foránea `provider_category_id`.
 - **Estandarización:** Crear tabla base para categorías gestionable desde el SuperAdmin.
 - **Frontend:** Modificar formulario Admin y filtros Residente para consumir `/api/ecosystem/provider-categories` de forma reactiva.
+
+### [Resolved] Contingency 1.4: Dynamic Provider Categories (Frontend Integration)
+* **Objective:** Refactor Admin and Resident Provider views to consume dynamic system taxonomies instead of hardcoded arrays.
+* **Execution details:**
+  * Removed static category arrays from `Admin/Providers/Index.vue` and `Resident/Providers/Index.vue`.
+  * Implemented asynchronous data fetching via `axios` on the `onMounted` hook.
+  * Added graceful loading states to prevent form submission before data is ready.
+  * **Validation:** Verified end-to-end that the "Override Rule" and "Tenant Isolation" correctly reflect in the UI for both roles.
 
 ---
 
@@ -60,6 +68,15 @@
 - **Columnas clave:** `id`, `type` (ej. provider_category), `community_id` (NULL = Global), `label`, `value`, `meta` (JSON para iconos/colores), `is_active`.
 - **Query Scope:** Implementación de un *Scope* mixto (`GlobalOrTenantScope`) para que las consultas devuelvan los registros globales de Sitios Urbanos + los registros locales específicos de la comunidad activa.
 - **Impacto Transversal:** Servirá como base para resolver la Contingencia 1.4 (Categorías de Proveedores) y futuros módulos.
+
+### [Resolved] Contingency 2: Database Standardization (Global/Local Taxonomies)
+* **Objective:** Centralize all dynamic select options and categories into a single polymorphic table to prevent database fragmentation.
+* **Execution details:**
+  * Created `system_taxonomies` migration with `foreignId` for `community_id` (nullable for global records).
+  * Implemented `SystemTaxonomy` model bypassing standard `TenantScoped` to allow a custom `scopeForCurrentTenantOrGlobal`.
+  * Created `SystemTaxonomyController` mapped to `/api/system/taxonomies/{type}`. 
+  * **Critical Bug Fix:** Forced `$request->route('type')` in the controller to prevent the tenant subdomain string from shifting and overwriting the `$type` parameter.
+* **Frozen Architectural Decision (The Override Rule):** If a local taxonomy (created by a community) shares the exact same `value` as a global Sitios Urbanos taxonomy, the Controller uses `.keyBy('value')` to ensure the local record natively overwrites the global one in the API response, preventing duplicate keys in Vue loops.
 
 *Fin del Registro Activo.*
 

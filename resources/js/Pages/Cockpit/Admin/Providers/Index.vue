@@ -37,20 +37,28 @@ const currentProviderId = ref<number | null>(null);
 
 const form = useForm({
     name: '',
-    category: 'maintenance',
+    category: '',
     description: '',
     status: 'active',
     contact_details: [{ type: 'phone', value: '' }] as ContactDetail[],
 });
 
-const categories = [
-    { value: 'plumbing', label: 'Plomería' },
-    { value: 'electrical', label: 'Electricidad' },
-    { value: 'cleaning', label: 'Limpieza' },
-    { value: 'maintenance', label: 'Mantenimiento' },
-    { value: 'others', label: 'Otros' }
-];
+const categories = ref<{ value: string; label: string; }[]>([]);
+const isLoadingCategories = ref(true);
 const contactTypes = ['phone', 'email', 'whatsapp'];
+
+const fetchCategories = async () => {
+    isLoadingCategories.value = true;
+    try {
+        const response = await axios.get('/api/system/taxonomies/provider_category');
+        categories.value = response.data.data;
+    } catch (error) {
+        console.error('Error fetching categories:', error);
+        categories.value = [];
+    } finally {
+        isLoadingCategories.value = false;
+    }
+};
 
 const fetchProviders = async () => {
     loading.value = true;
@@ -65,6 +73,7 @@ const fetchProviders = async () => {
 };
 
 onMounted(() => {
+    fetchCategories();
     fetchProviders();
 });
 
@@ -74,7 +83,7 @@ const openCreateModal = () => {
     form.clearErrors();
     form.defaults({
         name: '',
-        category: 'maintenance',
+        category: categories.value.length > 0 ? categories.value[0].value : '',
         description: '',
         status: 'active',
         contact_details: [{ type: 'phone', value: '' }],
@@ -111,6 +120,7 @@ const removeContact = (index: number) => {
 };
 
 const submitForm = async () => {
+    if (categories.value.length === 0) return;
     form.clearErrors();
     try {
         if (isEditing.value && currentProviderId.value) {
@@ -165,7 +175,7 @@ const translateContactType = (type: string) => {
     }
 };
 const translateCategory = (catValue: string) => {
-    const category = categories.find(c => c.value === catValue);
+    const category = categories.value.find(c => c.value === catValue);
     return category ? category.label : catValue;
 };
 
@@ -292,7 +302,10 @@ const getError = (key: string): string | undefined => {
                             id="category"
                             v-model="form.category"
                             class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                            :disabled="isLoadingCategories || categories.length === 0"
                         >
+                            <option v-if="isLoadingCategories" disabled value="">Cargando categorías...</option>
+                            <option v-else-if="categories.length === 0" disabled value="">Error al cargar categorías</option>
                             <option v-for="cat in categories" :key="cat.value" :value="cat.value">{{ cat.label }}</option>
                         </select>
                         <p class="text-sm text-red-600 mt-1" v-if="form.errors.category">{{ form.errors.category }}</p>

@@ -1919,3 +1919,11 @@ Implemented the backend core for the Professional Services Directory (Providers 
   * Created `SystemTaxonomyController` mapped to `/api/system/taxonomies/{type}`. 
   * **Critical Bug Fix:** Forced `$request->route('type')` in the controller to prevent the tenant subdomain string from shifting and overwriting the `$type` parameter.
 * **Frozen Architectural Decision (The Override Rule):** If a local taxonomy (created by a community) shares the exact same `value` as a global Sitios Urbanos taxonomy, the Controller uses `.keyBy('value')` to ensure the local record natively overwrites the global one in the API response, preventing duplicate keys in Vue loops.
+
+### [Resolved] Contingency 1.4: Dynamic Provider Categories (Frontend Integration)
+* **Objective:** Refactor Admin and Resident Provider views to consume dynamic system taxonomies instead of hardcoded arrays.
+* **Execution details:**
+  * Removed static category arrays from `Admin/Providers/Index.vue` and `Resident/Providers/Index.vue`.
+  * Implemented asynchronous data fetching via `axios` on the `onMounted` hook.
+  * Added graceful loading states to prevent form submission before data is ready.
+  * **Validation:** Verified end-to-end that the "Override Rule" and "Tenant Isolation" correctly reflect in the UI for both roles.
