@@ -1927,3 +1927,12 @@ Implemented the backend core for the Professional Services Directory (Providers 
   * Implemented asynchronous data fetching via `axios` on the `onMounted` hook.
   * Added graceful loading states to prevent form submission before data is ready.
   * **Validation:** Verified end-to-end that the "Override Rule" and "Tenant Isolation" correctly reflect in the UI for both roles.
+
+  ### [Resolved] Contingency 3: Separation of Powers & Global Parameterization (SaaS Authorization Engine)
+* **Objective:** Enforce the "Default-Closed" rule for premium SaaS modules to prevent unauthorized access by local community admins.
+* **Execution details:**
+  * Added `saas_settings` JSONB column to `communities` table for high-performance feature flagging without N+1 queries.
+  * Created `system_settings` table for SuperAdmin global parameterization (e.g., automated moderation dictionaries).
+  * Implemented `EnsureTenantHasFeature` middleware and registered alias `tenant.feature` in `bootstrap/app.php` (Laravel 13 standard).
+  * Created `CommunityFeatureController` isolated for SuperAdmin use.
+* **Validation:** Verified via Tinker that a tenant explicitly fails-closed (403) without a feature and succeeds when granted the flag via JSONB update.

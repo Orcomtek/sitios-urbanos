@@ -23,6 +23,7 @@ class Community extends Model
         'slug',
         'subdomain',
         'status',
+        'saas_settings',
     ];
 
     /**
@@ -54,5 +55,29 @@ class Community extends Model
     public function residents(): HasMany
     {
         return $this->hasMany(Resident::class);
+    }
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'saas_settings' => 'array',
+        ];
+    }
+
+    /**
+     * Check if the community has a specific SaaS feature enabled.
+     *
+     * @param string $feature
+     * @return bool
+     */
+    public function hasFeature(string $feature): bool
+    {
+        $settings = $this->saas_settings ?? [];
+
+        return $settings[$feature] ?? false;
     }
 }

@@ -78,5 +78,18 @@
   * **Critical Bug Fix:** Forced `$request->route('type')` in the controller to prevent the tenant subdomain string from shifting and overwriting the `$type` parameter.
 * **Frozen Architectural Decision (The Override Rule):** If a local taxonomy (created by a community) shares the exact same `value` as a global Sitios Urbanos taxonomy, the Controller uses `.keyBy('value')` to ensure the local record natively overwrites the global one in the API response, preventing duplicate keys in Vue loops.
 
-*Fin del Registro Activo.*
+## 🚨 Contingencia 3: Separación de Poderes y Parametrización Global (El Panel SuperAdmin de Sitios Urbanos vs. Panel Local).
 
+**Estado:** `[Resuelta]` 
+
+### [Resolved] Contingency 3: Separation of Powers & Global Parameterization (SaaS Authorization Engine)
+* **Objective:** Enforce the "Default-Closed" rule for premium SaaS modules to prevent unauthorized access by local community admins.
+* **Execution details:**
+  * Added `saas_settings` JSONB column to `communities` table for high-performance feature flagging without N+1 queries.
+  * Created `system_settings` table for SuperAdmin global parameterization (e.g., automated moderation dictionaries).
+  * Implemented `EnsureTenantHasFeature` middleware and registered alias `tenant.feature` in `bootstrap/app.php` (Laravel 13 standard).
+  * Created `CommunityFeatureController` isolated for SuperAdmin use.
+* **Validation:** Verified via Tinker that a tenant explicitly fails-closed (403) without a feature and succeeds when granted the flag via JSONB update.
+
+
+*Fin del Registro Activo.*
