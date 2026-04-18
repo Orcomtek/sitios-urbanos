@@ -79,7 +79,6 @@
 * **Frozen Architectural Decision (The Override Rule):** If a local taxonomy (created by a community) shares the exact same `value` as a global Sitios Urbanos taxonomy, the Controller uses `.keyBy('value')` to ensure the local record natively overwrites the global one in the API response, preventing duplicate keys in Vue loops.
 
 ## 🚨 Contingencia 3: Separación de Poderes y Parametrización Global (El Panel SuperAdmin de Sitios Urbanos vs. Panel Local).
-
 **Estado:** `[Resuelta]` 
 
 ### [Resolved] Contingency 3: Separation of Powers & Global Parameterization (SaaS Authorization Engine)
@@ -90,6 +89,26 @@
   * Implemented `EnsureTenantHasFeature` middleware and registered alias `tenant.feature` in `bootstrap/app.php` (Laravel 13 standard).
   * Created `CommunityFeatureController` isolated for SuperAdmin use.
 * **Validation:** Verified via Tinker that a tenant explicitly fails-closed (403) without a feature and succeeds when granted the flag via JSONB update.
+
+## 🚨 Contingencia 4: Auditoría UX y Refactor de Core Entities (Unidades y Residentes - Bloque 4).
+**Estado:** `[Resuelta]` 
+
+### [Resolved] Contingency 4: UX Audit & Core Entities Refactor (Units & Residents)
+* **Objective:** Establish robust, tenant-isolated CRUD operations for Units and Residents with an optimized, low-cognitive-load UI for property managers.
+* **Execution details:**
+  * Verified database constraints: `UNIQUE(['community_id', 'identifier'])` on Units and direct `unit_id` FK on Residents with `SoftDeletes` for historical tracking.
+  * Implemented strict Tenant Isolation at the Form Request level (`StoreResidentRequest`) using scoped `exists` rules to prevent IDOR attacks.
+  * Refactored `UnitController` to use `withCount` for lightweight grid rendering and eager loading on an isolated `/show` endpoint.
+  * **UX/CRO Win:** Replaced multi-page navigation with a reactive Vue `UnitSlideOver` component, allowing resident management directly within the Unit context without reloading the page.
+
+
+
+## 🚨 Contingencia 5: Auditoría UX de Gobernanza (Votaciones, Encuestas, Documentos - Bloque 13).
+**Estado:** `[Pendiente]`
+
+
+## 🚨 Contingencia 6: Auditoría UX e Integración de Accesos (Visitantes e Invitaciones huérfanos en menús - Bloques 14 y 17).
+**Estado:** `[Pendiente]`
 
 
 *Fin del Registro Activo.*

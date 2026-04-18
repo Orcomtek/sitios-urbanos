@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, Link, usePage } from '@inertiajs/vue3';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
+import axios from 'axios';
+import UnitSlideOver from './Components/UnitSlideOver.vue';
 
 const props = defineProps<{
     units: {
@@ -18,6 +20,26 @@ const props = defineProps<{
 const page = usePage();
 const communitySlug = computed(() => (page.props.tenant as any)?.community?.slug);
 
+const isSlideOverOpen = ref(false);
+const selectedUnitId = ref<number | null>(null);
+const isLoadingUnit = ref(false);
+
+const openSlideOver = (unitId: number) => {
+    selectedUnitId.value = unitId;
+    isSlideOverOpen.value = true;
+    isLoadingUnit.value = true;
+    
+    // The SlideOver component handles the data fetching based on these reactive props
+    // We orchestrate the opening here
+    setTimeout(() => {
+        isLoadingUnit.value = false;
+    }, 100);
+};
+
+const closeSlideOver = () => {
+    isSlideOverOpen.value = false;
+    selectedUnitId.value = null;
+};
 </script>
 
 <template>
@@ -52,7 +74,7 @@ const communitySlug = computed(() => (page.props.tenant as any)?.community?.slug
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-200">
-                                <tr v-for="unit in units.data" :key="unit.id">
+                                <tr v-for="unit in units.data" :key="unit.id" @click="openSlideOver(unit.id)" class="cursor-pointer hover:bg-gray-50 transition">
                                     <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0">{{ unit.identifier }}</td>
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                         {{ unit.type === 'apartment' ? 'Apartamento' :
@@ -66,7 +88,8 @@ const communitySlug = computed(() => (page.props.tenant as any)?.community?.slug
                                         <span v-else class="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">Mantenimiento</span>
                                     </td>
                                     <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
-                                        <Link :href="route('units.edit', { community_slug: communitySlug, unit: unit.id })" class="text-indigo-600 hover:text-indigo-900">Editar</Link>
+                                        <button @click.stop="openSlideOver(unit.id)" class="text-indigo-600 hover:text-indigo-900">Residentes</button>
+                                        <Link :href="route('units.edit', { community_slug: communitySlug, unit: unit.id })" class="text-indigo-600 hover:text-indigo-900 ml-4">Editar</Link>
                                     </td>
                                 </tr>
                                 <tr v-if="units.data.length === 0">
@@ -80,5 +103,12 @@ const communitySlug = computed(() => (page.props.tenant as any)?.community?.slug
                 </div>
             </div>
         </div>
+
+        <UnitSlideOver 
+            :is-open="isSlideOverOpen" 
+            :unit-id="selectedUnitId"
+            :is-loading="isLoadingUnit"
+            @close="closeSlideOver" 
+        />
     </AppLayout>
 </template>

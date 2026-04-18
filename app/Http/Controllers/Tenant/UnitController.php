@@ -22,12 +22,30 @@ class UnitController extends Controller
     {
         $community = $this->context->require();
 
+        // Optimized for the grid, no heavy eager loading, only counts if necessary
         $units = $community->units()
+            ->withCount('residents')
             ->orderBy('identifier')
             ->paginate(50);
 
         return Inertia::render('Tenant/Units/Index', [
             'units' => $units,
+        ]);
+    }
+
+    public function show(string $community_slug, Unit $unit)
+    {
+        $this->context->require();
+
+        // Eager load residents for the Slide-over context
+        $unit->load(['residents' => function ($query) {
+            $query->orderBy('is_active', 'desc')
+                  ->orderBy('full_name', 'asc');
+        }]);
+
+        // Returning as JSON to be consumed asynchronously by the Vue Slide-over
+        return response()->json([
+            'unit' => $unit
         ]);
     }
 
