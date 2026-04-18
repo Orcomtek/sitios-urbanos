@@ -20,6 +20,7 @@ use App\Http\Controllers\Api\Security\AccessInvitationController;
 use App\Http\Controllers\Api\Security\EmergencyEventController;
 use App\Http\Controllers\Api\Security\PackageController;
 use App\Http\Controllers\Api\Security\VisitorController;
+use App\Http\Controllers\Api\SystemTaxonomyController;
 use App\Http\Controllers\Webhooks\EpaycoWebhookController;
 use App\Http\Middleware\TenantMiddleware;
 use Illuminate\Http\Request;
@@ -36,6 +37,8 @@ $centralDomain = config('app.central_domain', 'sitios-urbanos.test');
 Route::domain('{community_slug}.'.$centralDomain)
     ->middleware(['auth:sanctum', TenantMiddleware::class])
     ->group(function () {
+        Route::get('/system/taxonomies/{type}', [SystemTaxonomyController::class, 'index'])->name('api.system.taxonomies.index');
+
         Route::get('/cockpit/dashboard', [DashboardController::class, 'index'])->name('api.cockpit.dashboard');
         Route::get('/cockpit/work-queue', [WorkQueueController::class, 'index'])->name('api.cockpit.work-queue');
         Route::get('/cockpit/admin-work-queue', [AdminWorkQueueController::class, 'index'])->name('api.cockpit.admin-work-queue');

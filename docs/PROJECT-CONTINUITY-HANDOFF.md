@@ -37,12 +37,14 @@ This project uses a structured execution model:
 
 ### Rule
 
-ChatGPT MUST:
+ChatGPT (and any AI agent) MUST:
 
 - NOT act as code executor
 - plan, review, validate, and audit
 - enforce RIGOR discipline
 - protect architecture and scope
+- NOT execute code directly
+- NOT modify this document
 
 ---
 
@@ -107,50 +109,21 @@ No deviations without explicit approval.
 
 ---
 
-## 7. Mandatory Methodology — RIGOR 3.0
+### Rule 7. Mandatory Methodology — RIGOR 4.2
+This project is governed strictly by **RIGOR 4.2**. No implementation is allowed without passing through the full lifecycle:
+1.  **Task Definition:** Small, concrete, and bounded.
+2.  **Implementation Plan:** Technical logic, affected files, and risks.
+3.  **Explicit Approval:** The Architect must approve the plan before a single line of code is written.
+4.  **Execution:** Strictly limited to the approved scope.
+5.  **Validation:** Technical verification (Routes, Models, Logic).
+6.  **Closing Audit (The Hard Gate):** Mandatory check against Visual/UX standards, 100% SRS compliance, and Tenant Isolation.
+7.  **Closure:** Documentation and clean commit.
+
+**Strict Prohibition:** Skipping the Closing Audit or normalizing "silent errors" (like swallowed 422 validations) is a breach of RIGOR 4.2.
 
 ---
 
-### Core Principle
-
-The system is built in **controlled execution blocks**, not features.
-
----
-
-### Rules
-
-- work block-by-block
-- no code without planning
-- require:
-  - Task List
-  - Implementation Plan
-  - Approval
-- validate before moving forward
-
----
-
-### Block Lifecycle
-
-Each block MUST be:
-
-1. Planned  
-2. Implemented  
-3. Validated  
-4. Documented (continuity update)
-
----
-
-### Forbidden
-
-- skipping steps
-- mixing blocks
-- premature optimization
-- scope expansion
-- architecture improvisation
-
----
-
-## 8. Execution Backlog (RIGOR 3.0)
+## 8. Execution Backlog (RIGOR 4.2)
 
 ---
 
@@ -332,82 +305,29 @@ The system MUST:
 
 ---
 
-## 17. Required Continuity Content
-
-Each update MUST include:
-
----
-
-### Current Phase
-
-Example:
-
-RIGOR 3.0 — Block 1 (Infrastructure)
-
----
-
-### Completed Work
-
-- implemented features
-- validated flows
-- passed tests
+### Rule 17. Required Continuity Content
+Every handoff or block closure must contain:
+1.  **Current Block Status:** [Resolved], [Pending], or [Incomplete].
+2.  **Last Validated Milestone:** What is physically working and tested.
+3.  **Closing Audit Evidence:**
+    * **Visual/UX:** Confirmation of premium UI and error handling.
+    * **SRS Compliance:** Verification against functional requirements.
+    * **Tenant Isolation:** Evidence that data is strictly scoped to `community_id`.
+4.  **Frozen Decisions:** Any new architectural or business rules established.
+5.  **Pending Contingencies:** Any debt or UX refactor discovered and logged in `PROJECT-CONTINGENCIES.md`.
+6.  **Next Immediate Step:** Precise instruction for the next session.
 
 ---
 
-### System State
-
-- stable / unstable
-- limitations
-
----
-
-### Active Constraints
-
-- tenant rules
-- financial rules
-- security rules
-- MVP boundaries
-
----
-
-### Next Steps
-
-- next block
-- dependencies
-
----
-
-### Risks
-
-- fragile areas
-- warnings
-
----
-
-## 18. New Chat Resume Protocol
-
----
-
-### Required Documents
-
-- PROJECT-CONTINUITY-HANDOFF.md
-- PRD
-- SRS
-- MVP
-- Backlog
-- Rules
-
----
-
-### Instruction Template
-
-```text
-Continue Sitios Urbanos using RIGOR 3.0.
-We are currently at [BLOCK].
-Request Task List + Implementation Plan.
-Do not re-plan previous phases.
-Do not change frozen decisions.
-```
+### Rule 18. New Chat Resume Protocol
+When starting a new session or switching agents, the following protocol is mandatory:
+1.  **Mandatory Document Bundle:** The agent MUST read the following files before any action:
+    * `METHODOLOGY-RIGOR.md` (To understand governance).
+    * `PROJECT-CONTINUITY-HANDOFF.md` (To understand current state).
+    * `PROJECT-CONTINGENCIES.md` (To understand technical debt and pending refactors).
+    * `ARCHITECTURE.md` & `APP-STRUCTURE.md` (To understand boundaries).
+2.  **State Verification:** The agent must summarize its understanding of the "Last Validated Milestone" and "Next Step" before requesting approval to proceed.
+3.  **Context Alignment:** Any deviation from the "Frozen Decisions" found in the Handoff must be flagged immediately.
 
 ---
 
@@ -482,430 +402,465 @@ The project must behave as:
 
 Not as a chat-dependent process.
 
-Current Phase
-
-# convertir a Markdown desde aqui
-
-RIGOR 3.0 — Block 1 (Infrastructure & Multi-Domain Foundation) ✅ COMPLETED
-
-🔹 Completed Work
-Subdomain architecture implemented
-Control Plane and Tenant Runtime separated
-Session shared across subdomains
-Path-based tenancy removed from runtime
-Tests updated to domain-based routing
-Local development strategy documented
-🔹 System State
-Stable
-Infrastructure ready for authentication layer
-No known tenant leakage risks
-🔹 Next Step
-
-👉 RIGOR 3.0 — Block 2 (Authentication & Entry)
-
-Current Phase
-
-RIGOR 3.0 — Block 2 (Authentication & Entry) ✅ COMPLETED
-
-Completed Work
-Login flow anchored in app.sitios-urbanos.test
-Private community selector implemented through backend validation
-Single-community auto-redirect implemented
-Zero-community controlled state implemented
-Tenant runtime root route established with temporary redirect to units.index
-Session persistence across subdomains manually validated in browser
-Root tenant redirect bug fixed by explicitly forwarding community_slug
-System State
-Stable
-Authentication and tenant entry flow operational
-Shared session behavior confirmed
-Next Step
-
-👉 RIGOR 3.0 — Block 3 (Tenant Runtime Hardening)
-
-Risks / Notes
-Tenant runtime still uses temporary landing redirect to units.index
-Full tenant runtime hardening remains pending in Block 3
-
-Current Phase
-
-RIGOR 3.0 — Block 3 (Tenant Runtime Hardening) ✅ COMPLETED
-
-Completed Work
-TenantScope and TenantScoped implemented
-TenantContext enforced as runtime authority
-Unit and Resident models protected via automatic scoping
-community_id removed from fillable
-payload manipulation prevented
-route model binding secured via tenant scope
-middleware priority corrected (TenantMiddleware before SubstituteBindings)
-cross-tenant access denied (404)
-manual validation of tenant isolation performed
-System State
-Stable
-Tenant runtime isolation enforced
-No cross-tenant leakage in HTTP runtime
-Risks / Notes
-Outside TenantContext (queues, artisan, control plane), scope behaves benignly
-Queue tenancy not yet implemented
-Next Step
-
-👉 RIGOR 3.0 — Block 4 (Core Entities Hardening)
-
-Current Phase
-
-RIGOR 3.0 — Block 4 (Core Entities Hardening) ✅ COMPLETED
-
-Completed Work
-Unit aligned with SRS (property_type, parking, storage)
-JSONB identifiers implemented
-Resident aligned with SRS (full_name, resident_type, is_active, pays_administration)
-user_id remains nullable
-one-active-tenant-per-unit enforced (application + DB)
-hard rejection implemented
-factories and tests updated
-constraint validated through automated and manual tests
-System State
-Stable
-Core domain entities aligned with business rules
-Data integrity significantly improved
-Risks / Notes
-Partial unique index only active in PostgreSQL
-SQLite fallback relies on application-level validation
-Next Step
-
-👉 RIGOR 3.0 — Block 5 (Financial Engine Foundation)
-
-Current Phase
-
-RIGOR 3.0 — Block 5 (Financial Engine Foundation) ✅ COMPLETED
-
-Completed Work
-Invoice, Payment, LedgerEntry models implemented
-resident_id used as operational payer reference
-issued_at added to Invoice
-strict enums for statuses and methods
-integer-based monetary handling (COP)
-unit-centric ledger implemented
-ledger immutability enforced
-idempotency implemented via idempotency_key
-1 payment → 1 invoice enforced
-transactional integrity using DB::transaction()
-System State
-Stable
-Financial foundation operational
-Ledger integrity enforced
-Ready for payment gateway integration (future block)
-Risks / Notes
-No refund engine yet
-No multi-invoice payments yet
-No overdue logic yet
-ePayco integration pending
-Next Step
-
-👉 RIGOR 3.0 — Block 6 (Payments Integration + Notifications)
-
-Current Phase
-
-RIGOR 3.0 — Block 6 (Aggregator Payments + Split Orchestration) ✅ COMPLETED
-
-Completed Work
-Payment model extended for aggregator orchestration
-external_reference and idempotency_key separated correctly
-webhook endpoint implemented (/api/webhooks/epayco)
-cryptographic signature validation enforced
-strict webhook validation pipeline implemented
-idempotent webhook processing ensured
-Payment → Invoice state synchronization implemented
-ledger entries for payment and platform commission created
-net_amount and platform_commission handled via configuration
-internal vs external payment logic separated
-System State
-Stable
-Payment orchestration functional
-Financial integrity enforced end-to-end
-Ready for real ePayco environment integration
-Risks / Notes
-Commission currently uses placeholder configuration
-No refund engine yet
-No multi-invoice payments yet
-No advanced reconciliation UI yet
-Next Step
-
-👉 RIGOR 3.0 — Block 7 (Notifications + User Financial UX)
-
-Current Phase
-
-RIGOR 3.0 — Block 7 (Notifications + Financial UX Layer) ✅ COMPLETED
-
-Completed Work
-PaymentConfirmed and PaymentFailed domain events implemented
-SendPaymentNotifications listener created
-Mail-based notification system (no database notifications)
-Recipient resolution via Invoice → Resident → User
-FinancialStateController exposing invoice/payment state
-Tenant-scoped API endpoints implemented
-Event dispatch tied strictly to valid financial state transitions
-No notifications on invalid or tampered webhooks
-Full test coverage for events, notifications, and API
-System State
-Stable
-Financial UX layer operational
-Notifications working correctly
-API ready for frontend integration
-Risks / Notes
-No notification inbox/history yet
-No push/SMS yet
-No advanced UX/UI yet
-Next Step
-
-👉 RIGOR 3.0 — Block 8 (Legal + Data Layer + Compliance Hardening)
-
-Current Phase
-
-RIGOR 3.0 — Block 8 (Legal + Data + Compliance Hardening) ✅ COMPLETED
-
-Completed Work
-append-only security log foundation implemented
-legal consent tracking foundation implemented
-resident anonymization action implemented
-retention manager baseline implemented
-sensitive resident deletion flow now logs security events
-privacy and compliance foundations added without exposing public compliance APIs
-System State
-Stable
-Sensitive actions now have a compliance-ready technical base
-Privacy hardening foundations are active
-Risks / Notes
-No public anonymization endpoint yet
-No full legal/compliance dashboard yet
-Retention manager remains foundational and non-destructive by default
-Next Step
-
-👉 RIGOR 3.0 — Bloque de consolidación / revisión estratégica del roadmap siguiente
-
-Current Phase
-
-RIGOR 3.0 — Block 9 (PQRS + Governance Core) ✅ COMPLETED
-
-Completed Work
-PQRS entity implemented with tenant safety
-Resident-based operational identity enforced
-Anonymous PQRS supported with output-level identity protection
-PQRS type and status enums defined
-Admin state transitions and responses implemented via action
-Integration with SecurityLog for traceability
-Tests for tenant isolation, anonymity, transitions and logging
-System State
-Stable
-Governance core operational
-PQRS ready for real usage scenarios
-Risks / Notes
-No advanced workflow (SLA, assignments) yet
-No UI/dashboard yet
-Anonymity enforced at model serialization level (future: API Resources)
-Next Step
-
-👉 RIGOR 3.0 — Bloque 10: Governance UX + Notifications + Admin Flow
-
-Current Phase
-
-RIGOR 3.0 — Block 10 (Governance UX + Admin Flow) ✅ COMPLETED
-
-Completed Work
-Full PQRS API implemented (create, list, show, update)
-Role-based visibility enforced per tenant
-Anonymous PQRS fully protected at API layer via Resource
-Admin flow implemented using UpdatePqrsStateAction
-Notifications for PQRS creation and updates implemented
-Tenant-safe routing and access control enforced
-End-to-end feature tests implemented
-System State
-Stable
-PQRS module fully operational
-Governance flow usable end-to-end via API
-Risks / Notes
-No UI yet (intentional)
-No SLA or advanced workflow
-No analytics/reporting layer
-Next Step
-
-Current Phase
-
-RIGOR 3.0 — Block 11 (Financial UX + Account Statement Core) ✅ COMPLETED
-
-Completed Work
-Account Statement API implemented
-Balance derived strictly from LedgerEntry
-Invoice history endpoint implemented
-Payment history endpoint implemented
-PLATFORM_COMMISSION correctly isolated from unit balance
-Tenant-safe financial access enforced
-API Resources implemented for all outputs
-Feature tests and manual validation completed
-System State
-Stable
-Financial engine now visible and understandable for users
-Ready for real-world usage
-Risks / Notes
-No UI yet (intencional)
-No reporting layer
-No export features
-Next Step
-
-👉 Bloque 12 — Financial Operations UX (Payments Flow + UX Real)
-
-Current Phase
-
-RIGOR 3.0 — Block 12 (Payments UX + Execution Flow) ✅ COMPLETED
-
-Completed Work
-payment initiation endpoint implemented
-pending payment intents safely reused
-payable invoice rule enforced
-tenant-safe payment initiation enforced
-financial state endpoints hardened with ownership validation
-PaymentIntentResource added for frontend-safe handoff
-feature tests for payment initiation and financial state updated
-System State
-Stable
-Residents can now initiate payments safely from pending invoices
-Payment flow is now consumable end-to-end through API
-Risks / Notes
-No expiration engine for pending intents yet
-No payment frontend yet
-No multi-invoice payment support yet
-Next Step
-
-👉 Definir el siguiente frente estratégico:
-Governance extendido o Marketplace / Ecosystem foundation
-
-Current Phase
-
-RIGOR 3.0 — Block 13 (Governance Extended: Announcements + Documents + Voting Core) ✅ COMPLETED
-
-Completed Work
-Announcement module implemented
-Document repository module implemented
-Poll / voting core implemented
-voting eligibility and one-vote-per-unit enforced
-tenant-safe governance APIs implemented
-API Resources for governance entities implemented
-tests for tenant isolation, access rules and voting constraints completed
-System State
-Stable
-Governance extended layer operational
-Community communication and decision foundations active
-Risks / Notes
-No legal/certified voting yet
-No governance analytics yet
-No frontend yet
-Voting remains MVP/simple by design
-Next Step
-
-👉 Definir el siguiente macrofrente:
-Marketplace / Ecosystem foundation o Operations / Security extension
-
-Current Phase
-
-RIGOR 3.0 — Block 14 (Visitors & Access Core) ✅ COMPLETED
-
-Completed Work
-visitor registration system implemented
-visitor state machine implemented (pending → entered → exited)
-tenant-safe visitor access enforced
-role-based operation (resident create, admin/guard operate)
-TransitionVisitorStatusAction implemented
-VisitorResource implemented
-feature tests covering access, isolation and transitions
-System State
-Stable
-Core access/visitor flow operational
-Ready for real-world usage in communities
-Risks / Notes
-No QR or automated validation yet
-No package integration yet
-No panic/emergency flows yet
-Next Step
-
-👉 Bloque 15 — Packages (Paquetería)
-
-Current Phase
-
-RIGOR 3.0 — Block 15 (Packages Core) ✅ COMPLETED
-
-Completed Work
-package lifecycle system implemented
-unit-based modeling enforced
-package reception and delivery flows operational
-strict state transitions (received → delivered / returned)
-role-based operations (admin/guard)
-API endpoints implemented
-feature tests covering isolation, access, and transitions
-System State
-Stable
-Visitors + Packages fully operational
-Core operations layer now usable in real communities
-Risks / Notes
-no notifications yet (intentional)
-no OCR or automation
-no analytics
-no audit log integration yet (can come later)
-Next Step
-
-👉 Bloque 16 — Panic Button + Notifications
-
-Current Phase
-
-RIGOR 3.0 — Block 16 (Panic Button + Notifications) ✅ COMPLETED
-
-Completed Work
-emergency event system implemented
-panic trigger flow operational
-strict state machine (active → acknowledged → resolved)
-anti-duplicate logic per unit + type
-role-based operations (resident trigger, admin/guard handle)
-SecurityLog fully integrated
-minimal notification system implemented
-full API + tests
-System State
-Stable
-Operational + security layer now complete
-Platform now supports real-world emergency flows
-Risks / Notes
-no SMS yet (future block)
-no realtime push (future block)
-no escalation logic yet
-no SLA/priority engine yet
-Next Step
-
-👉 Bloque 17 — Access Extensions (QR / Invitaciones)
-
-Current Phase
-
-RIGOR 3.0 — Block 17 (Access Extensions: QR / Invitations) ✅ COMPLETED
-
-Completed Work
-access invitation subsystem implemented
-secure single-use invitation lifecycle enforced
-expiration and revocation logic implemented
-tenant-safe invitation visibility and consumption implemented
-security logging integrated for creation, consumption, and revocation
-invitation API endpoints implemented
-feature tests covering isolation, ownership, expiration, and single-use constraints completed
-System State
-Stable
-Visitors + Packages + Emergency + Invitations now form a real operational security layer
-Product is increasingly ready for serious pilots
-Risks / Notes
-no hardware integration yet
-no QR scanner integration yet
-no multi-use invitation support yet
-no visitor auto-linking/auto-creation yet
-Next Step
-
-👉 Definir siguiente macrofrente:
-Marketplace / Ecosystem foundation o Admin UX / Operational cockpit
+## 25. 🧊 Frozen Business & Architectural Decisions
+
+* **Monetization & Global Services Access (Default-Closed Rule):** All global services within the Sitios Urbanos ecosystem (Marketplace, Add-ons, External Services, Global Categories) are **default-closed** to community administrations. Sitios Urbanos owns the supply, controls the publishing, and manages these modules exclusively via the SuperAdmin panel. Granting creation/management permissions to a local community administration is strictly a **transactional exception** (enabled via a *Feature Flag* linked to a premium plan or membership sale). Native internal management modules (e.g., visitors, PQRS) retain their standard local administration behavior.
+
+# Arquitectura y Roadmap: RIGOR 3.0
+
+---
+
+## RIGOR 3.0 — Block 1 (Infrastructure & Multi-Domain Foundation) ✅ COMPLETED
+
+### 🔹 Completed Work
+* Subdomain architecture implemented.
+* Control Plane and Tenant Runtime separated.
+* Session shared across subdomains.
+* Path-based tenancy removed from runtime.
+* Tests updated to domain-based routing.
+* Local development strategy documented.
+
+### 🔹 System State
+* Stable.
+* Infrastructure ready for authentication layer.
+* No known tenant leakage risks.
+
+### 🔹 Next Step
+👉 **RIGOR 3.0 — Block 2 (Authentication & Entry)**
+
+---
+
+## RIGOR 3.0 — Block 2 (Authentication & Entry) ✅ COMPLETED
+
+### 🔹 Completed Work
+* Login flow anchored in `app.sitios-urbanos.test`.
+* Private community selector implemented through backend validation.
+* Single-community auto-redirect implemented.
+* Zero-community controlled state implemented.
+* Tenant runtime root route established with temporary redirect to `units.index`.
+* Session persistence across subdomains manually validated in browser.
+* Root tenant redirect bug fixed by explicitly forwarding `community_slug`.
+
+### 🔹 System State
+* Stable.
+* Authentication and tenant entry flow operational.
+* Shared session behavior confirmed.
+
+### 🔹 Risks / Notes
+* Tenant runtime still uses temporary landing redirect to `units.index`.
+* Full tenant runtime hardening remains pending in Block 3.
+
+### 🔹 Next Step
+👉 **RIGOR 3.0 — Block 3 (Tenant Runtime Hardening)**
+
+---
+
+## RIGOR 3.0 — Block 3 (Tenant Runtime Hardening) ✅ COMPLETED
+
+### 🔹 Completed Work
+* `TenantScope` and `TenantScoped` implemented.
+* `TenantContext` enforced as runtime authority.
+* `Unit` and `Resident` models protected via automatic scoping.
+* `community_id` removed from fillable properties (payload manipulation prevented).
+* Route model binding secured via tenant scope.
+* Middleware priority corrected (`TenantMiddleware` before `SubstituteBindings`).
+* Cross-tenant access denied (404).
+* Manual validation of tenant isolation performed.
+
+### 🔹 System State
+* Stable.
+* Tenant runtime isolation enforced.
+* No cross-tenant leakage in HTTP runtime.
+
+### 🔹 Risks / Notes
+* Outside `TenantContext` (queues, artisan, control plane), scope behaves benignly.
+* Queue tenancy not yet implemented.
+
+### 🔹 Next Step
+👉 **RIGOR 3.0 — Block 4 (Core Entities Hardening)**
+
+---
+
+## RIGOR 3.0 — Block 4 (Core Entities Hardening) ✅ COMPLETED
+
+### 🔹 Completed Work
+* `Unit` aligned with SRS (`property_type`, `parking`, `storage`).
+* JSONB identifiers implemented.
+* `Resident` aligned with SRS (`full_name`, `resident_type`, `is_active`, `pays_administration`).
+* `user_id` remains nullable.
+* One-active-tenant-per-unit enforced (application + DB level).
+* Hard rejection implemented.
+* Factories and tests updated.
+* Constraint validated through automated and manual tests.
+
+### 🔹 System State
+* Stable.
+* Core domain entities aligned with business rules.
+* Data integrity significantly improved.
+
+### 🔹 Risks / Notes
+* Partial unique index only active in PostgreSQL.
+* SQLite fallback relies on application-level validation.
+
+### 🔹 Next Step
+👉 **RIGOR 3.0 — Block 5 (Financial Engine Foundation)**
+
+---
+
+## RIGOR 3.0 — Block 5 (Financial Engine Foundation) ✅ COMPLETED
+
+### 🔹 Completed Work
+* `Invoice`, `Payment`, `LedgerEntry` models implemented.
+* `resident_id` used as operational payer reference.
+* `issued_at` added to Invoice.
+* Strict enums for statuses and methods implemented.
+* Integer-based monetary handling (COP).
+* Unit-centric ledger implemented with immutability enforced.
+* Idempotency implemented via `idempotency_key`.
+* 1 payment → 1 invoice constraint enforced.
+* Transactional integrity using `DB::transaction()`.
+
+### 🔹 System State
+* Stable.
+* Financial foundation operational.
+* Ledger integrity enforced.
+* Ready for payment gateway integration.
+
+### 🔹 Risks / Notes
+* No refund engine yet.
+* No multi-invoice payments yet.
+* No overdue logic yet.
+* ePayco integration pending.
+
+### 🔹 Next Step
+👉 **RIGOR 3.0 — Block 6 (Payments Integration + Notifications)**
+
+---
+
+## RIGOR 3.0 — Block 6 (Aggregator Payments + Split Orchestration) ✅ COMPLETED
+
+### 🔹 Completed Work
+* `Payment` model extended for aggregator orchestration.
+* `external_reference` and `idempotency_key` separated correctly.
+* Webhook endpoint implemented (`/api/webhooks/epayco`).
+* Cryptographic signature validation enforced.
+* Strict webhook validation pipeline implemented.
+* Idempotent webhook processing ensured.
+* Payment → Invoice state synchronization implemented.
+* Ledger entries for payment and platform commission created.
+* `net_amount` and `platform_commission` handled via configuration.
+* Internal vs External payment logic separated.
+
+### 🔹 System State
+* Stable.
+* Payment orchestration functional.
+* Financial integrity enforced end-to-end.
+* Ready for real ePayco environment integration.
+
+### 🔹 Risks / Notes
+* Commission currently uses placeholder configuration.
+* No refund engine yet.
+* No multi-invoice payments yet.
+* No advanced reconciliation UI yet.
+
+### 🔹 Next Step
+👉 **RIGOR 3.0 — Block 7 (Notifications + User Financial UX)**
+
+---
+
+## RIGOR 3.0 — Block 7 (Notifications + Financial UX Layer) ✅ COMPLETED
+
+### 🔹 Completed Work
+* `PaymentConfirmed` and `PaymentFailed` domain events implemented.
+* `SendPaymentNotifications` listener created.
+* Mail-based notification system (no database notifications).
+* Recipient resolution via Invoice → Resident → User.
+* `FinancialStateController` exposing invoice/payment state.
+* Tenant-scoped API endpoints implemented.
+* Event dispatch tied strictly to valid financial state transitions.
+* No notifications on invalid or tampered webhooks.
+* Full test coverage for events, notifications, and API.
+
+### 🔹 System State
+* Stable.
+* Financial UX layer operational.
+* Notifications working correctly.
+* API ready for frontend integration.
+
+### 🔹 Risks / Notes
+* No notification inbox/history yet.
+* No push/SMS yet.
+* No advanced UX/UI yet.
+
+### 🔹 Next Step
+👉 **RIGOR 3.0 — Block 8 (Legal + Data Layer + Compliance Hardening)**
+
+---
+
+## RIGOR 3.0 — Block 8 (Legal + Data + Compliance Hardening) ✅ COMPLETED
+
+### 🔹 Completed Work
+* Append-only security log foundation implemented.
+* Legal consent tracking foundation implemented.
+* Resident anonymization action implemented.
+* Retention manager baseline implemented.
+* Sensitive resident deletion flow now logs security events.
+* Privacy and compliance foundations added without exposing public compliance APIs.
+
+### 🔹 System State
+* Stable.
+* Sensitive actions now have a compliance-ready technical base.
+* Privacy hardening foundations are active.
+
+### 🔹 Risks / Notes
+* No public anonymization endpoint yet.
+* No full legal/compliance dashboard yet.
+* Retention manager remains foundational and non-destructive by default.
+
+### 🔹 Next Step
+👉 **RIGOR 3.0 — Bloque de consolidación / revisión estratégica del roadmap siguiente**
+
+---
+
+## RIGOR 3.0 — Block 9 (PQRS + Governance Core) ✅ COMPLETED
+
+### 🔹 Completed Work
+* PQRS entity implemented with tenant safety.
+* Resident-based operational identity enforced.
+* Anonymous PQRS supported with output-level identity protection.
+* PQRS type and status enums defined.
+* Admin state transitions and responses implemented via action.
+* Integration with `SecurityLog` for traceability.
+* Tests for tenant isolation, anonymity, transitions, and logging completed.
+
+### 🔹 System State
+* Stable.
+* Governance core operational.
+* PQRS ready for real usage scenarios.
+
+### 🔹 Risks / Notes
+* No advanced workflow (SLA, assignments) yet.
+* No UI/dashboard yet.
+* Anonymity enforced at model serialization level (future: API Resources).
+
+### 🔹 Next Step
+👉 **RIGOR 3.0 — Bloque 10: Governance UX + Notifications + Admin Flow**
+
+---
+
+## RIGOR 3.0 — Block 10 (Governance UX + Admin Flow) ✅ COMPLETED
+
+### 🔹 Completed Work
+* Full PQRS API implemented (create, list, show, update).
+* Role-based visibility enforced per tenant.
+* Anonymous PQRS fully protected at API layer via Resource.
+* Admin flow implemented using `UpdatePqrsStateAction`.
+* Notifications for PQRS creation and updates implemented.
+* Tenant-safe routing and access control enforced.
+* End-to-end feature tests implemented.
+
+### 🔹 System State
+* Stable.
+* PQRS module fully operational.
+* Governance flow usable end-to-end via API.
+
+### 🔹 Risks / Notes
+* No UI yet (intentional).
+* No SLA or advanced workflow.
+* No analytics/reporting layer.
+
+### 🔹 Next Step
+👉 **RIGOR 3.0 — Block 11 (Financial UX + Account Statement Core)**
+
+---
+
+## RIGOR 3.0 — Block 11 (Financial UX + Account Statement Core) ✅ COMPLETED
+
+### 🔹 Completed Work
+* Account Statement API implemented.
+* Balance derived strictly from `LedgerEntry`.
+* Invoice history endpoint implemented.
+* Payment history endpoint implemented.
+* `PLATFORM_COMMISSION` correctly isolated from unit balance.
+* Tenant-safe financial access enforced.
+* API Resources implemented for all outputs.
+* Feature tests and manual validation completed.
+
+### 🔹 System State
+* Stable.
+* Financial engine now visible and understandable for users.
+* Ready for real-world usage.
+
+### 🔹 Risks / Notes
+* No UI yet (intentional).
+* No reporting layer.
+* No export features.
+
+### 🔹 Next Step
+👉 **Bloque 12 — Financial Operations UX (Payments Flow + UX Real)**
+
+---
+
+## RIGOR 3.0 — Block 12 (Payments UX + Execution Flow) ✅ COMPLETED
+
+### 🔹 Completed Work
+* Payment initiation endpoint implemented.
+* Pending payment intents safely reused.
+* Payable invoice rule enforced.
+* Tenant-safe payment initiation enforced.
+* Financial state endpoints hardened with ownership validation.
+* `PaymentIntentResource` added for frontend-safe handoff.
+* Feature tests for payment initiation and financial state updated.
+
+### 🔹 System State
+* Stable.
+* Residents can now initiate payments safely from pending invoices.
+* Payment flow is now consumable end-to-end through API.
+
+### 🔹 Risks / Notes
+* No expiration engine for pending intents yet.
+* No payment frontend yet.
+* No multi-invoice payment support yet.
+
+### 🔹 Next Step
+👉 **Definir el siguiente frente estratégico: Governance extendido o Marketplace / Ecosystem foundation**
+
+---
+
+## RIGOR 3.0 — Block 13 (Governance Extended: Announcements + Documents + Voting Core) ✅ COMPLETED
+
+### 🔹 Completed Work
+* Announcement module implemented.
+* Document repository module implemented.
+* Poll / voting core implemented.
+* Voting eligibility and one-vote-per-unit enforced.
+* Tenant-safe governance APIs implemented.
+* API Resources for governance entities implemented.
+* Tests for tenant isolation, access rules, and voting constraints completed.
+
+### 🔹 System State
+* Stable.
+* Governance extended layer operational.
+* Community communication and decision foundations active.
+
+### 🔹 Risks / Notes
+* No legal/certified voting yet.
+* No governance analytics yet.
+* No frontend yet.
+* Voting remains MVP/simple by design.
+
+### 🔹 Next Step
+👉 **Definir el siguiente macrofrente: Marketplace / Ecosystem foundation o Operations / Security extension**
+
+---
+
+## RIGOR 3.0 — Block 14 (Visitors & Access Core) ✅ COMPLETED
+
+### 🔹 Completed Work
+* Visitor registration system implemented.
+* Visitor state machine implemented (`pending` → `entered` → `exited`).
+* Tenant-safe visitor access enforced.
+* Role-based operation (resident create, admin/guard operate).
+* `TransitionVisitorStatusAction` implemented.
+* `VisitorResource` implemented.
+* Feature tests covering access, isolation, and transitions.
+
+### 🔹 System State
+* Stable.
+* Core access/visitor flow operational.
+* Ready for real-world usage in communities.
+
+### 🔹 Risks / Notes
+* No QR or automated validation yet.
+* No package integration yet.
+* No panic/emergency flows yet.
+
+### 🔹 Next Step
+👉 **Bloque 15 — Packages (Paquetería)**
+
+---
+
+## RIGOR 3.0 — Block 15 (Packages Core) ✅ COMPLETED
+
+### 🔹 Completed Work
+* Package lifecycle system implemented.
+* Unit-based modeling enforced.
+* Package reception and delivery flows operational.
+* Strict state transitions (`received` → `delivered` / `returned`).
+* Role-based operations (admin/guard).
+* API endpoints implemented.
+* Feature tests covering isolation, access, and transitions.
+
+### 🔹 System State
+* Stable.
+* Visitors + Packages fully operational.
+* Core operations layer now usable in real communities.
+
+### 🔹 Risks / Notes
+* No notifications yet (intentional).
+* No OCR or automation.
+* No analytics.
+* No audit log integration yet (can come later).
+
+### 🔹 Next Step
+👉 **Bloque 16 — Panic Button + Notifications**
+
+---
+
+## RIGOR 3.0 — Block 16 (Panic Button + Notifications) ✅ COMPLETED
+
+### 🔹 Completed Work
+* Emergency event system implemented.
+* Panic trigger flow operational.
+* Strict state machine (`active` → `acknowledged` → `resolved`).
+* Anti-duplicate logic per unit + type.
+* Role-based operations (resident trigger, admin/guard handle).
+* `SecurityLog` fully integrated.
+* Minimal notification system implemented.
+* Full API + tests.
+
+### 🔹 System State
+* Stable.
+* Operational + security layer now complete.
+* Platform now supports real-world emergency flows.
+
+### 🔹 Risks / Notes
+* No SMS yet (future block).
+* No realtime push (future block).
+* No escalation logic yet.
+* No SLA/priority engine yet.
+
+### 🔹 Next Step
+👉 **Bloque 17 — Access Extensions (QR / Invitaciones)**
+
+---
+
+## RIGOR 3.0 — Block 17 (Access Extensions: QR / Invitations) ✅ COMPLETED
+
+### 🔹 Completed Work
+* Access invitation subsystem implemented.
+* Secure single-use invitation lifecycle enforced.
+* Expiration and revocation logic implemented.
+* Tenant-safe invitation visibility and consumption implemented.
+* Security logging integrated for creation, consumption, and revocation.
+* Invitation API endpoints implemented.
+* Feature tests covering isolation, ownership, expiration, and single-use constraints completed.
+
+### 🔹 System State
+* Stable.
+* Visitors + Packages + Emergency + Invitations now form a real operational security layer.
+* Product is increasingly ready for serious pilots.
+
+### 🔹 Risks / Notes
+* No hardware integration yet.
+* No QR scanner integration yet.
+* No multi-use invitation support yet.
+* No visitor auto-linking/auto-creation yet.
+
+### 🔹 Next Step (Decisión Estratégica)
+👉 **Definir siguiente macrofrente: Marketplace / Ecosystem foundation o Admin UX / Operational cockpit**
+
+---
 
 ## BLOCK 18 — Operational Dashboard Core (COMPLETED)
 
@@ -1947,3 +1902,20 @@ Implemented the backend core for the Professional Services Directory (Providers 
 - **Enums:** `ServiceRequestStatus` (pending, accepted, completed, cancelled) and `ServiceUrgency`.
 - **Security:** Addressed payload spoofing by forcing the backend to infer the `resident_id` directly from the authenticated session context (`$request->user()->currentResident`).
 - **Access Control:** Admins have global read access for auditing. Residents have full CRUD but strictly scoped to their own requests. Guards are explicitly blocked.
+
+### Block 34 — Providers Ecosystem UX (Frontend)
+- **Admin Interface:** Created `/cockpit/admin/providers`. Implemented a robust data table and a Slide-over/Modal for creating and editing providers.
+- **Dynamic Forms:** Successfully implemented reactive arrays for `contact_details` (allowing multiple phones/emails) mapping correctly to the backend JSONB column.
+- **Strict Validation UI:** Forced the UI to map and render Inertia 422 validation errors directly under the corresponding inputs, specifically catching the `status` requirement.
+- **Resident Interface:** Created `/cockpit/resident/providers`. Implemented a read-only masonry grid layout with inline category filters.
+- **Service Request Modal:** Implemented the "Solicitar Servicio" modal in the Resident view, successfully hitting the Block 33.5 backend.
+- **Tenant Isolation Verified:** Manually validated that providers created in one community (`test-community`) are strictly invisible to residents of another community.
+
+### [Resolved] Contingency 2: Database Standardization (Global/Local Taxonomies)
+* **Objective:** Centralize all dynamic select options and categories into a single polymorphic table to prevent database fragmentation.
+* **Execution details:**
+  * Created `system_taxonomies` migration with `foreignId` for `community_id` (nullable for global records).
+  * Implemented `SystemTaxonomy` model bypassing standard `TenantScoped` to allow a custom `scopeForCurrentTenantOrGlobal`.
+  * Created `SystemTaxonomyController` mapped to `/api/system/taxonomies/{type}`. 
+  * **Critical Bug Fix:** Forced `$request->route('type')` in the controller to prevent the tenant subdomain string from shifting and overwriting the `$type` parameter.
+* **Frozen Architectural Decision (The Override Rule):** If a local taxonomy (created by a community) shares the exact same `value` as a global Sitios Urbanos taxonomy, the Controller uses `.keyBy('value')` to ensure the local record natively overwrites the global one in the API response, preventing duplicate keys in Vue loops.

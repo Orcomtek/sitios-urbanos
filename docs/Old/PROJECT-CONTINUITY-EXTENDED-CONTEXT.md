@@ -300,11 +300,13 @@ This project uses a three-layer execution model:
 
 ### 11.2 Critical Rule
 
-ChatGPT MUST:
+ChatGPT (and any AI agent) MUST:
 
 - NOT assume it writes final code
 - produce plans and audits
 - validate Antigravity outputs
+- NOT execute code directly
+- NOT modify this document
 
 Antigravity is:
 
