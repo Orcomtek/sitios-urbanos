@@ -104,8 +104,15 @@
 
 
 ## 🚨 Contingencia 5: Auditoría UX de Gobernanza (Votaciones, Encuestas, Documentos - Bloque 13).
-**Estado:** `[Pendiente]`
+**Estado:** `[Resuelta]`
 
+### [Resolved] Contingency 5: UX Audit & Governance Refactor (Polls & Documents)
+* **Objective:** Unify Governance interactions into a high-conversion, single-page dashboard while enforcing strict legal auditability and preventing double-voting.
+* **Execution details:**
+  * Created robust pivot tables (`poll_votes`, `document_signatures`) with composite `UNIQUE(['community_id', 'poll_id', 'user_id'])` constraints to guarantee strict tenant isolation and absolute vote immutability.
+  * Future-proofed LATAM Assembly mechanics by adding a `vote_weight` column for property coefficient calculations.
+  * Centralized backend logic in `ParticipationCenterController` using advanced Eloquent Eager Loading (`whereDoesntHave`) to create a "Zero-State" inbox experience.
+  * **UX/CRO Win:** Implemented a unified Vue/Inertia dashboard (`Tenant/Governance/Index.vue`) featuring "One-Click Voting" without page reloads, fully integrated into the master `AppLayout` slot structure.
 
 ## 🚨 Contingencia 6: Auditoría UX e Integración de Accesos (Visitantes e Invitaciones huérfanos en menús - Bloques 14 y 17).
 **Estado:** `[Pendiente]`

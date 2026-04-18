@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\CommunityController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Tenant\Governance\ParticipationCenterController;
+use App\Actions\Governance\SubmitPollVoteAction;
 use Illuminate\Support\Facades\Route;
 
 $centralDomain = config('app.central_domain');
@@ -60,5 +62,7 @@ Route::domain('{community_slug}.'.$centralDomain)
             Route::get('/resident/ecosystem', [CockpitController::class, 'residentEcosystem'])->name('tenant.cockpit.resident.ecosystem');
             Route::get('/resident/providers', [CockpitController::class, 'residentProviders'])->name('tenant.cockpit.resident.providers');
             Route::get('/activity', [CockpitController::class, 'activity'])->name('tenant.cockpit.activity');
+            Route::get('/resident/centro-de-participacion', [ParticipationCenterController::class, 'index'])->name('tenant.governance.index');
+            Route::post('/resident/polls/{poll}/vote', [SubmitPollVoteAction::class, 'handle'])->name('tenant.governance.polls.vote');
         });
     });

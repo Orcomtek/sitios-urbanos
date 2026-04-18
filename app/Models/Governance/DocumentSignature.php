@@ -3,23 +3,20 @@
 namespace App\Models\Governance;
 
 use App\Models\Community;
-use App\Models\Unit;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class PollVote extends Model
+class DocumentSignature extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'community_id',
-        'poll_id',
-        'poll_option_id',
+        'document_id',
         'user_id',
-        'unit_id',
-        'vote_weight',
+        'agreed_at',
         'ip_address',
         'user_agent',
     ];
@@ -27,7 +24,7 @@ class PollVote extends Model
     protected function casts(): array
     {
         return [
-            'vote_weight' => 'decimal:2',
+            'agreed_at' => 'datetime',
         ];
     }
 
@@ -36,23 +33,13 @@ class PollVote extends Model
         return $this->belongsTo(Community::class);
     }
 
-    public function poll(): BelongsTo
+    public function document(): BelongsTo
     {
-        return $this->belongsTo(Poll::class);
-    }
-
-    public function option(): BelongsTo
-    {
-        return $this->belongsTo(PollOption::class, 'poll_option_id');
+        return $this->belongsTo(Document::class);
     }
 
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
-    }
-
-    public function unit(): BelongsTo
-    {
-        return $this->belongsTo(Unit::class);
     }
 }

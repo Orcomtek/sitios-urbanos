@@ -31,4 +31,8 @@ class Document extends Model
     {
         return $this->belongsTo(User::class, 'created_by');
     }
+    public function signatures()
+    {
+        return $this->hasMany(\App\Models\Governance\DocumentSignature::class);
+    }
 }
