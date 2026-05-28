@@ -7,12 +7,11 @@ const props = defineProps<{
     residents: {
         data: Array<{
             id: number;
-            first_name: string;
-            last_name: string;
+            full_name: string;
             email: string | null;
             phone: string | null;
-            type: string;
-            status: string;
+            resident_type: string;
+            is_active: boolean;
             unit: {
                 id: number;
                 identifier: string;
@@ -62,18 +61,19 @@ const communitySlug = computed(() => (page.props.tenant as any)?.community?.slug
                             <tbody class="divide-y divide-gray-200">
                                 <tr v-for="resident in residents.data" :key="resident.id">
                                     <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0">
-                                        {{ resident.first_name }} {{ resident.last_name }}
+                                        {{ resident.full_name }}
                                         <div v-if="resident.email" class="text-xs font-normal text-gray-500">{{ resident.email }}</div>
                                     </td>
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                         {{ resident.unit?.identifier }}
                                     </td>
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                        <span v-if="resident.type === 'owner'" class="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-600/20">Propietario</span>
-                                        <span v-else class="inline-flex items-center rounded-md bg-purple-50 px-2 py-1 text-xs font-medium text-purple-700 ring-1 ring-inset ring-purple-600/20">Arrendatario</span>
+                                        <span v-if="resident.resident_type === 'owner'" class="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-600/20">Propietario</span>
+                                        <span v-else-if="resident.resident_type === 'tenant'" class="inline-flex items-center rounded-md bg-purple-50 px-2 py-1 text-xs font-medium text-purple-700 ring-1 ring-inset ring-purple-600/20">Inquilino</span>
+                                        <span v-else-if="resident.resident_type === 'dependent'" class="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-700 ring-1 ring-inset ring-gray-600/20">Dependiente</span>
                                     </td>
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                        <span v-if="resident.status === 'active'" class="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">Activo</span>
+                                        <span v-if="resident.is_active" class="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">Activo</span>
                                         <span v-else class="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">Inactivo</span>
                                     </td>
                                     <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">

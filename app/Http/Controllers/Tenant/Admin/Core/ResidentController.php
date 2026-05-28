@@ -40,18 +40,22 @@ class ResidentController extends Controller
 
         return Inertia::render('Tenant/Admin/Core/Residents/Form', [
             'resident' => new Resident([
-                'type' => 'tenant',
-                'status' => 'active',
+                'resident_type' => \App\Enums\ResidentType::TENANT,
+                'is_active' => true,
+                'pays_administration' => false,
             ]),
             'units' => $units,
         ]);
     }
 
-    public function store(StoreResidentRequest $request, string $community_slug, CreateResidentAction $action): RedirectResponse
+    public function store(StoreResidentRequest $request, string $community_slug, \App\Services\ResidentOnboardingService $service): RedirectResponse
     {
-        $action->execute($this->context->require(), $request->validated());
+        $community = $this->context->require();
+        $unit = $community->units()->findOrFail($request->validated('unit_id'));
+        
+        $service->onboard($unit, $request->validated());
 
-        return redirect()->route('tenant.admin.core.residents.index', ['community_slug' => $this->context->require()->slug])
+        return redirect()->route('tenant.admin.core.residents.index', ['community_slug' => $community->slug])
             ->with('success', 'Residente creado exitosamente.');
     }
 
@@ -67,9 +71,9 @@ class ResidentController extends Controller
         ]);
     }
 
-    public function update(UpdateResidentRequest $request, string $community_slug, Resident $resident, UpdateResidentAction $action): RedirectResponse
+    public function update(UpdateResidentRequest $request, string $community_slug, Resident $resident, \App\Services\ResidentOnboardingService $service): RedirectResponse
     {
-        $action->execute($this->context->require(), $resident, $request->validated());
+        $service->update($resident, $request->validated());
 
         return redirect()->route('tenant.admin.core.residents.index', ['community_slug' => $this->context->require()->slug])
             ->with('success', 'Residente actualizado exitosamente.');

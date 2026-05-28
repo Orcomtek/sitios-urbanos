@@ -1914,7 +1914,7 @@ Implemented the backend core for the Professional Services Directory (Providers 
 ## BLOCK 35 — 360 Census & Granular Resident Architecture
 
 ### Status
-⏳ Pending
+✅ Completed
 
 ### Description
 A deep refactoring of the resident and unit entities to establish strict Role-Binding. A resident is not simply a user; they represent a specific legal and operational link to a unit. This block builds the foundation for complex community demographics.
@@ -1923,6 +1923,14 @@ A deep refactoring of the resident and unit entities to establish strict Role-Bi
 * **Owner (Propietario):** Grants access to financial dashboards, assembly voting with property coefficients, and the ability to authorize tenants.
 * **Tenant (Inquilino):** Enforces a strict database and application rule: Only 1 active Tenant per unit at a time. Grants access to the operational dashboard (QR access, PQRS, Packages).
 * **Co-Resident/Dependent:** Allows family members or roommates to exist in the census to receive packages and gate access, strictly isolated from voting and financial data.
+
+### [Completed] Block 35: 360 Census & Granular Resident Architecture
+* **Objective:** Implement strict Role-Binding per unit (Owner, Tenant, Dependent) and enforce the "1 Active Tenant" business rule.
+* **Execution details:**
+  * Created `ResidentType` Enum and applied strict casting/scopes in the `Resident` model.
+  * Engineered `ResidentOnboardingService` to handle transitions using DB transactions.
+  * Implemented automated deactivation cascade: Onboarding a new Tenant automatically deactivates the previous Tenant and their Dependents, preserving forensic data (No soft-deletes) while enforcing the 1-active-tenant rule.
+  * Patched Mass Assignment and Multi-Tenant (`community_id`) constraints at the service layer.
 
 ## BLOCK 36 — Asynchronous Bulk Import Engine
 

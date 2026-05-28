@@ -13,6 +13,7 @@ class Resident extends Model
     use HasFactory, SoftDeletes, TenantScoped;
 
     protected $fillable = [
+        'community_id',
         'unit_id',
         'user_id',
         'full_name',
@@ -28,6 +29,7 @@ class Resident extends Model
         return [
             'is_active' => 'boolean',
             'pays_administration' => 'boolean',
+            'resident_type' => \App\Enums\ResidentType::class,
         ];
     }
 
@@ -53,5 +55,37 @@ class Resident extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * @param  \Illuminate\Database\Eloquent\Builder<self>  $query
+     */
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', true);
+    }
+
+    /**
+     * @param  \Illuminate\Database\Eloquent\Builder<self>  $query
+     */
+    public function scopeOwners($query)
+    {
+        return $query->where('resident_type', \App\Enums\ResidentType::OWNER);
+    }
+
+    /**
+     * @param  \Illuminate\Database\Eloquent\Builder<self>  $query
+     */
+    public function scopeTenants($query)
+    {
+        return $query->where('resident_type', \App\Enums\ResidentType::TENANT);
+    }
+
+    /**
+     * @param  \Illuminate\Database\Eloquent\Builder<self>  $query
+     */
+    public function scopeDependents($query)
+    {
+        return $query->where('resident_type', \App\Enums\ResidentType::DEPENDENT);
     }
 }
