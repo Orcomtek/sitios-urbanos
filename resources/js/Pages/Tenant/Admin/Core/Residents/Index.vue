@@ -35,7 +35,7 @@ const communitySlug = computed(() => (page.props.tenant as any)?.community?.slug
             <div class="flex items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
                 <h2 class="text-xl font-semibold leading-tight text-gray-800">Residentes</h2>
                 <Link
-                    :href="route('residents.create', { community_slug: communitySlug })"
+                    :href="route('tenant.admin.core.residents.create', { community_slug: communitySlug })"
                     class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                 >
                     Nuevo Residente
@@ -77,7 +77,7 @@ const communitySlug = computed(() => (page.props.tenant as any)?.community?.slug
                                         <span v-else class="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">Inactivo</span>
                                     </td>
                                     <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
-                                        <Link :href="route('residents.edit', { community_slug: communitySlug, resident: resident.id })" class="text-indigo-600 hover:text-indigo-900">Editar</Link>
+                                        <Link :href="route('tenant.admin.core.residents.edit', { community_slug: communitySlug, resident: resident.id })" class="text-indigo-600 hover:text-indigo-900">Editar</Link>
                                     </td>
                                 </tr>
                                 <tr v-if="residents.data.length === 0">

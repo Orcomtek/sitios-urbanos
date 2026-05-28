@@ -11,32 +11,32 @@ const navigation = computed(() => {
     
     // Everyone sees some basic modules potentially, maybe Units/Residents for Admin
     if (tenantRole.value === 'admin') {
-        items.push({ name: 'Unidades', href: route('units.index', { community_slug: communitySlug.value }) });
-        items.push({ name: 'Residentes', href: route('residents.index', { community_slug: communitySlug.value }) });
+        items.push({ name: 'Unidades', href: route('tenant.admin.core.units.index', { community_slug: communitySlug.value }) });
+        items.push({ name: 'Residentes', href: route('tenant.admin.core.residents.index', { community_slug: communitySlug.value }) });
     }
 
     // Cockpit Navigation for Admins and Guards
     if (tenantRole.value === 'admin' || tenantRole.value === 'guard') {
-        items.push({ name: 'Panel Operativo', href: route('tenant.cockpit.dashboard', { community_slug: communitySlug.value }) });
-        items.push({ name: 'Cola de Trabajo', href: route('tenant.cockpit.work-queue', { community_slug: communitySlug.value }) });
+        items.push({ name: 'Panel Operativo', href: route('tenant.admin.dashboard', { community_slug: communitySlug.value }) });
+        items.push({ name: 'Cola de Trabajo', href: route('tenant.admin.core.work-queue', { community_slug: communitySlug.value }) });
     }
     
     // Cockpit for Admins only
     if (tenantRole.value === 'admin') {
-        items.push({ name: 'Cola Administrativa', href: route('tenant.cockpit.admin-work-queue', { community_slug: communitySlug.value }) });
-        items.push({ name: 'Directorio de Proveedores', href: route('tenant.cockpit.admin.providers', { community_slug: communitySlug.value }) });
+        items.push({ name: 'Cola Administrativa', href: route('tenant.admin.core.admin-work-queue', { community_slug: communitySlug.value }) });
+        items.push({ name: 'Directorio de Proveedores', href: route('tenant.admin.ecosystem.providers', { community_slug: communitySlug.value }) });
     }
 
     // Cockpit for Residents only
     if (tenantRole.value === 'resident') {
-        items.push({ name: 'Cabina del Residente', href: route('tenant.cockpit.resident', { community_slug: communitySlug.value }) });
-        items.push({ name: 'Clasificados', href: route('tenant.cockpit.resident.ecosystem', { community_slug: communitySlug.value }) });
-        items.push({ name: 'Directorio de Proveedores', href: route('tenant.cockpit.resident.providers', { community_slug: communitySlug.value }) });
+        items.push({ name: 'Cabina del Residente', href: route('tenant.resident.dashboard', { community_slug: communitySlug.value }) });
+        items.push({ name: 'Clasificados', href: route('tenant.resident.ecosystem.index', { community_slug: communitySlug.value }) });
+        items.push({ name: 'Directorio de Proveedores', href: route('tenant.resident.ecosystem.providers', { community_slug: communitySlug.value }) });
     }
 
     // Activity Timeline (All roles)
     if (['admin', 'guard', 'resident'].includes(tenantRole.value as string)) {
-        items.push({ name: 'Registro de Actividad', href: route('tenant.cockpit.activity', { community_slug: communitySlug.value }) });
+        items.push({ name: 'Registro de Actividad', href: route('tenant.resident.activity', { community_slug: communitySlug.value }) });
     }
 
     return items;

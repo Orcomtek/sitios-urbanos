@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Tenant;
+namespace App\Http\Controllers\Tenant\Admin\Core;
 
 use App\Actions\CoreOperations\CreateUnitAction;
 use App\Actions\CoreOperations\DeleteUnitAction;
@@ -28,7 +28,7 @@ class UnitController extends Controller
             ->orderBy('identifier')
             ->paginate(50);
 
-        return Inertia::render('Tenant/Units/Index', [
+        return Inertia::render('Tenant/Admin/Core/Units/Index', [
             'units' => $units,
         ]);
     }
@@ -54,7 +54,7 @@ class UnitController extends Controller
         // Require context just to ensure we are inside a tenant
         $this->context->require();
 
-        return Inertia::render('Tenant/Units/Form', [
+        return Inertia::render('Tenant/Admin/Core/Units/Form', [
             'unit' => new Unit,
         ]);
     }
@@ -63,13 +63,13 @@ class UnitController extends Controller
     {
         $action->execute($this->context->require(), $request->validated());
 
-        return redirect()->route('units.index', ['community_slug' => $this->context->require()->slug])
+        return redirect()->route('tenant.admin.core.units.index', ['community_slug' => $this->context->require()->slug])
             ->with('success', 'Unidad creada exitosamente.');
     }
 
     public function edit(string $community_slug, Unit $unit): Response
     {
-        return Inertia::render('Tenant/Units/Form', [
+        return Inertia::render('Tenant/Admin/Core/Units/Form', [
             'unit' => $unit,
         ]);
     }
@@ -78,7 +78,7 @@ class UnitController extends Controller
     {
         $action->execute($this->context->require(), $unit, $request->validated());
 
-        return redirect()->route('units.index', ['community_slug' => $this->context->require()->slug])
+        return redirect()->route('tenant.admin.core.units.index', ['community_slug' => $this->context->require()->slug])
             ->with('success', 'Unidad actualizada exitosamente.');
     }
 
@@ -86,7 +86,7 @@ class UnitController extends Controller
     {
         $action->execute($this->context->require(), $unit);
 
-        return redirect()->route('units.index', ['community_slug' => $this->context->require()->slug])
+        return redirect()->route('tenant.admin.core.units.index', ['community_slug' => $this->context->require()->slug])
             ->with('success', 'Unidad eliminada exitosamente.');
     }
 }

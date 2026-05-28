@@ -50,7 +50,7 @@ const closeSlideOver = () => {
             <div class="flex items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
                 <h2 class="text-xl font-semibold leading-tight text-gray-800">Unidades</h2>
                 <Link
-                    :href="route('units.create', { community_slug: communitySlug })"
+                    :href="route('tenant.admin.core.units.create', { community_slug: communitySlug })"
                     class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                 >
                     Nueva Unidad
@@ -89,7 +89,7 @@ const closeSlideOver = () => {
                                     </td>
                                     <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
                                         <button @click.stop="openSlideOver(unit.id)" class="text-indigo-600 hover:text-indigo-900">Residentes</button>
-                                        <Link :href="route('units.edit', { community_slug: communitySlug, unit: unit.id })" class="text-indigo-600 hover:text-indigo-900 ml-4">Editar</Link>
+                                        <Link :href="route('tenant.admin.core.units.edit', { community_slug: communitySlug, unit: unit.id })" class="text-indigo-600 hover:text-indigo-900 ml-4">Editar</Link>
                                     </td>
                                 </tr>
                                 <tr v-if="units.data.length === 0">

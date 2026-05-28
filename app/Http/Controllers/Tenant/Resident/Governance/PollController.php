@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Tenant\Governance;
+namespace App\Http\Controllers\Tenant\Resident\Governance;
 
 use App\Http\Controllers\Controller;
 use App\Models\Governance\Document;
@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class ParticipationCenterController extends Controller
+class PollController extends Controller
 {
     public function index(Request $request): Response
     {
@@ -36,7 +36,7 @@ class ParticipationCenterController extends Controller
             ->latest()
             ->get();
 
-        return Inertia::render('Tenant/Governance/Index', [
+        return Inertia::render('Tenant/Resident/Governance/Polls/Index', [
             'activePolls' => $activePolls,
             'pendingDocuments' => $pendingDocuments,
         ]);

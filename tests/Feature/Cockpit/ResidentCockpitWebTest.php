@@ -44,29 +44,29 @@ class ResidentCockpitWebTest extends TestCase
 
     public function test_resident_can_view_cockpit_page()
     {
-        $response = $this->makeRequest($this->residentUser, 'GET', '/cockpit/resident');
+        $response = $this->makeRequest($this->residentUser, 'GET', '/resident/dashboard');
 
         $response->assertStatus(200);
-        $response->assertInertia(fn ($page) => $page->component('Cockpit/ResidentCockpit'));
+        $response->assertInertia(fn ($page) => $page->component('Tenant/Resident/Dashboard'));
     }
 
     public function test_admin_forbidden_from_resident_page()
     {
-        $response = $this->makeRequest($this->adminUser, 'GET', '/cockpit/resident');
+        $response = $this->makeRequest($this->adminUser, 'GET', '/resident/dashboard');
         $response->assertStatus(403);
     }
 
     public function test_resident_can_view_pqrs_page()
     {
-        $response = $this->makeRequest($this->residentUser, 'GET', '/cockpit/resident/pqrs');
+        $response = $this->makeRequest($this->residentUser, 'GET', '/resident/governance/pqrs');
 
         $response->assertStatus(200);
-        $response->assertInertia(fn ($page) => $page->component('Cockpit/ResidentPqrs'));
+        $response->assertInertia(fn ($page) => $page->component('Tenant/Resident/Governance/Pqrs'));
     }
 
     public function test_admin_forbidden_from_resident_pqrs_page()
     {
-        $response = $this->makeRequest($this->adminUser, 'GET', '/cockpit/resident/pqrs');
+        $response = $this->makeRequest($this->adminUser, 'GET', '/resident/governance/pqrs');
         $response->assertStatus(403);
     }
 }

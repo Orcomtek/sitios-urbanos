@@ -159,6 +159,7 @@ class PollController extends Controller
 
         // Create the vote safely
         $vote = PollVote::create([
+            'community_id' => $community->id,
             'poll_id' => $poll->id,
             'poll_option_id' => $option->id,
             'user_id' => $user->id,

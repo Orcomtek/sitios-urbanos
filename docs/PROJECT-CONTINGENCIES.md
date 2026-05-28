@@ -144,7 +144,7 @@ This contingency addresses the critical need for a secure, zero-friction onboard
 ## CONTINGENCY 7 — Semantic Routing Refactor (Routing Core)
 
 ### Status
-⏳ Pending
+⏳ [Resolved]
 
 ### Description
 The project must transition away from the legacy monolithic `/cockpit/...` routing structure. As the ecosystem evolves into a fully-fledged Multi-Tenant Operating System, the URLs must reflect a RESTful, module-based taxonomy that scales cleanly and matches the underlying Permission Registry.
@@ -153,6 +153,14 @@ The project must transition away from the legacy monolithic `/cockpit/...` routi
 * **Namespace Migration:** Segregating routes into strict logical domains: `/system/...` for SuperAdmin (Orcomtek), `/admin/...` for Community Management, and `/resident/...` for end-users.
 * **Micro-Service Structure:** Updating all API endpoints and Inertia/Vue view references to match the new structure (e.g., migrating `/cockpit/admin/units` to `/admin/core/units` and `/cockpit/resident/polls` to `/resident/governance/polls`).
 * **Codebase Hardening:** Deep search and replace across the routing files (`web.php`, `tenant.php`) and frontend components to ensure no legacy hardcoded URLs remain, preventing future 404 errors during module expansion.
+
+### [Resolved] Contingency 7: Semantic Routing Refactor (Routing Core)
+* **Objective:** Eliminate the monolithic `/cockpit/...` routing structure and apply a RESTful taxonomy based on the module catalog.
+* **Execution details:**
+  * Migrated namespaces to strict logical domains: `/system/...` (SuperAdmin), `/admin/...` (Community Management), and `/resident/...` (End-users).
+  * Extracted tenant-bound routes into a dedicated `routes/tenant.php` file loaded via `bootstrap/app.php` with strict middleware isolation.
+  * Restructured controllers and Vue directories to perfectly mirror the new semantic taxonomy.
+  * Executed a "clean break" with no 301 fallbacks, explicitly updating all Ziggy route helpers across Vue components to enforce the new `tenant.*` nomenclature.
 
 ## CONTINGENCY 8 — Global Injection & "Workspace Switcher" (TopBar UX)
 

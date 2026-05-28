@@ -39,7 +39,7 @@ const submitVote = (poll: Poll) => {
   
   votingPollId.value = poll.id;
   
-  form.post(route('tenant.governance.polls.vote', poll.id), {
+  form.post(route('tenant.resident.governance.polls.vote', poll.id), {
     preserveScroll: true,
     onSuccess: () => {
       form.reset();

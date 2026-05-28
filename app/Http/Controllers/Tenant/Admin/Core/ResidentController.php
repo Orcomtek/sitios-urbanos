@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Tenant;
+namespace App\Http\Controllers\Tenant\Admin\Core;
 
 use App\Actions\CoreOperations\CreateResidentAction;
 use App\Actions\CoreOperations\DeleteResidentAction;
@@ -27,7 +27,7 @@ class ResidentController extends Controller
             ->orderBy('id', 'desc')
             ->paginate(50);
 
-        return Inertia::render('Tenant/Residents/Index', [
+        return Inertia::render('Tenant/Admin/Core/Residents/Index', [
             'residents' => $residents,
         ]);
     }
@@ -38,7 +38,7 @@ class ResidentController extends Controller
 
         $units = $community->units()->orderBy('identifier')->get(['id', 'identifier']);
 
-        return Inertia::render('Tenant/Residents/Form', [
+        return Inertia::render('Tenant/Admin/Core/Residents/Form', [
             'resident' => new Resident([
                 'type' => 'tenant',
                 'status' => 'active',
@@ -51,7 +51,7 @@ class ResidentController extends Controller
     {
         $action->execute($this->context->require(), $request->validated());
 
-        return redirect()->route('residents.index', ['community_slug' => $this->context->require()->slug])
+        return redirect()->route('tenant.admin.core.residents.index', ['community_slug' => $this->context->require()->slug])
             ->with('success', 'Residente creado exitosamente.');
     }
 
@@ -61,7 +61,7 @@ class ResidentController extends Controller
 
         $units = $community->units()->orderBy('identifier')->get(['id', 'identifier']);
 
-        return Inertia::render('Tenant/Residents/Form', [
+        return Inertia::render('Tenant/Admin/Core/Residents/Form', [
             'resident' => $resident,
             'units' => $units,
         ]);
@@ -71,7 +71,7 @@ class ResidentController extends Controller
     {
         $action->execute($this->context->require(), $resident, $request->validated());
 
-        return redirect()->route('residents.index', ['community_slug' => $this->context->require()->slug])
+        return redirect()->route('tenant.admin.core.residents.index', ['community_slug' => $this->context->require()->slug])
             ->with('success', 'Residente actualizado exitosamente.');
     }
 
@@ -79,7 +79,7 @@ class ResidentController extends Controller
     {
         $action->execute($this->context->require(), $resident);
 
-        return redirect()->route('residents.index', ['community_slug' => $this->context->require()->slug])
+        return redirect()->route('tenant.admin.core.residents.index', ['community_slug' => $this->context->require()->slug])
             ->with('success', 'Residente eliminado exitosamente.');
     }
 }

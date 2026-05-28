@@ -74,18 +74,18 @@ const getTargetRoute = (notification: any) => {
         case 'package_received':
         case 'visitor_registered':
         case 'invitation_consumed':
-            return route('tenant.cockpit.resident.operations', { community_slug: communitySlug });
+            return route('tenant.resident.core.operations', { community_slug: communitySlug });
         case 'pqrs_updated':
-            return route('tenant.cockpit.resident.pqrs', { community_slug: communitySlug });
+            return route('tenant.resident.governance.pqrs', { community_slug: communitySlug });
         case 'pqrs_created':
-            return route('tenant.cockpit.admin-work-queue', { community_slug: communitySlug });
+            return route('tenant.admin.core.admin-work-queue', { community_slug: communitySlug });
         case 'payment_confirmed':
         case 'payment_failed':
-            return route('tenant.cockpit.resident', { community_slug: communitySlug });
+            return route('tenant.resident.dashboard', { community_slug: communitySlug });
         case 'emergency_triggered':
-            return route('tenant.cockpit.work-queue', { community_slug: communitySlug });
+            return route('tenant.admin.core.work-queue', { community_slug: communitySlug });
         default:
-            return route('tenant.cockpit.dashboard', { community_slug: communitySlug });
+            return route('tenant.admin.dashboard', { community_slug: communitySlug });
     }
 };
 

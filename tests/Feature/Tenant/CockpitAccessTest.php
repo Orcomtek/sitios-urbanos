@@ -34,13 +34,13 @@ class CockpitAccessTest extends TestCase
         $admin = UserFactory::new()->create();
         $this->community->users()->attach($admin, ['role' => 'admin']);
 
-        $response = $this->actingAs($admin)->get('http://'.$this->tenantHeaders['Host'].'/cockpit/dashboard');
+        $response = $this->actingAs($admin)->get('http://'.$this->tenantHeaders['Host'].'/admin/dashboard');
         $response->assertOk();
 
-        $response = $this->actingAs($admin)->get('http://'.$this->tenantHeaders['Host'].'/cockpit/work-queue');
+        $response = $this->actingAs($admin)->get('http://'.$this->tenantHeaders['Host'].'/admin/core/work-queue');
         $response->assertOk();
 
-        $response = $this->actingAs($admin)->get('http://'.$this->tenantHeaders['Host'].'/cockpit/admin-work-queue');
+        $response = $this->actingAs($admin)->get('http://'.$this->tenantHeaders['Host'].'/admin/core/admin-work-queue');
         $response->assertOk();
     }
 
@@ -49,13 +49,13 @@ class CockpitAccessTest extends TestCase
         $guard = UserFactory::new()->create();
         $this->community->users()->attach($guard, ['role' => 'guard']);
 
-        $response = $this->actingAs($guard)->get('http://'.$this->tenantHeaders['Host'].'/cockpit/dashboard');
+        $response = $this->actingAs($guard)->get('http://'.$this->tenantHeaders['Host'].'/admin/dashboard');
         $response->assertOk();
 
-        $response = $this->actingAs($guard)->get('http://'.$this->tenantHeaders['Host'].'/cockpit/work-queue');
+        $response = $this->actingAs($guard)->get('http://'.$this->tenantHeaders['Host'].'/admin/core/work-queue');
         $response->assertOk();
 
-        $response = $this->actingAs($guard)->get('http://'.$this->tenantHeaders['Host'].'/cockpit/admin-work-queue');
+        $response = $this->actingAs($guard)->get('http://'.$this->tenantHeaders['Host'].'/admin/core/admin-work-queue');
         $response->assertForbidden();
     }
 
@@ -64,13 +64,13 @@ class CockpitAccessTest extends TestCase
         $resident = UserFactory::new()->create();
         $this->community->users()->attach($resident, ['role' => 'resident']);
 
-        $response = $this->actingAs($resident)->get('http://'.$this->tenantHeaders['Host'].'/cockpit/dashboard');
+        $response = $this->actingAs($resident)->get('http://'.$this->tenantHeaders['Host'].'/admin/dashboard');
         $response->assertForbidden();
 
-        $response = $this->actingAs($resident)->get('http://'.$this->tenantHeaders['Host'].'/cockpit/work-queue');
+        $response = $this->actingAs($resident)->get('http://'.$this->tenantHeaders['Host'].'/admin/core/work-queue');
         $response->assertForbidden();
 
-        $response = $this->actingAs($resident)->get('http://'.$this->tenantHeaders['Host'].'/cockpit/admin-work-queue');
+        $response = $this->actingAs($resident)->get('http://'.$this->tenantHeaders['Host'].'/admin/core/admin-work-queue');
         $response->assertForbidden();
     }
 }

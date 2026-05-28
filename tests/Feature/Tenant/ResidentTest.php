@@ -15,11 +15,11 @@ it('can list residents in tenant context', function () {
     // Create residents with their own units so they don't violate the DB partial index
     Resident::factory()->count(3)->create(['community_id' => $community->id]);
 
-    $response = $this->actingAs($user)->get(route('residents.index', ['community_slug' => $community->slug]));
+    $response = $this->actingAs($user)->get(route('tenant.admin.core.residents.index', ['community_slug' => $community->slug]));
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
-        ->component('Tenant/Residents/Index')
+        ->component('Tenant/Admin/Core/Residents/Index')
         ->has('residents.data', 3)
     );
 });
@@ -33,11 +33,11 @@ it('cannot see residents from another community', function () {
     $unit2 = Unit::factory()->create(['community_id' => $community2->id]);
     Resident::factory()->create(['community_id' => $community2->id, 'unit_id' => $unit2->id]);
 
-    $response = $this->actingAs($user)->get(route('residents.index', ['community_slug' => $community1->slug]));
+    $response = $this->actingAs($user)->get(route('tenant.admin.core.residents.index', ['community_slug' => $community1->slug]));
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
-        ->component('Tenant/Residents/Index')
+        ->component('Tenant/Admin/Core/Residents/Index')
         ->has('residents.data', 0)
     );
 });
@@ -50,7 +50,7 @@ it('cannot assign resident to a unit from another community', function () {
 
     $unit2 = Unit::factory()->create(['community_id' => $community2->id]);
 
-    $response = $this->actingAs($user)->post(route('residents.store', ['community_slug' => $community1->slug]), [
+    $response = $this->actingAs($user)->post(route('tenant.admin.core.residents.store', ['community_slug' => $community1->slug]), [
         'unit_id' => $unit2->id,
         'full_name' => 'John Doe',
         'resident_type' => 'tenant',
@@ -67,7 +67,7 @@ it('can create resident', function () {
     $user->communities()->attach($community, ['role' => 'admin', 'unit_id' => null]);
     $unit = Unit::factory()->create(['community_id' => $community->id]);
 
-    $response = $this->actingAs($user)->post(route('residents.store', ['community_slug' => $community->slug]), [
+    $response = $this->actingAs($user)->post(route('tenant.admin.core.residents.store', ['community_slug' => $community->slug]), [
         'unit_id' => $unit->id,
         'full_name' => 'John Doe',
         'resident_type' => 'tenant',
@@ -75,7 +75,7 @@ it('can create resident', function () {
         'pays_administration' => false,
     ]);
 
-    $response->assertRedirect(route('residents.index', ['community_slug' => $community->slug]));
+    $response->assertRedirect(route('tenant.admin.core.residents.index', ['community_slug' => $community->slug]));
     $this->assertDatabaseHas('residents', [
         'community_id' => $community->id,
         'unit_id' => $unit->id,
@@ -96,7 +96,7 @@ it('route bindings protect cross-tenant resident updates', function () {
     $unit1 = Unit::factory()->create(['community_id' => $community1->id]);
 
     // Try to update $resident2 using $community1 context
-    $response = $this->actingAs($user)->put(route('residents.update', ['community_slug' => $community1->slug, 'resident' => $resident2->id]), [
+    $response = $this->actingAs($user)->put(route('tenant.admin.core.residents.update', ['community_slug' => $community1->slug, 'resident' => $resident2->id]), [
         'unit_id' => $unit1->id, // valid unit in community1
         'full_name' => 'Hacked Name',
         'resident_type' => 'tenant',

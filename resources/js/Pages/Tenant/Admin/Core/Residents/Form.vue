@@ -37,9 +37,9 @@ const form = useForm({
 
 const submit = () => {
     if (isEditing.value) {
-        form.put(route('residents.update', { community_slug: communitySlug.value, resident: props.resident.id }));
+        form.put(route('tenant.admin.core.residents.update', { community_slug: communitySlug.value, resident: props.resident.id }));
     } else {
-        form.post(route('residents.store', { community_slug: communitySlug.value }));
+        form.post(route('tenant.admin.core.residents.store', { community_slug: communitySlug.value }));
     }
 };
 

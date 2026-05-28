@@ -21,7 +21,7 @@ it('allows residents to access the ecosystem cockpit', function () {
     $this->withoutVite();
     
     $response = $this->actingAs($user)
-        ->get("http://{$community->slug}.{$centralDomain}/cockpit/resident/ecosystem");
+        ->get("http://{$community->slug}.{$centralDomain}/resident/ecosystem");
 
     $response->assertOk();
 });
@@ -34,7 +34,7 @@ it('forbids admins from accessing the ecosystem cockpit', function () {
     $centralDomain = config('app.central_domain');
 
     $response = $this->actingAs($user)
-        ->get("http://{$community->slug}.{$centralDomain}/cockpit/resident/ecosystem");
+        ->get("http://{$community->slug}.{$centralDomain}/resident/ecosystem");
 
     $response->assertForbidden();
 });
@@ -47,7 +47,7 @@ it('forbids guards from accessing the ecosystem cockpit', function () {
     $centralDomain = config('app.central_domain');
 
     $response = $this->actingAs($user)
-        ->get("http://{$community->slug}.{$centralDomain}/cockpit/resident/ecosystem");
+        ->get("http://{$community->slug}.{$centralDomain}/resident/ecosystem");
 
     $response->assertForbidden();
 });

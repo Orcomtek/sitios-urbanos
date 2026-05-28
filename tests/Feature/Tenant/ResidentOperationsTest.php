@@ -49,7 +49,7 @@ class ResidentOperationsTest extends TestCase
     {
         $response = $this->actingAs($this->residentUser)
             ->withSession(['tenant.community_id' => $this->community->id])
-            ->get("http://{$this->community->slug}." . config('app.central_domain') . "/cockpit/resident/operations");
+            ->get("http://{$this->community->slug}." . config('app.central_domain') . "/resident/core/operations");
 
         $response->assertStatus(200);
     }
@@ -59,7 +59,7 @@ class ResidentOperationsTest extends TestCase
     {
         $response = $this->actingAs($this->adminUser)
             ->withSession(['tenant.community_id' => $this->community->id])
-            ->get("http://{$this->community->slug}." . config('app.central_domain') . "/cockpit/resident/operations");
+            ->get("http://{$this->community->slug}." . config('app.central_domain') . "/resident/core/operations");
 
         $response->assertStatus(403);
     }
@@ -69,7 +69,7 @@ class ResidentOperationsTest extends TestCase
     {
         $response = $this->actingAs($this->guardUser)
             ->withSession(['tenant.community_id' => $this->community->id])
-            ->get("http://{$this->community->slug}." . config('app.central_domain') . "/cockpit/resident/operations");
+            ->get("http://{$this->community->slug}." . config('app.central_domain') . "/resident/core/operations");
 
         $response->assertStatus(403);
     }

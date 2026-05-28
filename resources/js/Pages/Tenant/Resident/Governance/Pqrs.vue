@@ -81,7 +81,7 @@ const formatDate = (dateString) => {
                 <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                     Mis Requests (PQRS)
                 </h2>
-                <Link :href="route('tenant.cockpit.resident')" class="text-sm text-gray-500 hover:text-gray-700 underline">
+                <Link :href="route('tenant.resident.dashboard')" class="text-sm text-gray-500 hover:text-gray-700 underline">
                     &larr; Volver a Cabina
                 </Link>
             </div>

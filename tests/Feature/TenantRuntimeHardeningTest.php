@@ -70,7 +70,7 @@ it('denies cross-tenant route model binding access', function () {
     $this->actingAs($this->userA);
 
     // Try to edit Unit B (which belongs to Community B) while in Community A's subdomain runtime
-    $url = route('units.edit', [
+    $url = route('tenant.admin.core.units.edit', [
         'community_slug' => $this->communityA->slug,
         'unit' => $this->unitB->id,
     ]);
@@ -84,7 +84,7 @@ it('denies cross-tenant route model binding access', function () {
 it('allows normal route model binding access for own resources', function () {
     $this->actingAs($this->userA);
 
-    $url = route('units.edit', [
+    $url = route('tenant.admin.core.units.edit', [
         'community_slug' => $this->communityA->slug,
         'unit' => $this->unitA->id,
     ]);
