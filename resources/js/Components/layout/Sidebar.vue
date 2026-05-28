@@ -3,46 +3,22 @@ import { Link, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
 
 const page = usePage();
-const tenantRole = computed(() => (page.props.tenant as any)?.role as string | null);
 const communitySlug = computed(() => (page.props.tenant as any)?.community?.slug);
+const navigationMenu = computed(() => (page.props as any).navigation_menu || []);
 
-const navigation = computed(() => {
-    const items = [];
-    
-    // Everyone sees some basic modules potentially, maybe Units/Residents for Admin
-    if (tenantRole.value === 'admin') {
-        items.push({ name: 'Unidades', href: route('tenant.admin.core.units.index', { community_slug: communitySlug.value }) });
-        items.push({ name: 'Residentes', href: route('tenant.admin.core.residents.index', { community_slug: communitySlug.value }) });
+const getRouteUrl = (routeName: string) => {
+    try {
+        if (!communitySlug.value) return '#';
+        // @ts-ignore
+        return route(routeName, { community_slug: communitySlug.value });
+    } catch {
+        return '#';
     }
+};
 
-    // Cockpit Navigation for Admins and Guards
-    if (tenantRole.value === 'admin' || tenantRole.value === 'guard') {
-        items.push({ name: 'Panel Operativo', href: route('tenant.admin.dashboard', { community_slug: communitySlug.value }) });
-        items.push({ name: 'Cola de Trabajo', href: route('tenant.admin.core.work-queue', { community_slug: communitySlug.value }) });
-    }
-    
-    // Cockpit for Admins only
-    if (tenantRole.value === 'admin') {
-        items.push({ name: 'Cola Administrativa', href: route('tenant.admin.core.admin-work-queue', { community_slug: communitySlug.value }) });
-        items.push({ name: 'Directorio de Proveedores', href: route('tenant.admin.ecosystem.providers', { community_slug: communitySlug.value }) });
-    }
-
-    // Cockpit for Residents only
-    if (tenantRole.value === 'resident') {
-        items.push({ name: 'Cabina del Residente', href: route('tenant.resident.dashboard', { community_slug: communitySlug.value }) });
-        items.push({ name: 'Clasificados', href: route('tenant.resident.ecosystem.index', { community_slug: communitySlug.value }) });
-        items.push({ name: 'Directorio de Proveedores', href: route('tenant.resident.ecosystem.providers', { community_slug: communitySlug.value }) });
-    }
-
-    // Activity Timeline (All roles)
-    if (['admin', 'guard', 'resident'].includes(tenantRole.value as string)) {
-        items.push({ name: 'Registro de Actividad', href: route('tenant.resident.activity', { community_slug: communitySlug.value }) });
-    }
-
-    return items;
-});
-
-const isActive = (href: string) => {
+const isActive = (routeName: string) => {
+    const href = getRouteUrl(routeName);
+    if (href === '#') return false;
     try {
         return page.url === new URL(href, 'http://localhost').pathname;
     } catch {
@@ -54,23 +30,32 @@ const isActive = (href: string) => {
 <template>
     <div class="hidden md:fixed md:inset-y-0 md:flex md:w-64 md:flex-col">
         <!-- Sidebar component -->
-        <div class="flex flex-grow flex-col overflow-y-auto border-r border-gray-200 bg-white pb-4 pt-5">
+        <div class="flex flex-grow flex-col overflow-y-auto border-r border-gray-200 bg-white dark:bg-slate-900 dark:border-gray-800 pb-4 pt-5">
             <div class="flex flex-shrink-0 items-center px-4">
-                <div class="h-8 w-auto text-xl font-bold tracking-tight text-gray-900">
+                <div class="h-8 w-auto text-xl font-bold tracking-tight text-gray-900 dark:text-white">
                     Sitios Urbanos
                 </div>
             </div>
             <div class="mt-8 flex flex-1 flex-col">
-                <nav class="flex-1 space-y-1 bg-white px-2" aria-label="Sidebar">
-                    <Link
-                        v-for="item in navigation"
-                        :key="item.name"
-                        :href="item.href"
-                        class="group flex items-center rounded-md px-2 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-                        :class="{'bg-gray-100 text-gray-900': isActive(item.href)}"
-                    >
-                        {{ item.name }}
-                    </Link>
+                <nav class="flex-1 space-y-6 px-2" aria-label="Sidebar">
+                    <div v-for="group in navigationMenu" :key="group.title">
+                        <h3 class="px-2 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">
+                            {{ group.title }}
+                        </h3>
+                        <div class="space-y-1">
+                            <Link
+                                v-for="item in group.items"
+                                :key="item.key"
+                                :href="getRouteUrl(item.route)"
+                                class="group flex items-center rounded-md px-2 py-2 text-sm font-medium transition-colors"
+                                :class="isActive(item.route) 
+                                    ? 'bg-primary text-white hover:bg-primary/90' 
+                                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-slate-800 dark:hover:text-white'"
+                            >
+                                {{ item.name }}
+                            </Link>
+                        </div>
+                    </div>
                 </nav>
             </div>
         </div>

@@ -185,7 +185,7 @@ To provide an Enterprise-grade UX, the platform must seamlessly support users ho
 ## CONTINGENCY 9 — UI Blueprint & Module Registry (V1 Rescue)
 
 ### Status
-⏳ Pending
+⏳ [Resuelta]
 
 ### Description
 Centralization of the frontend design system and dynamic rendering of navigation menus to prevent hardcoded conditionals in Vue components. This ensures visual consistency (Bento Grid) and scalable module activation per tenant.
@@ -194,6 +194,14 @@ Centralization of the frontend design system and dynamic rendering of navigation
 * **Design System:** Freezing the official color palette (Primary `#1F8A70`, Dark Mode `#0F172A`), Inter typography, and Bento Grid modular container CSS classes in a centralized UI Blueprint.
 * **Module Registry:** Implementation of a `module-registry.json` (or database equivalent) that dictates which SaaS add-ons are active for a specific community.
 * **Dynamic Sidebar:** Refactoring the frontend Sidebar component to render navigation items dynamically based purely on the active modules and the user's validated permissions, dramatically reducing frontend technical debt.
+
+### [Resolved] Contingency 9: UI Blueprint & Module Registry (V1 Rescue)
+* **Objective:** Centralize the frontend design system and implement dynamic, permission-based navigation rendering to prevent hardcoded Vue conditionals.
+* **Execution details:**
+  * Configured `config/modules.php` as the central static dictionary mapping modules, routes, categories, and role permissions.
+  * Implemented `ModuleRegistryService` to compute active navigation by intersecting the dictionary, the Tenant's `saas_settings['active_modules']`, and the User's explicit Role capabilities.
+  * Injected the fully authorized navigation tree globally via Inertia's middleware.
+  * Centralized design tokens (Primary `#1F8A70`, Dark `#0F172A`) and established global Bento Grid CSS utilities (`.bento-card`, `.bento-grid`) for absolute UI consistency across all future modules.
 
 
 *Fin del Registro Activo.*

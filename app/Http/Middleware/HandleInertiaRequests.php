@@ -50,6 +50,9 @@ class HandleInertiaRequests extends Middleware
             ])->toArray();
         }
 
+        $registryService = app(\App\Services\ModuleRegistryService::class);
+        $navigationMenu = $registryService->getAuthorizedModules($activeCommunity, $activeRole);
+
         return [
             ...parent::share($request),
             'auth' => [
@@ -60,6 +63,7 @@ class HandleInertiaRequests extends Middleware
                 'role' => $activeRole,
                 'authorized_communities' => $authorizedCommunities,
             ],
+            'navigation_menu' => $navigationMenu,
         ];
     }
 }
