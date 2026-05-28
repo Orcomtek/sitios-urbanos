@@ -33,9 +33,21 @@ class HandleInertiaRequests extends Middleware
         $tenantContext = app(TenantContext::class);
         $activeCommunity = $tenantContext->get();
         $activeRole = null;
+        $authorizedCommunities = [];
 
-        if ($activeCommunity && $request->user()) {
-            $activeRole = $request->user()->roleInCommunity($activeCommunity)?->value;
+        if ($user = $request->user()) {
+            $user->loadMissing('communities');
+
+            if ($activeCommunity) {
+                $activeRole = $user->roleInCommunity($activeCommunity)?->value;
+            }
+
+            $authorizedCommunities = $user->communities->map(fn ($community) => [
+                'id' => $community->id,
+                'name' => $community->name,
+                'slug' => $community->slug,
+                'role' => $community->pivot->role,
+            ])->toArray();
         }
 
         return [
@@ -46,6 +58,7 @@ class HandleInertiaRequests extends Middleware
             'tenant' => [
                 'community' => $activeCommunity,
                 'role' => $activeRole,
+                'authorized_communities' => $authorizedCommunities,
             ],
         ];
     }

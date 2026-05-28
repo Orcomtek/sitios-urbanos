@@ -144,7 +144,7 @@ This contingency addresses the critical need for a secure, zero-friction onboard
 ## CONTINGENCY 7 — Semantic Routing Refactor (Routing Core)
 
 ### Status
-⏳ [Resolved]
+⏳ [Resuelta]
 
 ### Description
 The project must transition away from the legacy monolithic `/cockpit/...` routing structure. As the ecosystem evolves into a fully-fledged Multi-Tenant Operating System, the URLs must reflect a RESTful, module-based taxonomy that scales cleanly and matches the underlying Permission Registry.
@@ -165,7 +165,7 @@ The project must transition away from the legacy monolithic `/cockpit/...` routi
 ## CONTINGENCY 8 — Global Injection & "Workspace Switcher" (TopBar UX)
 
 ### Status
-⏳ Pending
+⏳ [Resuelta]
 
 ### Description
 To provide an Enterprise-grade UX, the platform must seamlessly support users holding multiple roles or owning properties across different communities (e.g., an Owner in Community A, and a Board Member in Community B). Forcing users to log out to switch contexts is an unacceptable friction point.
@@ -174,6 +174,13 @@ To provide an Enterprise-grade UX, the platform must seamlessly support users ho
 * **TopBar Component:** Implementation of a global "Workspace Switcher" dropdown in the main navigation bar.
 * **Inertia Middleware Injection:** Modification of `HandleInertiaRequests.php` to globally inject the array of authorized *Tenants* and associated roles for the authenticated user on every page load.
 * **Context Swapping:** Logic to handle instant subdomain switching and tenant context reloading upon selection, fully preserving the authenticated session and seamlessly transitioning the user's operational boundaries.
+
+### [Resolved] Contingency 8: Global Injection & "Workspace Switcher" (TopBar UX)
+* **Objective:** Enable frictionless navigation for users with multiple roles/properties across different communities without logging out.
+* **Execution details:**
+  * Modified `HandleInertiaRequests.php` to globally inject `tenant.authorized_communities`. Utilized optimized eager loading (`loadMissing('communities')`) to prevent N+1 query performance degradation.
+  * Implemented a sleek TopBar dropdown UI displaying the active community and role alongside alternative authorized workspaces.
+  * Configured cross-context swapping via hard redirects (`window.location.href`) to the absolute root URL of the target tenant. This safely re-triggers the `TenantMiddleware` to completely rebuild the `TenantContext` and resolve the appropriate role-based dashboard, preventing 403 Role-Mismatch errors.
 
 ## CONTINGENCY 9 — UI Blueprint & Module Registry (V1 Rescue)
 
