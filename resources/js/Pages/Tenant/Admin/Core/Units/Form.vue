@@ -7,20 +7,22 @@ const props = defineProps<{
     unit: {
         id?: number;
         identifier: string;
-        type: string;
+        property_type: string;
         status: string;
+        amenities?: string[];
     };
 }>();
 
 const page = usePage();
-const communitySlug = computed(() => page.url.split('/')[2]);
+const communitySlug = computed(() => (page.props.tenant as any)?.community?.slug);
 
 const isEditing = computed(() => !!props.unit.id);
 
 const form = useForm({
     identifier: props.unit.identifier || '',
-    type: props.unit.type || 'apartment',
-    status: props.unit.status || 'occupied',
+    property_type: props.unit.property_type || '',
+    status: props.unit.status || '',
+    amenities: props.unit.amenities || [],
 });
 
 const submit = () => {
@@ -58,29 +60,50 @@ const submit = () => {
                             </div>
 
                             <div>
-                                <label for="type" class="block text-sm font-medium leading-6 text-gray-900">Tipo de Unidad</label>
+                                <label for="property_type" class="block text-sm font-medium leading-6 text-gray-900">Tipo de Unidad</label>
                                 <div class="mt-2">
-                                    <select id="type" v-model="form.type" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                                        <option value="apartment">Apartamento</option>
-                                        <option value="house">Casa</option>
-                                        <option value="local">Local</option>
-                                        <option value="storage">Depósito</option>
-                                        <option value="parking">Parqueadero</option>
+                                    <select id="property_type" v-model="form.property_type" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                                        <option value="" disabled>Seleccione un tipo</option>
+                                        <option v-for="type in (page.props.taxonomies as any)?.property_type" :key="type.value" :value="type.value">
+                                            {{ type.label }}
+                                        </option>
                                     </select>
                                 </div>
-                                <p v-if="form.errors.type" class="mt-2 text-sm text-red-600">{{ form.errors.type }}</p>
+                                <p v-if="form.errors.property_type" class="mt-2 text-sm text-red-600">{{ form.errors.property_type }}</p>
                             </div>
 
                             <div>
                                 <label for="status" class="block text-sm font-medium leading-6 text-gray-900">Estado</label>
                                 <div class="mt-2">
                                     <select id="status" v-model="form.status" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                                        <option value="occupied">Ocupada</option>
-                                        <option value="vacant">Vacante</option>
-                                        <option value="maintenance">Mantenimiento</option>
+                                        <option value="" disabled>Seleccione un estado</option>
+                                        <option v-for="status in (page.props.taxonomies as any)?.unit_status" :key="status.value" :value="status.value">
+                                            {{ status.label }}
+                                        </option>
                                     </select>
                                 </div>
                                 <p v-if="form.errors.status" class="mt-2 text-sm text-red-600">{{ form.errors.status }}</p>
+                            </div>
+
+                            <div class="border-t border-gray-200 pt-6">
+                                <h3 class="text-sm font-medium leading-6 text-gray-900">Amenidades (Características)</h3>
+                                <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div v-for="amenity in (page.props.taxonomies as any)?.unit_amenity" :key="amenity.value" class="relative flex items-start">
+                                        <div class="flex h-6 items-center">
+                                            <input 
+                                                :id="`amenity_${amenity.value}`" 
+                                                :value="amenity.value" 
+                                                v-model="form.amenities" 
+                                                type="checkbox" 
+                                                class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600" 
+                                            />
+                                        </div>
+                                        <div class="ml-3 text-sm leading-6">
+                                            <label :for="`amenity_${amenity.value}`" class="font-medium text-gray-900">{{ amenity.label }}</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p v-if="form.errors.amenities" class="mt-2 text-sm text-red-600">{{ form.errors.amenities }}</p>
                             </div>
                         </div>
 

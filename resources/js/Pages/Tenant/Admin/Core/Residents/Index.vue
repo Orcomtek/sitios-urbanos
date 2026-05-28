@@ -24,13 +24,17 @@ const props = defineProps<{
 const page = usePage();
 const communitySlug = computed(() => (page.props.tenant as any)?.community?.slug);
 
+const getTaxonomyLabel = (type: string, value: string) => {
+    const taxonomies = (page.props.taxonomies as any)?.[type] || [];
+    const item = taxonomies.find((t: any) => t.value === value);
+    return item ? item.label : value;
+};
 </script>
 
 <template>
     <Head title="Residentes" />
 
     <AppLayout>
-        <template #header>
             <div class="flex items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
                 <h2 class="text-xl font-semibold leading-tight text-gray-800">Residentes</h2>
                 <Link
@@ -40,7 +44,6 @@ const communitySlug = computed(() => (page.props.tenant as any)?.community?.slug
                     Nuevo Residente
                 </Link>
             </div>
-        </template>
 
         <div class="py-12">
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
@@ -68,9 +71,14 @@ const communitySlug = computed(() => (page.props.tenant as any)?.community?.slug
                                         {{ resident.unit?.identifier }}
                                     </td>
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                        <span v-if="resident.resident_type === 'owner'" class="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-600/20">Propietario</span>
-                                        <span v-else-if="resident.resident_type === 'tenant'" class="inline-flex items-center rounded-md bg-purple-50 px-2 py-1 text-xs font-medium text-purple-700 ring-1 ring-inset ring-purple-600/20">Inquilino</span>
-                                        <span v-else-if="resident.resident_type === 'dependent'" class="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-700 ring-1 ring-inset ring-gray-600/20">Dependiente</span>
+                                        <span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset"
+                                              :class="{
+                                                  'bg-blue-50 text-blue-700 ring-blue-600/20': resident.resident_type === 'owner',
+                                                  'bg-purple-50 text-purple-700 ring-purple-600/20': resident.resident_type === 'tenant',
+                                                  'bg-gray-50 text-gray-700 ring-gray-600/20': resident.resident_type !== 'owner' && resident.resident_type !== 'tenant'
+                                              }">
+                                            {{ getTaxonomyLabel('resident_type', resident.resident_type) }}
+                                        </span>
                                     </td>
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                         <span v-if="resident.is_active" class="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">Activo</span>

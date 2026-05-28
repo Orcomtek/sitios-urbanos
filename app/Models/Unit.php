@@ -13,25 +13,20 @@ class Unit extends Model
 {
     use HasFactory, SoftDeletes, TenantScoped;
 
+    // EL ARRAY QUE ANTIGRAVITY BORRÓ POR ACCIDENTE
     protected $fillable = [
+        'community_id',
         'identifier',
         'property_type',
         'status',
-        'has_parking',
-        'parking_count',
-        'parking_identifiers',
-        'has_storage',
-        'storage_count',
-        'storage_identifiers',
+        'amenities',
     ];
 
+    // EL CASTEO DE LA NUEVA COLUMNA JSONB
     protected function casts(): array
     {
         return [
-            'has_parking' => 'boolean',
-            'has_storage' => 'boolean',
-            'parking_identifiers' => 'array',
-            'storage_identifiers' => 'array',
+            'amenities' => 'array',
         ];
     }
 

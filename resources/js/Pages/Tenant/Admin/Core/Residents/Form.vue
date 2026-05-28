@@ -21,7 +21,7 @@ const props = defineProps<{
 }>();
 
 const page = usePage();
-const communitySlug = computed(() => page.url.split('/')[2]);
+const communitySlug = computed(() => (page.props.tenant as any)?.community?.slug);
 
 const isEditing = computed(() => !!props.resident.id);
 
@@ -30,7 +30,7 @@ const form = useForm({
     full_name: props.resident.full_name || '',
     email: props.resident.email || '',
     phone: props.resident.phone || '',
-    resident_type: props.resident.resident_type || 'tenant',
+    resident_type: props.resident.resident_type || '',
     is_active: props.resident.is_active ?? true,
     pays_administration: props.resident.pays_administration ?? false,
 });
@@ -110,9 +110,10 @@ const goBack = () => {
                                     <label for="resident_type" class="block text-sm font-medium leading-6 text-gray-900">Tipo de Residente</label>
                                     <div class="mt-2">
                                         <select id="resident_type" v-model="form.resident_type" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                                            <option value="owner">Propietario</option>
-                                            <option value="tenant">Arrendatario (Inquilino)</option>
-                                            <option value="dependent">Residente (Dependiente)</option>
+                                            <option value="" disabled>Seleccione un tipo</option>
+                                            <option v-for="type in (page.props.taxonomies as any)?.resident_type" :key="type.value" :value="type.value">
+                                                {{ type.label }}
+                                            </option>
                                         </select>
                                     </div>
                                     <p v-if="form.errors.resident_type" class="mt-2 text-sm text-red-600">{{ form.errors.resident_type }}</p>

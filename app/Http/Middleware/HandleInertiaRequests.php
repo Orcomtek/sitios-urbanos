@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use App\Services\TenantContext;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -53,6 +54,14 @@ class HandleInertiaRequests extends Middleware
         $registryService = app(\App\Services\ModuleRegistryService::class);
         $navigationMenu = $registryService->getAuthorizedModules($activeCommunity, $activeRole);
 
+        $tenantId = $activeCommunity?->id ?? 'global';
+        $taxonomies = Cache::remember("taxonomies_tenant_{$tenantId}", now()->addDay(), function () {
+            return \App\Models\SystemTaxonomy::forCurrentTenantOrGlobal()
+                ->get(['type', 'label', 'value'])
+                ->groupBy('type')
+                ->toArray();
+        });
+
         return [
             ...parent::share($request),
             'auth' => [
@@ -64,6 +73,7 @@ class HandleInertiaRequests extends Middleware
                 'authorized_communities' => $authorizedCommunities,
             ],
             'navigation_menu' => $navigationMenu,
+            'taxonomies' => $taxonomies,
         ];
     }
 }

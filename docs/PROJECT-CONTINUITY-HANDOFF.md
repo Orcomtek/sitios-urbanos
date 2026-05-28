@@ -1932,6 +1932,15 @@ A deep refactoring of the resident and unit entities to establish strict Role-Bi
   * Implemented automated deactivation cascade: Onboarding a new Tenant automatically deactivates the previous Tenant and their Dependents, preserving forensic data (No soft-deletes) while enforcing the 1-active-tenant rule.
   * Patched Mass Assignment and Multi-Tenant (`community_id`) constraints at the service layer.
 
+## BLOCK 35.5 — Dynamic Taxonomies & UI CRUD Refactoring (Frontend Debt Rescue)
+**Phase:** Core Infrastructure (Emergent)
+**Objective:** Restore and stabilize the inherited V1 Vue frontend to seamlessly connect with the new semantic routing and multi-tenant constraints implemented in previous blocks.
+
+**Key Deliverables:**
+1. **Ziggy Routing Fix:** Resolve the `ERR_CERT_COMMON_NAME_INVALID` SSL error by ensuring Inertia/Ziggy correctly targets the dynamic tenant subdomain (`{slug}.app.sitios-urbanos.test`) during POST/PUT operations, bypassing the incorrect global `core` domain fallback.
+2. **Taxonomy Integration:** Eradicate hardcoded select options in Vue components (e.g., Property Types). Integrate the `system_taxonomies` database table to drive these dropdowns dynamically via Inertia shared props or dedicated backend controllers.
+3. **CRUD UI Restoration:** Update `Units/Index.vue`, `Units/Form.vue`, `Residents/Index.vue`, and `Residents/Form.vue`. Strip out legacy V1 permission gates (`v-if="can(...)"`) that are incorrectly hiding action buttons, and wire the forms to the new semantic endpoints (`tenant.admin.core.*`).
+
 ## BLOCK 36 — Asynchronous Bulk Import Engine
 
 ### Status
