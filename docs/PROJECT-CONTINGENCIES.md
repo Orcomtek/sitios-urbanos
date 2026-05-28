@@ -114,8 +114,71 @@
   * Centralized backend logic in `ParticipationCenterController` using advanced Eloquent Eager Loading (`whereDoesntHave`) to create a "Zero-State" inbox experience.
   * **UX/CRO Win:** Implemented a unified Vue/Inertia dashboard (`Tenant/Governance/Index.vue`) featuring "One-Click Voting" without page reloads, fully integrated into the master `AppLayout` slot structure.
 
-## 🚨 Contingencia 6: Auditoría UX e Integración de Accesos (Visitantes e Invitaciones huérfanos en menús - Bloques 14 y 17).
-**Estado:** `[Pendiente]`
+## 🚨 Contingency 6 — UX Audit & Access Integration (Onboarding)
+**Estado:** `[Resuelta]`
+
+### [Resolved] Contingency 6: UX Audit & Access Integration (Onboarding)
+* **Objective:** Implement a secure, zero-friction onboarding flow for new residents and administrators using "Magic Links".
+* **Execution details:**
+  * Created `user_invitations` table utilizing single-use, time-bound cryptographic tokens (64-char hash).
+  * Implemented `AcceptInvitationController` in the Global Control Plane (`app.sitiosurbanos.test`) as the absolute authority, preventing IDOR and privilege escalation.
+  * Executed dual-scenario handling: Password creation for new users and 1-Click acceptance for existing users, merging them safely via `syncWithoutDetaching`.
+  * Configured dynamic cross-subdomain redirection to the specific Tenant Runtime (`{slug}.app.sitiosurbanos.test`).
+
+### Description
+This contingency addresses the critical need for a secure, zero-friction onboarding flow for new residents and administrators. The current invitation flow must be decoupled from manual password creation and integrated into a "Magic Link" architecture to ensure immediate adoption and strict tenant isolation.
+
+**Scope & Execution Details:**
+* **Database Architecture:** Implementation of a highly secure `user_invitations` table utilizing single-use, time-bound cryptographic tokens. This table acts as the absolute source of truth for the target `role` and `community_id`.
+* **Tenant Resolution:** Redirection logic mapping the user from the Global Control Plane (`app.sitiosurbanos.com`) to their specific community runtime (`{slug}.app.sitiosurbanos.com`) only after token validation.
+* **UX Flows:** Dual-scenario handling. Scenario A: Seamless password creation for brand-new users with pre-filled, locked emails. Scenario B: 1-Click acceptance for existing users (e.g., property owners in multiple communities) merging them into the new `community_user` pivot without requiring a secondary account.
+
+### [Resolved] Contingency 6: UX Audit & Access Integration (Onboarding)
+* **Objective:** Implement a secure, zero-friction onboarding flow for new residents and administrators using "Magic Links".
+* **Execution details:**
+  * Created `user_invitations` table utilizing single-use, time-bound cryptographic tokens (64-char hash).
+  * Implemented `AcceptInvitationController` in the Global Control Plane (`app.sitiosurbanos.test`) as the absolute authority, preventing IDOR and privilege escalation.
+  * Executed dual-scenario handling: Password creation for new users and 1-click acceptance for existing users, merging them safely via `syncWithoutDetaching`.
+  * Configured dynamic cross-subdomain redirection to the specific Tenant Runtime (`{slug}.app.sitiosurbanos.test`).
+
+## CONTINGENCY 7 — Semantic Routing Refactor (Routing Core)
+
+### Status
+⏳ Pending
+
+### Description
+The project must transition away from the legacy monolithic `/cockpit/...` routing structure. As the ecosystem evolves into a fully-fledged Multi-Tenant Operating System, the URLs must reflect a RESTful, module-based taxonomy that scales cleanly and matches the underlying Permission Registry.
+
+**Scope & Execution Details:**
+* **Namespace Migration:** Segregating routes into strict logical domains: `/system/...` for SuperAdmin (Orcomtek), `/admin/...` for Community Management, and `/resident/...` for end-users.
+* **Micro-Service Structure:** Updating all API endpoints and Inertia/Vue view references to match the new structure (e.g., migrating `/cockpit/admin/units` to `/admin/core/units` and `/cockpit/resident/polls` to `/resident/governance/polls`).
+* **Codebase Hardening:** Deep search and replace across the routing files (`web.php`, `tenant.php`) and frontend components to ensure no legacy hardcoded URLs remain, preventing future 404 errors during module expansion.
+
+## CONTINGENCY 8 — Global Injection & "Workspace Switcher" (TopBar UX)
+
+### Status
+⏳ Pending
+
+### Description
+To provide an Enterprise-grade UX, the platform must seamlessly support users holding multiple roles or owning properties across different communities (e.g., an Owner in Community A, and a Board Member in Community B). Forcing users to log out to switch contexts is an unacceptable friction point.
+
+**Scope & Execution Details:**
+* **TopBar Component:** Implementation of a global "Workspace Switcher" dropdown in the main navigation bar.
+* **Inertia Middleware Injection:** Modification of `HandleInertiaRequests.php` to globally inject the array of authorized *Tenants* and associated roles for the authenticated user on every page load.
+* **Context Swapping:** Logic to handle instant subdomain switching and tenant context reloading upon selection, fully preserving the authenticated session and seamlessly transitioning the user's operational boundaries.
+
+## CONTINGENCY 9 — UI Blueprint & Module Registry (V1 Rescue)
+
+### Status
+⏳ Pending
+
+### Description
+Centralization of the frontend design system and dynamic rendering of navigation menus to prevent hardcoded conditionals in Vue components. This ensures visual consistency (Bento Grid) and scalable module activation per tenant.
+
+**Scope & Execution Details:**
+* **Design System:** Freezing the official color palette (Primary `#1F8A70`, Dark Mode `#0F172A`), Inter typography, and Bento Grid modular container CSS classes in a centralized UI Blueprint.
+* **Module Registry:** Implementation of a `module-registry.json` (or database equivalent) that dictates which SaaS add-ons are active for a specific community.
+* **Dynamic Sidebar:** Refactoring the frontend Sidebar component to render navigation items dynamically based purely on the active modules and the user's validated permissions, dramatically reducing frontend technical debt.
 
 
 *Fin del Registro Activo.*

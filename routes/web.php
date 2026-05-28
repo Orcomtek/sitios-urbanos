@@ -13,6 +13,9 @@ Route::domain($centralDomain)->group(function () {
         return redirect()->route('communities.index');
     })->middleware(['auth']);
 
+    Route::get('/invitations/accept', [\App\Http\Controllers\Global\AcceptInvitationController::class, 'show'])->name('invitations.accept.show');
+    Route::post('/invitations/accept', [\App\Http\Controllers\Global\AcceptInvitationController::class, 'store'])->name('invitations.accept.store');
+
     Route::middleware('auth')->group(function () {
         Route::get('/comunidades', [CommunityController::class, 'index'])->name('communities.index');
         Route::get('/comunidades/{slug}/ingresar', [CommunityController::class, 'enter'])->name('communities.enter');

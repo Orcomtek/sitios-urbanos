@@ -1911,44 +1911,144 @@ Implemented the backend core for the Professional Services Directory (Providers 
 - **Service Request Modal:** Implemented the "Solicitar Servicio" modal in the Resident view, successfully hitting the Block 33.5 backend.
 - **Tenant Isolation Verified:** Manually validated that providers created in one community (`test-community`) are strictly invisible to residents of another community.
 
-### [Resolved] Contingency 2: Database Standardization (Global/Local Taxonomies)
-* **Objective:** Centralize all dynamic select options and categories into a single polymorphic table to prevent database fragmentation.
-* **Execution details:**
-  * Created `system_taxonomies` migration with `foreignId` for `community_id` (nullable for global records).
-  * Implemented `SystemTaxonomy` model bypassing standard `TenantScoped` to allow a custom `scopeForCurrentTenantOrGlobal`.
-  * Created `SystemTaxonomyController` mapped to `/api/system/taxonomies/{type}`. 
-  * **Critical Bug Fix:** Forced `$request->route('type')` in the controller to prevent the tenant subdomain string from shifting and overwriting the `$type` parameter.
-* **Frozen Architectural Decision (The Override Rule):** If a local taxonomy (created by a community) shares the exact same `value` as a global Sitios Urbanos taxonomy, the Controller uses `.keyBy('value')` to ensure the local record natively overwrites the global one in the API response, preventing duplicate keys in Vue loops.
+## BLOCK 35 — 360 Census & Granular Resident Architecture
 
-### [Resolved] Contingency 1.4: Dynamic Provider Categories (Frontend Integration)
-* **Objective:** Refactor Admin and Resident Provider views to consume dynamic system taxonomies instead of hardcoded arrays.
-* **Execution details:**
-  * Removed static category arrays from `Admin/Providers/Index.vue` and `Resident/Providers/Index.vue`.
-  * Implemented asynchronous data fetching via `axios` on the `onMounted` hook.
-  * Added graceful loading states to prevent form submission before data is ready.
-  * **Validation:** Verified end-to-end that the "Override Rule" and "Tenant Isolation" correctly reflect in the UI for both roles.
+### Status
+⏳ Pending
 
-  ### [Resolved] Contingency 3: Separation of Powers & Global Parameterization (SaaS Authorization Engine)
-* **Objective:** Enforce the "Default-Closed" rule for premium SaaS modules to prevent unauthorized access by local community admins.
-* **Execution details:**
-  * Added `saas_settings` JSONB column to `communities` table for high-performance feature flagging without N+1 queries.
-  * Created `system_settings` table for SuperAdmin global parameterization (e.g., automated moderation dictionaries).
-  * Implemented `EnsureTenantHasFeature` middleware and registered alias `tenant.feature` in `bootstrap/app.php` (Laravel 13 standard).
-  * Created `CommunityFeatureController` isolated for SuperAdmin use.
-* **Validation:** Verified via Tinker that a tenant explicitly fails-closed (403) without a feature and succeeds when granted the flag via JSONB update.
+### Description
+A deep refactoring of the resident and unit entities to establish strict Role-Binding. A resident is not simply a user; they represent a specific legal and operational link to a unit. This block builds the foundation for complex community demographics.
 
-### [Resolved] Contingency 4: UX Audit & Core Entities Refactor (Units & Residents)
-* **Objective:** Establish robust, tenant-isolated CRUD operations for Units and Residents with an optimized, low-cognitive-load UI for property managers.
-* **Execution details:**
-  * Verified database constraints: `UNIQUE(['community_id', 'identifier'])` on Units and direct `unit_id` FK on Residents with `SoftDeletes` for historical tracking.
-  * Implemented strict Tenant Isolation at the Form Request level (`StoreResidentRequest`) using scoped `exists` rules to prevent IDOR attacks.
-  * Refactored `UnitController` to use `withCount` for lightweight grid rendering and eager loading on an isolated `/show` endpoint.
-  * **UX/CRO Win:** Replaced multi-page navigation with a reactive Vue `UnitSlideOver` component, allowing resident management directly within the Unit context without reloading the page.
+**Scope & Execution Details:**
+* **Owner (Propietario):** Grants access to financial dashboards, assembly voting with property coefficients, and the ability to authorize tenants.
+* **Tenant (Inquilino):** Enforces a strict database and application rule: Only 1 active Tenant per unit at a time. Grants access to the operational dashboard (QR access, PQRS, Packages).
+* **Co-Resident/Dependent:** Allows family members or roommates to exist in the census to receive packages and gate access, strictly isolated from voting and financial data.
 
-  ### [Resolved] Contingency 5: UX Audit & Governance Refactor (Polls & Documents)
-* **Objective:** Unify Governance interactions into a high-conversion, single-page dashboard while enforcing strict legal auditability and preventing double-voting.
-* **Execution details:**
-  * Created robust pivot tables (`poll_votes`, `document_signatures`) with composite `UNIQUE(['community_id', 'poll_id', 'user_id'])` constraints to guarantee strict tenant isolation and absolute vote immutability.
-  * Future-proofed LATAM Assembly mechanics by adding a `vote_weight` column for property coefficient calculations.
-  * Centralized backend logic in `ParticipationCenterController` using advanced Eloquent Eager Loading (`whereDoesntHave`) to create a "Zero-State" inbox experience.
-  * **UX/CRO Win:** Implemented a unified Vue/Inertia dashboard (`Tenant/Governance/Index.vue`) featuring "One-Click Voting" without page reloads, fully integrated into the master `AppLayout` slot structure.
+## BLOCK 36 — Asynchronous Bulk Import Engine
+
+### Status
+⏳ Pending
+
+### Description
+Manual data entry is a critical bottleneck for B2B SaaS adoption. This block implements a robust, fault-tolerant bulk import system allowing administrators to upload CSV files to bootstrap a community instantly.
+
+**Scope & Execution Details:**
+* **Queued Processing:** Utilizing Laravel Queues and Jobs (e.g., Laravel Excel) to process large datasets in the background without blocking the HTTP request or timing out.
+* **Row-by-Row Validation:** Ensuring that a single typo in row 45 does not roll back the entire import. The system will process valid rows and return a downloadable error log for the failed ones.
+* **Import Targets:** Full support for bulk uploading Units, Property Coefficients, Initial Financial Balances (Ledger), Residents, Vehicles, and Pets.
+
+## BLOCK 37 — SuperAdmin Control Plane (/system)
+
+### Status
+⏳ Pending
+
+### Description
+The global management dashboard for the SaaS owner (Orcomtek). This is the absolute top-level tier required to monetize and govern the multi-tenant architecture effectively.
+
+**Scope & Execution Details:**
+* **SaaS Tiers & Subscriptions:** Creation of pricing plans (Base, Pro, Elite) mapping to feature availability and unit limits.
+* **Tenant Feature Overrides:** A module to manage commercial negotiations. It configures specific exceptions per community (e.g., 50 extra free SMS, discounted ePayco Take-Rate) via the `tenant_feature_overrides` table.
+* **Global Auditing:** Dashboard to monitor overall SaaS health, active communities, MRR (Monthly Recurring Revenue) metrics, and global system logs.
+
+## BLOCK 38 — Dunning & Soft-Collection Strategy
+
+### Status
+⏳ Pending
+
+### Description
+An automated, UX-focused financial retention flow. This replaces aggressive collection tactics with a phased "Soft-Collection" strategy to handle unpaid community invoices without alienating the resident, while protecting the community's cash flow.
+
+**Scope & Execution Details:**
+* **Friendly Reminders (Days 1-3):** Automated, empathetic notifications regarding failed or pending payments.
+* **Grace Periods:** Configurable parameters per community defining the acceptable delay window.
+* **Automated Service Degradation:** Gradual locking of non-essential services (e.g., Amenity reservations, quick QR generation) while keeping payment portals accessible. Escaping to manual legal handover only at the terminal stage.
+
+## BLOCK 39 — ePayco Split Commission Engine
+
+### Status
+⏳ Pending
+
+### Description
+The core monetization engine for the platform. This block implements the real-time financial orchestration required for the aggregator model using ePayco Split, dictating exact profit margins on every transaction.
+
+**Scope & Execution Details:**
+* **Commission Profiles:** Creation of the `commission_profiles` and `commission_rules` tables to handle dynamic calculation rates.
+* **Real-Time Split:** Logic to intercept payments (Administration fees, Marketplace purchases) and calculate: `Total Amount - Gateway Cost - Sitios Urbanos Take-Rate = Net Community/Provider Payout`.
+* **Ledger Integration:** Ensuring the immutable ledger records these splits transparently, separating platform fees from the unit's actual credited balance.
+
+## BLOCK 40 — Cryptographic Access Engine (QR & Gates)
+
+### Status
+⏳ Pending
+
+### Description
+The operational boundary of the community. This block moves the Access module from a conceptual state to a fully functional, cryptographically secure entry system for the gatehouse.
+
+**Scope & Execution Details:**
+* **TOTP/HMAC QR Generation:** Producing time-sensitive, cryptographically signed QR codes that cannot be screenshotted and reused indefinitely.
+* **Guard UI Scanner:** A fast, mobile-friendly PWA interface for the security guard to scan codes.
+* **State Mutation:** Real-time backend validation of the signature, immediately mutating the `AccessInvitation` status to "Consumed" to prevent double-entry (replay attacks).
+
+## BLOCK 41 — Forensic Audit & Device Security
+
+### Status
+⏳ Pending
+
+### Description
+Establishing the legal and forensic shield for the platform. This guarantees that all critical operational and security actions are irrefutably tracked and that gatehouse access cannot be compromised via session theft.
+
+**Scope & Execution Details:**
+* **Immutable Audit Trail:** Expanding `security_logs` to capture granular data on who generated an invitation, which specific guard validated it, at what exact timestamp, and attaching photo evidence if required by community rules.
+* **Device Tokens (Hardware Binding):** Implementing asymmetric signature validation or strict Device Tokens for the `guard` role. This ensures operational sessions can only be initiated from physically authorized devices at the gatehouse, preventing guards from logging in from home.
+
+## BLOCK 42 — Resident P2P Ecosystem (Classifieds)
+
+### Status
+⏳ Pending
+
+### Description
+The circular economy module designed to maximize resident engagement and retention. A neighbor-to-neighbor classifieds system built with strict privacy and moderation controls, operating completely outside the payment gateway.
+
+**Scope & Execution Details:**
+* **Exploration & Creation UI:** Resident dashboard views to browse active listings, post new items/services, and pause/edit their own publications.
+* **Privacy Engine:** Backend enforcement of contact visibility based on the resident's preference (`show_contact_info`), ensuring PII (email/phone) is never leaked via API endpoints without consent.
+* **Community Moderation:** Reporting mechanics for residents and management tools for admins to pause or remove inappropriate listings.
+
+## BLOCK 43 — B2B2C Marketplace & Provider Directory
+
+### Status
+⏳ Pending
+
+### Description
+The formal commercial layer of the ecosystem. This connects external businesses and vetted service providers to the residents, serving as the secondary monetization pillar for the SaaS.
+
+**Scope & Execution Details:**
+* **Provider Directory (Lead Gen):** UI for residents to browse vetted professionals (plumbers, electricians), view ratings, and request services. Incorporates visibility slots (Ads) for provider monetization.
+* **Marketplace Integration:** Formal storefronts for local businesses (Mini-markets, Pharmacies) featuring a shopping cart UX, order status tracking, and direct integration with the ePayco Split engine to collect the platform's Take-Rate on every sale.
+
+## BLOCK 44 — Artificial Intelligence (Legal RAG)
+
+### Status
+⏳ Pending
+
+### Description
+Deploying generative AI to reduce the administrative burden on community managers. This chatbot answers resident queries using Retrieval-Augmented Generation (RAG) based purely on the specific legal documents of their community.
+
+**Scope & Execution Details:**
+* **Document Ingestion (Embeddings):** Processing uploaded Community Rulebooks (Manuales de Convivencia) and bylaws into a vector database.
+* **Resident Chat Interface:** A localized chat widget within the resident cockpit.
+* **Strict Context Framing:** Ensuring the LLM only answers based on the ingested embeddings, preventing hallucinated policies and providing exact citations to the community rulebook.
+
+## BLOCK 45 — Master UI/UX, Omnichannel & Demo Data Pack
+
+### Status
+⏳ Pending
+
+### Description
+The final polish and production hardening block. This transitions the application from a functional MVP to a commercial-grade Enterprise software product ready for deployment and sales demos.
+
+**Scope & Execution Details:**
+* **Visual Refinement:** Application-wide pass to enforce Bento Grid consistency, professional Empty States, and micro-interactions.
+* **Async Omnichannel Engine:** Activating the Redis queued jobs for AWS SNS (SMS), Emails, and Push notifications, enforcing the Fair Use quota degradation logic.
+* **Idempotent Seeders:** Creation of the `Local Demo Data Pack`. A robust seeder suite that instantly generates fully populated multi-tenant environments (units, residents, financial history, polls) to facilitate QA testing and high-impact sales demonstrations.
+* **Production Hardening:** Final configuration of CORS, API Rate Limiting, Database Backups, and Laravel Reverb concurrency tuning.
