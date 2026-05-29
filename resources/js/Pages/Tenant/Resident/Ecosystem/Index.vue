@@ -1,10 +1,13 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue';
-import { Head } from '@inertiajs/vue3';
+import { Head , usePage} from '@inertiajs/vue3';
 import axios from 'axios';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import ListingCard from './Partials/ListingCard.vue';
 import ListingForm from './Partials/ListingForm.vue';
+
+const page = usePage();
+const communitySlug = page.props.tenant?.community?.slug;
 
 const props = defineProps({
     resident_id: {
@@ -25,7 +28,7 @@ const fetchListings = async () => {
     loading.value = true;
     error.value = '';
     try {
-        const response = await axios.get('/api/ecosystem/listings');
+        const response = await axios.get(route('api.ecosystem.listings.index', { community_slug: communitySlug }));
         allListings.value = response.data.data;
     } catch (e) {
         console.error('Error fetching listings', e);
@@ -55,10 +58,10 @@ const submitForm = async (formData) => {
     
     try {
         if (editingListing.value) {
-            await axios.patch(`/api/ecosystem/listings/${editingListing.value.id}`, formData);
+            await axios.patch(route('api.ecosystem.listings.update', { community_slug: communitySlug, listing: editingListing.value.id }), formData);
             successMessage.value = 'Anuncio actualizado correctamente.';
         } else {
-            await axios.post('/api/ecosystem/listings', formData);
+            await axios.post(route('api.ecosystem.listings.store', { community_slug: communitySlug }), formData);
             successMessage.value = 'Anuncio publicado correctamente.';
         }
         
@@ -89,7 +92,7 @@ const toggleStatus = async (listing) => {
     
     try {
         processing.value = true;
-        await axios.patch(`/api/ecosystem/listings/${listing.id}`, {
+        await axios.patch(route('api.ecosystem.listings.update', { community_slug: communitySlug, listing: listing.id }), {
             status: newStatus
         });
         await fetchListings();

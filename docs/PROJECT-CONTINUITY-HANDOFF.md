@@ -1941,18 +1941,31 @@ A deep refactoring of the resident and unit entities to establish strict Role-Bi
 2. **Taxonomy Integration:** Eradicate hardcoded select options in Vue components (e.g., Property Types). Integrate the `system_taxonomies` database table to drive these dropdowns dynamically via Inertia shared props or dedicated backend controllers.
 3. **CRUD UI Restoration:** Update `Units/Index.vue`, `Units/Form.vue`, `Residents/Index.vue`, and `Residents/Form.vue`. Strip out legacy V1 permission gates (`v-if="can(...)"`) that are incorrectly hiding action buttons, and wire the forms to the new semantic endpoints (`tenant.admin.core.*`).
 
-## BLOCK 36 — Asynchronous Bulk Import Engine
+## BLOCK 36.0 — Topological Matrix & Infrastructure Generator
+**Phase:** Core Infrastructure (Onboarding)
+**Objective:** Replace manual, one-by-one unit creation with an algorithmic matrix generator to map the physical layout of a community, preventing security vulnerabilities like "phantom units".
+**Key Deliverables:**
+1. **Topological Algorithm:** A backend service that accepts matrix parameters (e.g., 3 Towers, 10 Floors, 4 Units per Floor, plus nomenclature rules) and generates the entire `units` database structure in a single database transaction.
+2. **Amenity Inheritance:** Ability to assign structural JSONB amenities during matrix creation (e.g., "All 1st-floor units include a patio").
+3. **Soft-Delete Enforcement:** Units cannot be hard-deleted to preserve forensic audit logs. Introduce `SoftDeletes` for structural adjustments (e.g., merging two apartments).
 
-### Status
-⏳ Pending
+## BLOCK 36.1 — Asynchronous Bulk Import Engine (ETL)
+**Phase:** Core Infrastructure (Data Population)
+**Objective:** A queue-based ETL (Extract, Transform, Load) pipeline to populate the Topological Matrix with human and financial data via CSV uploads, preventing server timeouts.
+**Key Deliverables:**
+1. **Job Queues:** Implement `ResidentImportJob` and `FinancialBalanceImportJob` using Laravel Horizon/Redis.
+2. **Validation Layer:** Strict CSV validation targeting the existing matrix (e.g., rejecting a resident if the CSV maps them to an uncreated/phantom unit).
+3. **Progress UI:** Real-time upload and processing feedback for the administrator (e.g., "Importing 400 residents... 80% complete").
 
-### Description
-Manual data entry is a critical bottleneck for B2B SaaS adoption. This block implements a robust, fault-tolerant bulk import system allowing administrators to upload CSV files to bootstrap a community instantly.
-
-**Scope & Execution Details:**
-* **Queued Processing:** Utilizing Laravel Queues and Jobs (e.g., Laravel Excel) to process large datasets in the background without blocking the HTTP request or timing out.
-* **Row-by-Row Validation:** Ensuring that a single typo in row 45 does not roll back the entire import. The system will process valid rows and return a downloadable error log for the failed ones.
-* **Import Targets:** Full support for bulk uploading Units, Property Coefficients, Initial Financial Balances (Ledger), Residents, Vehicles, and Pets.
+## BLOCK 36.2 — Global UX/UI Standardization (Modal-First Architecture)
+**Phase:** Technical & Cognitive Debt Rescue
+**Objective:** Eliminate cognitive friction and UI inconsistencies inherited from V1, applying CRO/Neuromarketing principles.
+**Key Deliverables:**
+1. **Action Modals:** Refactor all primary CRUD creation and editing forms (Units, Residents, Providers) into central screen Modals.
+2. **SlideOver Scoping:** Restrict SlideOvers strictly to "View/Read-Only" complex data profiles.
+3. **Server-Side DataTable Engine (`Units/Index.vue`):** Implement built-in sorting, text search (Identifier), property_type filters, and dynamic pagination (`per_page` array: 25, 50, 100) driven natively by Laravel Eloquent and Inertia dynamic requests.
+4. **Topological Matrix Sector Scoping (`VisualMatrix.vue`):** Prevent matrix layout fragmentation by implementing standalone Block/Sector view filters instead of standard table pagination.
+5. **Dynamic Toast Notification System:** Replace all browser-native `alert()` commands with an elegant, un-intrusive Toast component (Success/Error/Warning) with auto-dismiss logic.
 
 ## BLOCK 37 — SuperAdmin Control Plane (/system)
 
@@ -2030,6 +2043,14 @@ The circular economy module designed to maximize resident engagement and retenti
 * **Exploration & Creation UI:** Resident dashboard views to browse active listings, post new items/services, and pause/edit their own publications.
 * **Privacy Engine:** Backend enforcement of contact visibility based on the resident's preference (`show_contact_info`), ensuring PII (email/phone) is never leaked via API endpoints without consent.
 * **Community Moderation:** Reporting mechanics for residents and management tools for admins to pause or remove inappropriate listings.
+
+## BLOCK 42.1 — Dynamic Resource Allocation & Booking Engine (Communal Assets)
+**Phase:** Resident Experience & Governance
+**Objective:** Handle the lifecycle of floating, non-deeded assets (e.g., Communal Parking, BBQs, Event Rooms) outside the rigid topological matrix, utilizing a time-based booking and assignment system.
+**Key Deliverables:**
+1. **Resource Ledger:** A dynamic architecture (`communal_resources` and `bookings` tables) to register assets that can be reserved, raffled, or temporarily assigned to a Resident/Unit.
+2. **Booking & Eligibility Engine:** Logic to allow residents to reserve assets. Includes financial gates (e.g., "Resident must have $0 debt to enter the communal parking raffle").
+3. **Automated Assignment (Cron Jobs):** Automated quarterly/monthly rotation algorithms for high-demand floating assets like communal parking, completely decoupled from the physical Unit architecture.
 
 ## BLOCK 43 — B2B2C Marketplace & Provider Directory
 

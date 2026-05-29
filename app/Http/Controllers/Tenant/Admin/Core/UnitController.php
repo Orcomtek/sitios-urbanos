@@ -44,7 +44,14 @@ class UnitController extends Controller
         }]);
 
         // Returning as JSON to be consumed asynchronously by the Vue Slide-over
-        return response()->json([
+        if (request()->wantsJson()) {
+            return response()->json([
+                'unit' => $unit
+            ]);
+        }
+
+        // Fallback for non-JSON requests
+        return Inertia::render('Tenant/Admin/Core/Units/Show', [
             'unit' => $unit
         ]);
     }

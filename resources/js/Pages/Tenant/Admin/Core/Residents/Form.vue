@@ -24,9 +24,10 @@ const page = usePage();
 const communitySlug = computed(() => (page.props.tenant as any)?.community?.slug);
 
 const isEditing = computed(() => !!props.resident.id);
+const urlParams = new URLSearchParams(window.location.search);
 
 const form = useForm({
-    unit_id: props.resident.unit_id || '',
+    unit_id: props.resident?.unit_id || urlParams.get('unit_id') || '',
     full_name: props.resident.full_name || '',
     email: props.resident.email || '',
     phone: props.resident.phone || '',

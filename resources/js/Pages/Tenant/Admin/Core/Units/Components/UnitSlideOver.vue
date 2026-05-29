@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
 import axios from 'axios';
-import { usePage } from '@inertiajs/vue3';
+import { usePage, Link } from '@inertiajs/vue3';
 
 const props = defineProps<{
     isOpen: boolean;
@@ -14,13 +14,21 @@ const emit = defineEmits(['close']);
 // The hydrated unit with its residents
 const unitData = ref<any>(null);
 
+const page = usePage();
+const communitySlug = (page.props.tenant as any)?.community?.slug;
+
+const getTaxonomyLabel = (type: string, value: string) => {
+    const taxonomies = (page.props.taxonomies as any)?.[type] || [];
+    const item = taxonomies.find((t: any) => t.value === value);
+    return item ? item.label : value;
+};
+
 watch(() => props.isOpen, async (newVal) => {
     if (newVal && props.unitId) {
         try {
-            const communitySlug = (usePage().props.tenant as any)?.community?.slug;
             // Fetch the eager-loaded unit data using a standard Inertia JSON fetch or raw Axios.
             // Using raw axios for this slide-over structural demo based on the controller `show` JSON response:
-            const response = await axios.get(`/units/${props.unitId}`);
+            const response = await axios.get(route('tenant.admin.core.units.show', { community_slug: communitySlug, unit: props.unitId }));
             unitData.value = response.data.unit;
         } catch (e) {
             console.error(e);
@@ -67,23 +75,23 @@ const closePanel = () => {
                         <!-- Unit Details -->
                         <div>
                             <h3 class="text-sm font-medium text-gray-500">Identificador</h3>
-                            <p class="mt-1 text-sm text-gray-900">{{ unitData.identifier }} ({{ unitData.property_type }})</p>
+                            <p class="mt-1 text-sm text-gray-900">{{ unitData.identifier }} ({{ getTaxonomyLabel('property_type', unitData.property_type) }})</p>
                         </div>
                         
                         <!-- Residents Section -->
                         <div class="border-t border-gray-200 pt-6">
                             <div class="flex justify-between items-center mb-4">
                                 <h3 class="text-lg font-medium text-gray-900">Residentes</h3>
-                                <button class="text-sm text-indigo-600 font-medium hover:text-indigo-900">
+                                <Link :href="route('tenant.admin.core.residents.create', { community_slug: communitySlug, unit_id: unitData.id })" class="text-sm text-indigo-600 font-medium hover:text-indigo-900">
                                     + Añadir
-                                </button>
+                                </Link>
                             </div>
                             
                             <ul role="list" class="divide-y divide-gray-200" v-if="unitData.residents && unitData.residents.length > 0">
                                 <li v-for="resident in unitData.residents" :key="resident.id" class="py-4 flex justify-between">
                                     <div>
                                         <p class="text-sm font-medium text-gray-900">{{ resident.full_name }}</p>
-                                        <p class="text-sm text-gray-500">{{ resident.resident_type }}</p>
+                                        <p class="text-sm text-gray-500">{{ getTaxonomyLabel('resident_type', resident.resident_type) }}</p>
                                     </div>
                                     <div>
                                         <span v-if="resident.is_active" class="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">

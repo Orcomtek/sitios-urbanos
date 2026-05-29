@@ -51,7 +51,7 @@ const isLoadingCategories = ref(true);
 const fetchCategories = async () => {
     isLoadingCategories.value = true;
     try {
-        const response = await axios.get('/api/system/taxonomies/provider_category');
+        const response = await axios.get(route('api.system.taxonomies.index', { community_slug: communitySlug, type: 'provider_category' }));
         categories.value = response.data.data;
     } catch (error) {
         console.error('Error fetching categories:', error);

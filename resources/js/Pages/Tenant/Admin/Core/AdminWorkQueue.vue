@@ -7,6 +7,7 @@ import axios from 'axios';
 
 const { data, isLoading, error, refetch } = useApiData('/api/cockpit/admin-work-queue');
 const page = usePage();
+const communitySlug = (page.props.tenant as any)?.community?.slug;
 const communityId = (page.props.tenant as any)?.community?.id;
 
 // Translation Dictionary for Categories
@@ -77,7 +78,7 @@ const isModerating = ref<Record<string | number, boolean>>({});
 const moderateListing = async (id: number) => {
     isModerating.value[id] = true;
     try {
-        await axios.patch(`/api/ecosystem/listings/${id}/moderate`, { status: 'removed' });
+        await axios.patch(route('api.ecosystem.listings.moderate', { community_slug: communitySlug, listing: id }), { status: 'removed' });
         await refetch();
     } catch (e: any) {
         console.error(e);

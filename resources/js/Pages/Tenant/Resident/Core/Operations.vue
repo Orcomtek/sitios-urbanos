@@ -1,8 +1,11 @@
 <script setup>
 import { ref, onMounted } from 'vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import { Head, Link, useForm , usePage} from '@inertiajs/vue3';
 import axios from 'axios';
 import AppLayout from '@/Layouts/AppLayout.vue';
+
+const page = usePage();
+const communitySlug = page.props.tenant?.community?.slug;
 
 const props = defineProps({
     activeUnits: {
@@ -47,7 +50,7 @@ const formError = ref('');
 const fetchInvitations = async () => {
     loadingInvitations.value = true;
     try {
-        const response = await axios.get('/api/security/invitations');
+        const response = await axios.get(route('api.security.invitations.index', { community_slug: communitySlug }));
         invitations.value = response.data.data || [];
     } catch (e) {
         console.error(e);
@@ -60,7 +63,7 @@ const fetchInvitations = async () => {
 const fetchVisitors = async () => {
     loadingVisitors.value = true;
     try {
-        const response = await axios.get('/api/security/visitors');
+        const response = await axios.get(route('api.security.visitors.index', { community_slug: communitySlug }));
         visitors.value = response.data.data || [];
     } catch (e) {
         console.error(e);
@@ -73,7 +76,7 @@ const fetchVisitors = async () => {
 const fetchPackages = async () => {
     loadingPackages.value = true;
     try {
-        const response = await axios.get('/api/security/packages');
+        const response = await axios.get(route('api.security.packages.index', { community_slug: communitySlug }));
         packages.value = response.data.data || [];
     } catch (e) {
         console.error(e);
@@ -94,7 +97,7 @@ const submitInvitation = async () => {
     formSuccess.value = '';
     
     try {
-        await axios.post('/api/security/invitations', invitationForm);
+        await axios.post(route('api.security.invitations.store', { community_slug: communitySlug }), invitationForm);
         formSuccess.value = 'Invitación creada con éxito.';
         invitationForm.reset();
         // Reset defaults
@@ -115,7 +118,7 @@ const submitInvitation = async () => {
 const revokeInvitation = async (invitationId) => {
     if (!confirm('¿Seguro que deseas revocar esta invitación?')) return;
     try {
-        await axios.patch(`/api/security/invitations/${invitationId}/revoke`);
+        await axios.patch(route('api.security.invitations.revoke', { community_slug: communitySlug, invitation: invitationId }));
         await fetchInvitations();
     } catch (e) {
         alert('Error al revocar la invitación');
@@ -127,7 +130,7 @@ const submitVisitor = async () => {
     formSuccess.value = '';
     
     try {
-        await axios.post('/api/security/visitors', visitorForm);
+        await axios.post(route('api.security.visitors.store', { community_slug: communitySlug }), visitorForm);
         formSuccess.value = 'Visitante registrado con éxito.';
         visitorForm.reset();
         // Reset defaults

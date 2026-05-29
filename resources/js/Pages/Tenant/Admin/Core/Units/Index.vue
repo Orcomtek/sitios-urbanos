@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import AppLayout from '@/Layouts/AppLayout.vue';
-import { Head, Link, usePage } from '@inertiajs/vue3';
+import { Head, Link, usePage, router } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
 import axios from 'axios';
 import UnitSlideOver from './Components/UnitSlideOver.vue';
@@ -45,6 +45,12 @@ const openSlideOver = (unitId: number) => {
 const closeSlideOver = () => {
     isSlideOverOpen.value = false;
     selectedUnitId.value = null;
+};
+
+const deleteUnit = (unitId: number) => {
+    if (window.confirm('¿Estás seguro de eliminar esta unidad?')) {
+        router.delete(route('tenant.admin.core.units.destroy', { community_slug: communitySlug.value, unit: unitId }));
+    }
 };
 </script>
 
@@ -96,6 +102,7 @@ const closeSlideOver = () => {
                                     <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
                                         <button @click.stop="openSlideOver(unit.id)" class="text-indigo-600 hover:text-indigo-900">Residentes</button>
                                         <Link :href="route('tenant.admin.core.units.edit', { community_slug: communitySlug, unit: unit.id })" class="text-indigo-600 hover:text-indigo-900 ml-4">Editar</Link>
+                                        <button @click.stop="deleteUnit(unit.id)" class="text-red-600 hover:text-red-900 ml-4">Borrar</button>
                                     </td>
                                 </tr>
                                 <tr v-if="units.data.length === 0">

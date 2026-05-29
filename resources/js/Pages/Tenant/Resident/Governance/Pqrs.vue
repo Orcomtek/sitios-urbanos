@@ -1,8 +1,11 @@
 <script setup>
 import { ref, onMounted } from 'vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import { Head, Link, useForm , usePage} from '@inertiajs/vue3';
 import axios from 'axios';
 import AppLayout from '@/Layouts/AppLayout.vue';
+
+const page = usePage();
+const communitySlug = page.props.tenant?.community?.slug;
 
 const data = ref([]);
 const loading = ref(true);
@@ -27,7 +30,7 @@ const toggleExpand = (id) => {
 const fetchData = async () => {
     loading.value = true;
     try {
-        const response = await axios.get('/api/governance/pqrs');
+        const response = await axios.get(route('api.governance.pqrs.index', { community_slug: communitySlug }));
         data.value = response.data.data || [];
         error.value = null;
     } catch (e) {
@@ -47,7 +50,7 @@ const submitPqrs = async () => {
     formSuccess.value = '';
     
     try {
-        await axios.post('/api/governance/pqrs', form);
+        await axios.post(route('api.governance.pqrs.store', { community_slug: communitySlug }), form);
         formSuccess.value = 'Solicitud creada con éxito.';
         form.reset();
         isCreating.value = false;

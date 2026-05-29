@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Tenant\Admin\Core\ResidentController;
 use App\Http\Controllers\Tenant\Admin\Core\UnitController;
+use App\Http\Controllers\Tenant\Admin\Core\UnitGeneratorController;
 use App\Http\Controllers\Tenant\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Tenant\Admin\Ecosystem\ProviderController as AdminProviderController;
 use App\Http\Controllers\Tenant\Resident\DashboardController as ResidentDashboardController;
@@ -42,6 +43,11 @@ Route::domain('{community_slug}.'.$centralDomain)
                 Route::get('/work-queue', [AdminDashboardController::class, 'workQueue'])->name('work-queue');
                 Route::get('/admin-work-queue', [AdminDashboardController::class, 'adminWorkQueue'])->name('admin-work-queue');
                 
+                Route::prefix('units')->name('units.')->group(function () {
+                    Route::get('/generator', [UnitGeneratorController::class, 'index'])->name('generator');
+                    Route::post('/generator/generate', [UnitGeneratorController::class, 'generate'])->name('generator.generate');
+                    Route::post('/generator/bulk-amenities', [UnitGeneratorController::class, 'bulkUpdateAmenities'])->name('generator.bulk-amenities');
+                });
                 Route::resource('units', UnitController::class);
                 Route::resource('residents', ResidentController::class);
             });

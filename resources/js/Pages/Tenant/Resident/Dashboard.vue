@@ -1,8 +1,11 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link , usePage} from '@inertiajs/vue3';
 import axios from 'axios';
 import AppLayout from '@/Layouts/AppLayout.vue';
+
+const page = usePage();
+const communitySlug = page.props.tenant?.community?.slug;
 
 const data = ref(null);
 const loading = ref(true);
@@ -16,7 +19,7 @@ const payInvoice = async (invoiceId) => {
     paymentMessage.value = '';
     
     try {
-        await axios.post(`/api/finance/invoices/${invoiceId}/pay`);
+        await axios.post(route('api.finance.invoices.pay', { community_slug: communitySlug, invoice: invoiceId }));
         paymentMessage.value = 'Pago iniciado correctamente. Redirigiendo a pasarela...';
         await fetchData();
     } catch (e) {
@@ -31,7 +34,7 @@ const payInvoice = async (invoiceId) => {
 
 const fetchData = async () => {
     try {
-        const response = await axios.get('/api/cockpit/resident');
+        const response = await axios.get(route('api.cockpit.resident', { community_slug: communitySlug }));
         data.value = response.data.data;
         error.value = null;
     } catch (e) {
