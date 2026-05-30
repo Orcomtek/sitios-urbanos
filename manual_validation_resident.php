@@ -1,24 +1,25 @@
 <?php
 
 use App\Enums\CommunityRole;
+use App\Models\AccessInvitation;
 use App\Models\Community;
+use App\Models\Invoice;
+use App\Models\Package;
+use App\Models\Pqrs;
 use App\Models\Resident;
 use App\Models\Unit;
 use App\Models\User;
-use App\Models\Invoice;
-use App\Models\Package;
-use App\Models\AccessInvitation;
-use App\Models\Pqrs;
 use App\Models\Visitor;
+use App\Services\TenantContext;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 $communitySlug = 'eum-quidem-qui-quos-dolor';
 $community = Community::where('slug', $communitySlug)->first();
 
-app(\App\Services\TenantContext::class)->set($community);
+app(TenantContext::class)->set($community);
 
-$email = 'resident.test.' . Str::random(4) . '@sitios-urbanos.test';
+$email = 'resident.test.'.Str::random(4).'@sitios-urbanos.test';
 $password = 'password';
 
 $unit = Unit::firstOrCreate(
@@ -91,7 +92,7 @@ Pqrs::create([
 Visitor::create([
     'community_id' => $community->id,
     'unit_id' => $unit->id,
-    'status' => 'pending', 
+    'status' => 'pending',
     'name' => 'Diana Perez',
     'document_number' => '7654322',
 ]);

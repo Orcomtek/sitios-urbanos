@@ -3,10 +3,9 @@
 namespace App\Http\Controllers\Global;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-
-use App\Models\UserInvitation;
 use App\Models\User;
+use App\Models\UserInvitation;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
@@ -21,13 +20,13 @@ class AcceptInvitationController extends Controller
     {
         $token = $request->query('token');
 
-        if (!$token) {
+        if (! $token) {
             abort(404, 'Token de invitación no proporcionado.');
         }
 
         $invitation = UserInvitation::where('token', $token)->with('community')->first();
 
-        if (!$invitation || $invitation->status !== 'pending' || $invitation->expires_at->isPast()) {
+        if (! $invitation || $invitation->status !== 'pending' || $invitation->expires_at->isPast()) {
             abort(403, 'La invitación es inválida o ha expirado.');
         }
 
@@ -59,7 +58,7 @@ class AcceptInvitationController extends Controller
 
         $invitation = UserInvitation::where('token', $request->token)->with('community')->first();
 
-        if (!$invitation || $invitation->status !== 'pending' || $invitation->expires_at->isPast()) {
+        if (! $invitation || $invitation->status !== 'pending' || $invitation->expires_at->isPast()) {
             throw ValidationException::withMessages([
                 'token' => 'La invitación es inválida o ha expirado.',
             ]);
@@ -69,8 +68,8 @@ class AcceptInvitationController extends Controller
 
         if ($user) {
             // Existing user: verify password if not logged in as this user
-            if (!Auth::check() || Auth::user()->email !== $invitation->email) {
-                if (!Auth::attempt(['email' => $invitation->email, 'password' => $request->password])) {
+            if (! Auth::check() || Auth::user()->email !== $invitation->email) {
+                if (! Auth::attempt(['email' => $invitation->email, 'password' => $request->password])) {
                     throw ValidationException::withMessages([
                         'password' => 'Contraseña incorrecta.',
                     ]);
@@ -79,7 +78,7 @@ class AcceptInvitationController extends Controller
             $user = Auth::user();
         } else {
             // New user: validate name and create
-            if (!$request->name) {
+            if (! $request->name) {
                 throw ValidationException::withMessages([
                     'name' => 'El nombre es obligatorio.',
                 ]);
@@ -99,7 +98,7 @@ class AcceptInvitationController extends Controller
             $invitation->community_id => [
                 'role' => $invitation->role,
                 'unit_id' => $invitation->unit_id,
-            ]
+            ],
         ]);
 
         // Update invitation status
@@ -110,7 +109,7 @@ class AcceptInvitationController extends Controller
         // Redirección dinámica al Tenant Runtime
         $scheme = $request->getScheme();
         $host = parse_url(config('app.url'), PHP_URL_HOST) ?? 'sitiosurbanos.test';
-        
-        return redirect()->to($scheme . '://' . $invitation->community->slug . '.' . $host);
+
+        return redirect()->to($scheme.'://'.$invitation->community->slug.'.'.$host);
     }
 }

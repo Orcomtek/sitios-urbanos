@@ -27,9 +27,30 @@ return [
     */
     'registry' => [
         'units' => [
-            'name' => 'Unidades y Residentes',
+            'name' => 'Unidades',
             'icon' => 'home',
             'route' => 'tenant.admin.core.units.index',
+            'roles' => ['admin'],
+            'category' => 'operativo',
+        ],
+        'residents' => [
+            'name' => 'Residentes',
+            'icon' => 'users',
+            'route' => 'tenant.admin.core.residents.index',
+            'roles' => ['admin'],
+            'category' => 'operativo',
+        ],
+        'units_generator' => [
+            'name' => 'Generador de Matriz',
+            'icon' => 'table',
+            'route' => 'tenant.admin.core.units.generator',
+            'roles' => ['admin'],
+            'category' => 'operativo',
+        ],
+        'imports' => [
+            'name' => 'Importar Datos',
+            'icon' => 'arrow-up-tray',
+            'route' => 'tenant.admin.core.imports.index',
             'roles' => ['admin'],
             'category' => 'operativo',
         ],

@@ -2,6 +2,8 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\SystemTaxonomy;
+use App\Services\ModuleRegistryService;
 use App\Services\TenantContext;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -51,13 +53,13 @@ class HandleInertiaRequests extends Middleware
             ])->toArray();
         }
 
-        $registryService = app(\App\Services\ModuleRegistryService::class);
+        $registryService = app(ModuleRegistryService::class);
         $navigationMenu = $registryService->getAuthorizedModules($activeCommunity, $activeRole);
 
         $tenantId = $activeCommunity?->id ?? 'global';
         $taxonomies = Cache::remember("taxonomies_tenant_{$tenantId}", now()->addDay(), function () {
-            return \App\Models\SystemTaxonomy::forCurrentTenantOrGlobal()
-                ->get(['type', 'label', 'value'])
+            return SystemTaxonomy::forCurrentTenantOrGlobal()
+                ->get(['type', 'label', 'value', 'meta'])
                 ->groupBy('type')
                 ->toArray();
         });

@@ -40,19 +40,19 @@ class UnitController extends Controller
         // Eager load residents for the Slide-over context
         $unit->load(['residents' => function ($query) {
             $query->orderBy('is_active', 'desc')
-                  ->orderBy('full_name', 'asc');
+                ->orderBy('full_name', 'asc');
         }]);
 
         // Returning as JSON to be consumed asynchronously by the Vue Slide-over
         if (request()->wantsJson()) {
             return response()->json([
-                'unit' => $unit
+                'unit' => $unit,
             ]);
         }
 
         // Fallback for non-JSON requests
         return Inertia::render('Tenant/Admin/Core/Units/Show', [
-            'unit' => $unit
+            'unit' => $unit,
         ]);
     }
 

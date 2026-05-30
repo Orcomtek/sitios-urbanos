@@ -1,18 +1,19 @@
 <?php
 
+use App\Actions\Governance\SubmitPollVoteAction;
+use App\Http\Controllers\Tenant\Admin\Core\BulkImportController;
 use App\Http\Controllers\Tenant\Admin\Core\ResidentController;
 use App\Http\Controllers\Tenant\Admin\Core\UnitController;
 use App\Http\Controllers\Tenant\Admin\Core\UnitGeneratorController;
 use App\Http\Controllers\Tenant\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Tenant\Admin\Ecosystem\ProviderController as AdminProviderController;
-use App\Http\Controllers\Tenant\Resident\DashboardController as ResidentDashboardController;
+use App\Http\Controllers\Tenant\Resident\ActivityController;
 use App\Http\Controllers\Tenant\Resident\Core\OperationController;
+use App\Http\Controllers\Tenant\Resident\DashboardController as ResidentDashboardController;
 use App\Http\Controllers\Tenant\Resident\Ecosystem\EcosystemController;
 use App\Http\Controllers\Tenant\Resident\Ecosystem\ProviderController as ResidentProviderController;
 use App\Http\Controllers\Tenant\Resident\Governance\PollController;
 use App\Http\Controllers\Tenant\Resident\Governance\PqrsController;
-use App\Http\Controllers\Tenant\Resident\ActivityController;
-use App\Actions\Governance\SubmitPollVoteAction;
 use App\Http\Middleware\TenantMiddleware;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -38,11 +39,11 @@ Route::domain('{community_slug}.'.$centralDomain)
 
         Route::prefix('admin')->name('tenant.admin.')->group(function () {
             Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
-            
+
             Route::prefix('core')->name('core.')->group(function () {
                 Route::get('/work-queue', [AdminDashboardController::class, 'workQueue'])->name('work-queue');
                 Route::get('/admin-work-queue', [AdminDashboardController::class, 'adminWorkQueue'])->name('admin-work-queue');
-                
+
                 Route::prefix('units')->name('units.')->group(function () {
                     Route::get('/generator', [UnitGeneratorController::class, 'index'])->name('generator');
                     Route::post('/generator/generate', [UnitGeneratorController::class, 'generate'])->name('generator.generate');
@@ -50,6 +51,10 @@ Route::domain('{community_slug}.'.$centralDomain)
                 });
                 Route::resource('units', UnitController::class);
                 Route::resource('residents', ResidentController::class);
+
+                Route::get('/imports', [BulkImportController::class, 'index'])->name('imports.index');
+                Route::post('/imports', [BulkImportController::class, 'store'])->name('imports.store');
+                Route::get('/imports/{import}', [BulkImportController::class, 'show'])->name('imports.show');
             });
 
             Route::prefix('ecosystem')->name('ecosystem.')->group(function () {

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Events\TenantActivityUpdated;
 use App\Models\Traits\TenantScoped;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -44,7 +45,7 @@ class SecurityLog extends Model
         });
 
         static::created(function ($model) {
-            \App\Events\TenantActivityUpdated::dispatch((string) $model->community_id);
+            TenantActivityUpdated::dispatch((string) $model->community_id);
         });
     }
 

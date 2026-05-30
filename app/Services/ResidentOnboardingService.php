@@ -45,18 +45,18 @@ class ResidentOnboardingService
         return DB::transaction(function () use ($resident, $data) {
             if (isset($data['resident_type'])) {
                 $newType = ResidentType::from($data['resident_type']);
-                
+
                 // If changing to TENANT from something else, and becoming active
                 $isActive = $data['is_active'] ?? $resident->is_active;
-                
-                if ($newType === ResidentType::TENANT && $isActive && ($resident->resident_type !== ResidentType::TENANT || !$resident->is_active)) {
+
+                if ($newType === ResidentType::TENANT && $isActive && ($resident->resident_type !== ResidentType::TENANT || ! $resident->is_active)) {
                     $this->deactivateCurrentTenantAndDependents($resident->unit);
                 }
             }
 
             // Ensure community_id is not overwritten by mistake
             unset($data['community_id'], $data['unit_id']);
-            
+
             $resident->update($data);
 
             return $resident;
@@ -76,7 +76,7 @@ class ResidentOnboardingService
 
         if ($activeTenant) {
             $activeTenant->update(['is_active' => false]);
-            
+
             // Deactivate all dependents in the unit as they are tied to the tenant
             $unit->residents()
                 ->active()

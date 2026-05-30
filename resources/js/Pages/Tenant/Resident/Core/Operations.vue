@@ -3,6 +3,9 @@ import { ref, onMounted } from 'vue';
 import { Head, Link, useForm , usePage} from '@inertiajs/vue3';
 import axios from 'axios';
 import AppLayout from '@/Layouts/AppLayout.vue';
+import { useToast } from '@/Composables/useToast';
+
+const { show: showToast } = useToast();
 
 const page = usePage();
 const communitySlug = page.props.tenant?.community?.slug;
@@ -121,7 +124,7 @@ const revokeInvitation = async (invitationId) => {
         await axios.patch(route('api.security.invitations.revoke', { community_slug: communitySlug, invitation: invitationId }));
         await fetchInvitations();
     } catch (e) {
-        alert('Error al revocar la invitación');
+        showToast('Error al revocar la invitación', 'error');
     }
 };
 

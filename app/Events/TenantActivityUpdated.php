@@ -12,9 +12,7 @@ class TenantActivityUpdated implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public function __construct(public string $communityId)
-    {
-    }
+    public function __construct(public string $communityId) {}
 
     public function broadcastOn(): array
     {

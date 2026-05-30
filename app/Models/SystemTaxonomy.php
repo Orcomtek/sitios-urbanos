@@ -35,11 +35,11 @@ class SystemTaxonomy extends Model
         $tenantId = app(TenantContext::class)->get()?->id;
 
         $query->where('is_active', true)
-              ->where(function (Builder $query) use ($tenantId) {
-                  $query->whereNull('community_id');
-                  if ($tenantId) {
-                      $query->orWhere('community_id', $tenantId);
-                  }
-              });
+            ->where(function (Builder $query) use ($tenantId) {
+                $query->whereNull('community_id');
+                if ($tenantId) {
+                    $query->orWhere('community_id', $tenantId);
+                }
+            });
     }
 }

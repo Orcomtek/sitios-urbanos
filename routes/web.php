@@ -1,9 +1,8 @@
 <?php
 
 use App\Http\Controllers\CommunityController;
+use App\Http\Controllers\Global\AcceptInvitationController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\Tenant\Governance\ParticipationCenterController;
-use App\Actions\Governance\SubmitPollVoteAction;
 use Illuminate\Support\Facades\Route;
 
 $centralDomain = config('app.central_domain');
@@ -13,8 +12,8 @@ Route::domain($centralDomain)->group(function () {
         return redirect()->route('communities.index');
     })->middleware(['auth']);
 
-    Route::get('/invitations/accept', [\App\Http\Controllers\Global\AcceptInvitationController::class, 'show'])->name('invitations.accept.show');
-    Route::post('/invitations/accept', [\App\Http\Controllers\Global\AcceptInvitationController::class, 'store'])->name('invitations.accept.store');
+    Route::get('/invitations/accept', [AcceptInvitationController::class, 'show'])->name('invitations.accept.show');
+    Route::post('/invitations/accept', [AcceptInvitationController::class, 'store'])->name('invitations.accept.store');
 
     Route::middleware('auth')->group(function () {
         Route::get('/comunidades', [CommunityController::class, 'index'])->name('communities.index');
@@ -27,4 +26,3 @@ Route::domain($centralDomain)->group(function () {
 
     require __DIR__.'/auth.php';
 });
-

@@ -11,10 +11,10 @@ return new class extends Migration
         Schema::table('poll_votes', function (Blueprint $table) {
             $table->foreignId('community_id')->after('id')->constrained()->cascadeOnDelete();
             $table->decimal('vote_weight', 5, 2)->default(1.00)->after('unit_id');
-            
+
             // Drop old non-tenant-isolated unique constraint
-            //$table->dropUnique(['poll_id', 'unit_id']);
-            
+            // $table->dropUnique(['poll_id', 'unit_id']);
+
             // Apply new RIGOR strict tenant-isolation uniqueness
             $table->unique(['community_id', 'poll_id', 'user_id']);
         });

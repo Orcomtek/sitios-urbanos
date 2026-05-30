@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import Sidebar from '@/Components/layout/Sidebar.vue';
 import Topbar from '@/Components/layout/Topbar.vue';
+import Toast from '@/Components/ui/Toast.vue';
 </script>
 
 <template>
@@ -13,5 +14,6 @@ import Topbar from '@/Components/layout/Topbar.vue';
                 <slot />
             </main>
         </div>
+        <Toast />
     </div>
 </template>

@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Tenant\Resident\Ecosystem;
 
 use App\Enums\CommunityRole;
 use App\Http\Controllers\Controller;
-use App\Services\TenantContext;
 use App\Models\Resident;
+use App\Services\TenantContext;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;

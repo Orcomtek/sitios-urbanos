@@ -9,9 +9,8 @@ class GenerateTopologicalMatrixAction
 {
     /**
      * Generate topological units based on a template string and insert them, ignoring duplicates.
-     * 
-     * @param Community $community
-     * @param array{blocks: int, floors: int, units: int, pattern: string, property_type?: string} $data
+     *
+     * @param  array{blocks: int, floors: int, units: int, pattern: string, property_type?: string}  $data
      */
     public function execute(Community $community, array $data): void
     {
@@ -27,8 +26,8 @@ class GenerateTopologicalMatrixAction
         for ($b = 1; $b <= $blocks; $b++) {
             for ($p = 1; $p <= $floors; $p++) {
                 for ($u = 1; $u <= $unitsPerFloor; $u++) {
-                    $paddedU = str_pad((string)$u, 2, '0', STR_PAD_LEFT);
-                    
+                    $paddedU = str_pad((string) $u, 2, '0', STR_PAD_LEFT);
+
                     // The dynamic template string parser replaces {B}, {P}, and {U}
                     $identifier = str_replace(
                         ['{B}', '{P}', '{U}'],

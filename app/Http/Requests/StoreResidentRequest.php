@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Resident;
+use App\Enums\ResidentType;
 use App\Services\TenantContext;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
@@ -23,7 +23,7 @@ class StoreResidentRequest extends FormRequest
      *
      * @return array<string, ValidationRule|array<mixed>|string>
      */
-    public function rules(\App\Services\TenantContext $tenantContext): array
+    public function rules(TenantContext $tenantContext): array
     {
         $community = $tenantContext->require();
 
@@ -36,7 +36,7 @@ class StoreResidentRequest extends FormRequest
             'full_name' => ['required', 'string', 'max:255'],
             'email' => ['nullable', 'email', 'max:255'],
             'phone' => ['nullable', 'string', 'max:50'],
-            'resident_type' => ['required', Rule::enum(\App\Enums\ResidentType::class)],
+            'resident_type' => ['required', Rule::enum(ResidentType::class)],
             'pays_administration' => ['required', 'boolean'],
             'is_active' => ['required', 'boolean'],
         ];

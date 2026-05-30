@@ -4,6 +4,9 @@ import { Head, usePage } from '@inertiajs/vue3';
 import { useApiData } from '@/lib/useApiData';
 import { onMounted, onUnmounted, ref, computed } from 'vue';
 import axios from 'axios';
+import { useToast } from '@/Composables/useToast';
+
+const { show: showToast } = useToast();
 
 const { data, isLoading, error, refetch } = useApiData('/api/cockpit/admin-work-queue');
 const page = usePage();
@@ -81,8 +84,7 @@ const moderateListing = async (id: number) => {
         await axios.patch(route('api.ecosystem.listings.moderate', { community_slug: communitySlug, listing: id }), { status: 'removed' });
         await refetch();
     } catch (e: any) {
-        console.error(e);
-        alert(e.response?.data?.message || 'Hubo un error al moderar el anuncio.');
+        showToast(e.response?.data?.message || 'Hubo un error al moderar el anuncio.', 'error');
     } finally {
         isModerating.value[id] = false;
     }

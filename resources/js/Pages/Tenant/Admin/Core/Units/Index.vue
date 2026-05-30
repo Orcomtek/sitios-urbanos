@@ -4,6 +4,7 @@ import { Head, Link, usePage, router } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
 import axios from 'axios';
 import UnitSlideOver from './Components/UnitSlideOver.vue';
+import { PencilIcon, TrashIcon, UserGroupIcon } from '@heroicons/vue/24/outline';
 
 const props = defineProps<{
     units: {
@@ -100,9 +101,17 @@ const deleteUnit = (unitId: number) => {
                                         </span>
                                     </td>
                                     <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
-                                        <button @click.stop="openSlideOver(unit.id)" class="text-indigo-600 hover:text-indigo-900">Residentes</button>
-                                        <Link :href="route('tenant.admin.core.units.edit', { community_slug: communitySlug, unit: unit.id })" class="text-indigo-600 hover:text-indigo-900 ml-4">Editar</Link>
-                                        <button @click.stop="deleteUnit(unit.id)" class="text-red-600 hover:text-red-900 ml-4">Borrar</button>
+                                        <div class="flex items-center justify-end gap-3">
+                                            <button @click.stop="openSlideOver(unit.id)" class="text-gray-400 hover:text-primary transition" title="Residentes" aria-label="Residentes">
+                                                <UserGroupIcon class="w-5 h-5" />
+                                            </button>
+                                            <Link :href="route('tenant.admin.core.units.edit', { community_slug: communitySlug, unit: unit.id })" class="text-gray-400 hover:text-primary transition" title="Editar" aria-label="Editar">
+                                                <PencilIcon class="w-5 h-5" />
+                                            </Link>
+                                            <button @click.stop="deleteUnit(unit.id)" class="text-gray-400 hover:text-red-600 transition" title="Borrar" aria-label="Borrar">
+                                                <TrashIcon class="w-5 h-5" />
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                                 <tr v-if="units.data.length === 0">

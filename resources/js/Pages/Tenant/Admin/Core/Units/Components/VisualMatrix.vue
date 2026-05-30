@@ -1,6 +1,9 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useForm, usePage } from '@inertiajs/vue3';
+import { useToast } from '@/Composables/useToast';
+
+const { show: showToast } = useToast();
 
 const props = defineProps<{
     units: Array<{
@@ -26,9 +29,9 @@ const form = useForm({
 // Mock/fallback for taxonomies if not yet defined in the backend
 const availableAmenities = computed(() => {
     return (page.props.taxonomies as any)?.['amenities'] || [
-        { value: 'balcony', label: 'Balcón' },
-        { value: 'patio', label: 'Patio' },
-        { value: 'storage', label: 'Depósito Interno' },
+        { value: 'balcony', label: 'Balcón', meta: { color: 'bg-green-400' } },
+        { value: 'patio', label: 'Patio', meta: { color: 'bg-yellow-400' } },
+        { value: 'storage', label: 'Depósito Interno', meta: { color: 'bg-blue-400' } },
     ];
 });
 
@@ -87,7 +90,24 @@ const groupedBlocks = computed(() => {
     }));
 });
 
+const selectedSector = ref<string | null>(null);
+
+watch(groupedBlocks, (blocks) => {
+    if (blocks.length > 0 && !selectedSector.value) {
+        selectedSector.value = blocks[0].name;
+    }
+}, { immediate: true });
+
+const filteredBlocks = computed(() => {
+    if (!selectedSector.value) return [];
+    return groupedBlocks.value.filter(b => b.name === selectedSector.value);
+});
+
 // Selection Logic
+const getAmenityColor = (val: string) => {
+    const amenity = availableAmenities.value.find((a: any) => a.value === val);
+    return amenity?.meta?.color || 'bg-gray-400';
+};
 const toggleSelection = (unitId: number) => {
     if (selectedUnitIds.value.has(unitId)) {
         selectedUnitIds.value.delete(unitId);
@@ -134,14 +154,14 @@ const submitAmenities = () => {
     form.unit_ids = Array.from(selectedUnitIds.value);
     
     if (form.unit_ids.length === 0) {
-        alert('Selecciona al menos una unidad');
+        showToast('Selecciona al menos una unidad', 'error');
         return;
     }
 
     form.post(route('tenant.admin.core.units.generator.bulk-amenities', { community_slug: communitySlug.value }), {
         preserveScroll: true,
         onSuccess: () => {
-            alert('¡Amenidades aplicadas con éxito!');
+            showToast('¡Amenidades aplicadas con éxito!', 'success');
             selectedUnitIds.value.clear();
             form.reset();
         }
@@ -171,9 +191,12 @@ const toggleAmenity = (val: string) => {
                 
                 <div class="flex items-center gap-3">
                     <span class="text-sm text-gray-500">Amenidades:</span>
-                    <label v-for="amenity in availableAmenities" :key="amenity.value" class="inline-flex items-center cursor-pointer">
+                    <label v-for="amenity in availableAmenities" :key="amenity.value" class="inline-flex items-center cursor-pointer group">
                         <input type="checkbox" :checked="form.amenities.includes(amenity.value)" @change="toggleAmenity(amenity.value)" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-600" />
-                        <span class="ml-2 text-sm text-gray-700">{{ amenity.label }}</span>
+                        <span class="ml-2 flex items-center gap-1.5 text-sm text-gray-700 group-hover:text-gray-900 transition">
+                            <span :class="['w-2.5 h-2.5 rounded-full', getAmenityColor(amenity.value)]"></span>
+                            {{ amenity.label }}
+                        </span>
                     </label>
                 </div>
             </div>
@@ -188,8 +211,25 @@ const toggleAmenity = (val: string) => {
             </div>
         </div>
 
+        <!-- Sector Selector Tabs -->
+        <div v-if="groupedBlocks.length > 1" class="border-b border-gray-200">
+            <nav class="-mb-px flex space-x-8 overflow-x-auto scrollbar-hide" aria-label="Tabs">
+                <button v-for="block in groupedBlocks" :key="block.name"
+                    @click="selectedSector = block.name"
+                    :class="[
+                        selectedSector === block.name
+                            ? 'border-indigo-500 text-indigo-600'
+                            : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700',
+                        'whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium transition-colors'
+                    ]"
+                >
+                    {{ block.name }}
+                </button>
+            </nav>
+        </div>
+
         <!-- Seat Map Matrix -->
-        <div v-for="block in groupedBlocks" :key="block.name" class="bg-white shadow sm:rounded-lg overflow-hidden">
+        <div v-for="block in filteredBlocks" :key="block.name" class="bg-white shadow sm:rounded-lg overflow-hidden mt-4">
             <div class="px-4 py-5 border-b border-gray-200 sm:px-6">
                 <h3 class="text-lg font-medium leading-6 text-gray-900">{{ block.name }}</h3>
             </div>
@@ -226,7 +266,7 @@ const toggleAmenity = (val: string) => {
                                         <span class="text-xs font-bold">{{ floor.unitsMap[line].identifier.split('-').pop() || floor.unitsMap[line].identifier.split(' ').pop() }}</span>
                                         <div class="mt-1 flex gap-1 flex-wrap justify-center">
                                             <span v-for="am in (floor.unitsMap[line].amenities || []).slice(0, 3)" :key="am" 
-                                                  class="w-2 h-2 rounded-full bg-blue-400" :title="am"></span>
+                                                  :class="['w-2 h-2 rounded-full', getAmenityColor(am)]" :title="am"></span>
                                         </div>
                                     </div>
                                     <div v-else class="w-full h-16 sm:h-20 rounded-md bg-transparent border-2 border-dashed border-gray-200 opacity-50"></div>

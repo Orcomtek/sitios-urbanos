@@ -3,8 +3,8 @@
 namespace App\Policies;
 
 use App\Models\Governance\Poll;
-use App\Models\User;
 use App\Models\Resident;
+use App\Models\User;
 use App\Services\TenantContext;
 
 class PollPolicy

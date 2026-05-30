@@ -18,13 +18,13 @@ class UnitGeneratorController extends Controller
     public function index(string $community_slug): Response
     {
         $community = $this->context->require();
-        
+
         $units = $community->units()
             ->orderBy('identifier')
             ->get(['id', 'identifier', 'amenities', 'status', 'property_type']);
 
         return Inertia::render('Tenant/Admin/Core/Units/Generator', [
-            'units' => $units
+            'units' => $units,
         ]);
     }
 

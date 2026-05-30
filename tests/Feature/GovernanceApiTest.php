@@ -91,7 +91,7 @@ it('allows residents to vote but enforces one vote per unit', function () {
     $optionB = $poll->options()->create(['text' => 'B']);
 
     $url = route('api.governance.polls.vote', ['community_slug' => $community->slug, 'poll' => $poll->id]);
-    
+
     // User 1 votes for A
     $response1 = $this->actingAs($residentUser1, 'sanctum')->postJson($url, [
         'unit_id' => $unit->id,

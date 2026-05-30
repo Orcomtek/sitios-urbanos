@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use App\Enums\ResidentType;
 use App\Models\Traits\TenantScoped;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -29,7 +31,7 @@ class Resident extends Model
         return [
             'is_active' => 'boolean',
             'pays_administration' => 'boolean',
-            'resident_type' => \App\Enums\ResidentType::class,
+            'resident_type' => ResidentType::class,
         ];
     }
 
@@ -58,7 +60,7 @@ class Resident extends Model
     }
 
     /**
-     * @param  \Illuminate\Database\Eloquent\Builder<self>  $query
+     * @param  Builder<self>  $query
      */
     public function scopeActive($query)
     {
@@ -66,26 +68,26 @@ class Resident extends Model
     }
 
     /**
-     * @param  \Illuminate\Database\Eloquent\Builder<self>  $query
+     * @param  Builder<self>  $query
      */
     public function scopeOwners($query)
     {
-        return $query->where('resident_type', \App\Enums\ResidentType::OWNER);
+        return $query->where('resident_type', ResidentType::OWNER);
     }
 
     /**
-     * @param  \Illuminate\Database\Eloquent\Builder<self>  $query
+     * @param  Builder<self>  $query
      */
     public function scopeTenants($query)
     {
-        return $query->where('resident_type', \App\Enums\ResidentType::TENANT);
+        return $query->where('resident_type', ResidentType::TENANT);
     }
 
     /**
-     * @param  \Illuminate\Database\Eloquent\Builder<self>  $query
+     * @param  Builder<self>  $query
      */
     public function scopeDependents($query)
     {
-        return $query->where('resident_type', \App\Enums\ResidentType::DEPENDENT);
+        return $query->where('resident_type', ResidentType::DEPENDENT);
     }
 }

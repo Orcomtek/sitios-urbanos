@@ -17,13 +17,13 @@ class PollController extends Controller
         $tenantId = app(TenantContext::class)->get()->id;
         $userId = $request->user()->id;
 
-        // Eager load ONLY pending active items 
+        // Eager load ONLY pending active items
         $activePolls = Poll::with(['options'])
             ->where('community_id', $tenantId)
             ->where('status', 'active')
             ->whereDoesntHave('votes', function ($query) use ($userId, $tenantId) {
                 $query->where('user_id', $userId)
-                      ->where('community_id', $tenantId);
+                    ->where('community_id', $tenantId);
             })
             ->latest()
             ->get();
@@ -31,7 +31,7 @@ class PollController extends Controller
         $pendingDocuments = Document::where('community_id', $tenantId)
             ->whereDoesntHave('signatures', function ($query) use ($userId, $tenantId) {
                 $query->where('user_id', $userId)
-                      ->where('community_id', $tenantId);
+                    ->where('community_id', $tenantId);
             })
             ->latest()
             ->get();

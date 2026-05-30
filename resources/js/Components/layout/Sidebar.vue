@@ -1,6 +1,26 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
+import { 
+    HomeIcon, 
+    UsersIcon, 
+    TableCellsIcon, 
+    ArrowUpTrayIcon, 
+    ChartBarIcon, 
+    CurrencyDollarIcon, 
+    ShoppingBagIcon,
+    Bars3Icon
+} from '@heroicons/vue/24/outline';
+
+const iconMap: Record<string, any> = {
+    'home': HomeIcon,
+    'users': UsersIcon,
+    'table': TableCellsIcon,
+    'arrow-up-tray': ArrowUpTrayIcon,
+    'chart-bar': ChartBarIcon,
+    'currency-dollar': CurrencyDollarIcon,
+    'shopping-bag': ShoppingBagIcon,
+};
 
 const page = usePage();
 const communitySlug = computed(() => (page.props.tenant as any)?.community?.slug);
@@ -52,6 +72,12 @@ const isActive = (routeName: string) => {
                                     ? 'bg-primary text-white hover:bg-primary/90' 
                                     : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-slate-800 dark:hover:text-white'"
                             >
+                                <component 
+                                    :is="iconMap[item.icon] || Bars3Icon" 
+                                    class="mr-3 h-5 w-5 flex-shrink-0"
+                                    :class="isActive(item.route) ? 'text-white' : 'text-gray-400 group-hover:text-gray-500 dark:group-hover:text-gray-300'"
+                                    aria-hidden="true" 
+                                />
                                 {{ item.name }}
                             </Link>
                         </div>

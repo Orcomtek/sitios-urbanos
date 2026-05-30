@@ -2,10 +2,10 @@
 
 namespace App\Actions\Cockpit;
 
-use App\Models\User;
-use App\Models\Community;
 use App\Enums\CommunityRole;
+use App\Models\Community;
 use App\Models\SecurityLog;
+use App\Models\User;
 use Illuminate\Support\Str;
 
 class GetActivityTimelineAction
@@ -21,11 +21,11 @@ class GetActivityTimelineAction
                 ->latest('created_at')
                 ->take($limit)
                 ->get();
-                
+
             $items = $items->merge($logs->map(function (SecurityLog $log) {
                 return $this->mapSecurityLog($log);
             }));
-            
+
         } elseif ($role === CommunityRole::Resident) {
             // Resident -> rely strictly on tenant-filtered notifications
             $notifications = $user->notifications()
@@ -33,7 +33,7 @@ class GetActivityTimelineAction
                 ->latest()
                 ->take($limit)
                 ->get();
-                
+
             $items = $items->merge($notifications->map(function ($notification) {
                 return $this->mapNotification($notification);
             }));
@@ -46,7 +46,7 @@ class GetActivityTimelineAction
     private function mapSecurityLog(SecurityLog $log): array
     {
         $type = Str::snake($log->action);
-        
+
         $title = Str::title(str_replace('_', ' ', $type));
         if (isset($log->details['title'])) {
             $title = $log->details['title'];
@@ -55,7 +55,7 @@ class GetActivityTimelineAction
         $message = $log->details['message'] ?? 'Operación registrada en el sistema.';
 
         return [
-            'id' => 'log_' . $log->id,
+            'id' => 'log_'.$log->id,
             'source' => 'security_log',
             'type' => $type,
             'title' => $title,
@@ -76,9 +76,9 @@ class GetActivityTimelineAction
         $type = Str::snake($baseName);
 
         $data = $notification->data;
-        
+
         return [
-            'id' => 'notif_' . $notification->id,
+            'id' => 'notif_'.$notification->id,
             'source' => 'notification',
             'type' => $type,
             'title' => $data['title'] ?? 'Nueva Notificación',

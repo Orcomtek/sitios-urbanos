@@ -1,8 +1,11 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
-import { Head, Link , usePage} from '@inertiajs/vue3';
+import { Head, Link, usePage } from '@inertiajs/vue3';
 import axios from 'axios';
 import AppLayout from '@/Layouts/AppLayout.vue';
+import { useToast } from '@/Composables/useToast';
+
+const { show: showToast } = useToast();
 
 const page = usePage();
 const communitySlug = page.props.tenant?.community?.slug;
@@ -25,7 +28,7 @@ const payInvoice = async (invoiceId) => {
     } catch (e) {
         console.error('Error initiating payment:', e);
         const errorMsg = e.response?.data?.message || 'Error al iniciar el pago.';
-        alert(errorMsg);
+        showToast(errorMsg, 'error');
     } finally {
         processingPayment.value = null;
         setTimeout(() => paymentMessage.value = '', 3000);

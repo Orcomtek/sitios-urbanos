@@ -6,8 +6,8 @@ use App\Enums\CommunityRole;
 use App\Models\Community;
 use App\Models\SecurityLog;
 use App\Models\User;
-use App\Notifications\Security\VisitorArrivalNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class ActivityTimelineTest extends TestCase
@@ -15,15 +15,19 @@ class ActivityTimelineTest extends TestCase
     use RefreshDatabase;
 
     private User $admin;
+
     private User $resident;
+
     private Community $community;
+
     private Community $otherCommunity;
+
     private string $centralDomain;
 
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         $this->centralDomain = config('app.central_domain', 'sitios-urbanos.test');
 
         $this->community = Community::factory()->create(['slug' => 'test-community']);
@@ -59,7 +63,7 @@ class ActivityTimelineTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->admin)
-            ->getJson('http://' . $this->community->slug . '.' . $this->centralDomain . '/api/cockpit/activity');
+            ->getJson('http://'.$this->community->slug.'.'.$this->centralDomain.'/api/cockpit/activity');
 
         $response->assertStatus(200)
             ->assertJsonCount(1, 'data')
@@ -82,7 +86,7 @@ class ActivityTimelineTest extends TestCase
         // Use a generic database notification via notification fake/or just insert into db if Notifiable trait is configured to use db
         // But the easiest way is to push a notification if we have a real one, or just use the DB table directly.
         $this->resident->notifications()->create([
-            'id' => \Illuminate\Support\Str::uuid()->toString(),
+            'id' => Str::uuid()->toString(),
             'type' => 'App\Notifications\Security\PackageReceivedNotification',
             'notifiable_type' => User::class,
             'notifiable_id' => $this->resident->id,
@@ -96,7 +100,7 @@ class ActivityTimelineTest extends TestCase
 
         // Give resident a notification for another community
         $this->resident->notifications()->create([
-            'id' => \Illuminate\Support\Str::uuid()->toString(),
+            'id' => Str::uuid()->toString(),
             'type' => 'App\Notifications\Security\PackageReceivedNotification',
             'notifiable_type' => User::class,
             'notifiable_id' => $this->resident->id,
@@ -109,7 +113,7 @@ class ActivityTimelineTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->resident)
-            ->getJson('http://' . $this->community->slug . '.' . $this->centralDomain . '/api/cockpit/activity');
+            ->getJson('http://'.$this->community->slug.'.'.$this->centralDomain.'/api/cockpit/activity');
 
         $response->assertStatus(200)
             ->assertJsonCount(1, 'data')

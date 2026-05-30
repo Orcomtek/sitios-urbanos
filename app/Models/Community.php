@@ -56,6 +56,7 @@ class Community extends Model
     {
         return $this->hasMany(Resident::class);
     }
+
     /**
      * Get the attributes that should be cast.
      *
@@ -70,9 +71,6 @@ class Community extends Model
 
     /**
      * Check if the community has a specific SaaS feature enabled.
-     *
-     * @param string $feature
-     * @return bool
      */
     public function hasFeature(string $feature): bool
     {

@@ -2,17 +2,15 @@
 
 namespace App\Services;
 
-use App\Models\Community;
 use App\Enums\CommunityRole;
+use App\Models\Community;
 
 class ModuleRegistryService
 {
     /**
      * Get the authorized navigation modules for the current tenant and user role.
      *
-     * @param Community|null $community
-     * @param CommunityRole|string|null $role
-     * @return array
+     * @param  CommunityRole|string|null  $role
      */
     public function getAuthorizedModules(?Community $community, $role): array
     {
@@ -25,7 +23,7 @@ class ModuleRegistryService
 
         $saasSettings = $community->saas_settings ?? [];
         $activeModules = $saasSettings['active_modules'] ?? [];
-        
+
         $roleValue = $role instanceof CommunityRole ? $role->value : $role;
 
         $authorized = [];

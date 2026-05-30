@@ -1,19 +1,19 @@
 <?php
 
+use App\Enums\ListingCategory;
+use App\Enums\ListingStatus;
 use App\Models\Community;
 use App\Models\Listing;
 use App\Models\Resident;
-use App\Enums\ListingStatus;
-use App\Enums\ListingCategory;
 
 $community = Community::where('slug', 'test-community')->first();
-if (!$community) {
+if (! $community) {
     echo "Error: Community 'test-community' not found.\n";
     exit(1);
 }
 
 $resident = Resident::where('community_id', $community->id)->first();
-if (!$resident) {
+if (! $resident) {
     echo "Error: No resident found in 'test-community'.\n";
     exit(1);
 }

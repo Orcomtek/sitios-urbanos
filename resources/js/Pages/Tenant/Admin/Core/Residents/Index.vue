@@ -2,6 +2,7 @@
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, Link, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
+import { PencilIcon, TrashIcon } from '@heroicons/vue/24/outline';
 
 const props = defineProps<{
     residents: {
@@ -85,7 +86,11 @@ const getTaxonomyLabel = (type: string, value: string) => {
                                         <span v-else class="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">Inactivo</span>
                                     </td>
                                     <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
-                                        <Link :href="route('tenant.admin.core.residents.edit', { community_slug: communitySlug, resident: resident.id })" class="text-indigo-600 hover:text-indigo-900">Editar</Link>
+                                        <div class="flex items-center justify-end gap-3">
+                                            <Link :href="route('tenant.admin.core.residents.edit', { community_slug: communitySlug, resident: resident.id })" class="text-gray-400 hover:text-primary transition" title="Editar" aria-label="Editar">
+                                                <PencilIcon class="w-5 h-5" />
+                                            </Link>
+                                        </div>
                                     </td>
                                 </tr>
                                 <tr v-if="residents.data.length === 0">

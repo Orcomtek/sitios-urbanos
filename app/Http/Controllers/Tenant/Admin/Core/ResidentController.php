@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Tenant\Admin\Core;
 
-use App\Actions\CoreOperations\CreateResidentAction;
 use App\Actions\CoreOperations\DeleteResidentAction;
-use App\Actions\CoreOperations\UpdateResidentAction;
+use App\Enums\ResidentType;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreResidentRequest;
 use App\Http\Requests\UpdateResidentRequest;
 use App\Models\Resident;
+use App\Services\ResidentOnboardingService;
 use App\Services\TenantContext;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
@@ -40,7 +40,7 @@ class ResidentController extends Controller
 
         return Inertia::render('Tenant/Admin/Core/Residents/Form', [
             'resident' => new Resident([
-                'resident_type' => \App\Enums\ResidentType::TENANT,
+                'resident_type' => ResidentType::TENANT,
                 'is_active' => true,
                 'pays_administration' => false,
             ]),
@@ -48,11 +48,11 @@ class ResidentController extends Controller
         ]);
     }
 
-    public function store(StoreResidentRequest $request, string $community_slug, \App\Services\ResidentOnboardingService $service): RedirectResponse
+    public function store(StoreResidentRequest $request, string $community_slug, ResidentOnboardingService $service): RedirectResponse
     {
         $community = $this->context->require();
         $unit = $community->units()->findOrFail($request->validated('unit_id'));
-        
+
         $service->onboard($unit, $request->validated());
 
         return redirect()->route('tenant.admin.core.residents.index', ['community_slug' => $community->slug])
@@ -71,7 +71,7 @@ class ResidentController extends Controller
         ]);
     }
 
-    public function update(UpdateResidentRequest $request, string $community_slug, Resident $resident, \App\Services\ResidentOnboardingService $service): RedirectResponse
+    public function update(UpdateResidentRequest $request, string $community_slug, Resident $resident, ResidentOnboardingService $service): RedirectResponse
     {
         $service->update($resident, $request->validated());
 

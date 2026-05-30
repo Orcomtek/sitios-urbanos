@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\EnsureTenantHasFeature;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\TenantMiddleware;
 use Illuminate\Auth\Middleware\Authorize;
@@ -57,7 +58,7 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         $middleware->alias([
-            'tenant.feature' => \App\Http\Middleware\EnsureTenantHasFeature::class,
+            'tenant.feature' => EnsureTenantHasFeature::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
