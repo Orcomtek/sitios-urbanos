@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Global;
 
 use App\Http\Controllers\Controller;
+use App\Models\Resident;
 use App\Models\User;
 use App\Models\UserInvitation;
 use Illuminate\Http\Request;
@@ -33,10 +34,15 @@ class AcceptInvitationController extends Controller
         $userExists = User::where('email', $invitation->email)->exists();
         $isLoggedIn = Auth::check();
 
+        $resident = Resident::where('community_id', $invitation->community_id)
+            ->where('email', $invitation->email)
+            ->first();
+
         return Inertia::render('Global/Invitations/Accept', [
             'invitation' => [
                 'token' => $invitation->token,
                 'email' => $invitation->email,
+                'name' => $resident ? $resident->full_name : null,
                 'community_name' => $invitation->community->name,
                 'role' => $invitation->role,
             ],
@@ -50,12 +56,6 @@ class AcceptInvitationController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'token' => 'required|string',
-            'name' => 'nullable|string|max:255',
-            'password' => Auth::check() ? 'nullable|string' : 'required|string|min:8',
-        ]);
-
         $invitation = UserInvitation::where('token', $request->token)->with('community')->first();
 
         if (! $invitation || $invitation->status !== 'pending' || $invitation->expires_at->isPast()) {
@@ -64,7 +64,29 @@ class AcceptInvitationController extends Controller
             ]);
         }
 
+        $userExists = User::where('email', $invitation->email)->exists();
+
+        $rules = [
+            'token' => 'required|string',
+        ];
+
+        if (! Auth::check()) {
+            $rules['password'] = $userExists 
+                ? 'required|string' 
+                : 'required|string|min:8|confirmed';
+        } else {
+            $rules['password'] = 'nullable|string';
+        }
+
+        $request->validate($rules);
+
+
+
         $user = User::where('email', $invitation->email)->first();
+
+        $resident = Resident::where('community_id', $invitation->community_id)
+            ->where('email', $invitation->email)
+            ->first();
 
         if ($user) {
             // Existing user: verify password if not logged in as this user
@@ -77,15 +99,8 @@ class AcceptInvitationController extends Controller
             }
             $user = Auth::user();
         } else {
-            // New user: validate name and create
-            if (! $request->name) {
-                throw ValidationException::withMessages([
-                    'name' => 'El nombre es obligatorio.',
-                ]);
-            }
-
             $user = User::create([
-                'name' => $request->name,
+                'name' => $resident ? $resident->full_name : 'Usuario Invitado',
                 'email' => $invitation->email,
                 'password' => Hash::make($request->password),
             ]);
@@ -101,15 +116,16 @@ class AcceptInvitationController extends Controller
             ],
         ]);
 
+        // Update Resident user_id
+        if ($resident && ! $resident->user_id) {
+            $resident->update(['user_id' => $user->id]);
+        }
+
         // Update invitation status
         $invitation->update([
             'status' => 'accepted',
         ]);
 
-        // Redirección dinámica al Tenant Runtime
-        $scheme = $request->getScheme();
-        $host = parse_url(config('app.url'), PHP_URL_HOST) ?? 'sitiosurbanos.test';
-
-        return redirect()->to($scheme.'://'.$invitation->community->slug.'.'.$host);
+        return \Inertia\Inertia::location(route('tenant.resident.dashboard', ['community_slug' => $invitation->community->slug]));
     }
 }

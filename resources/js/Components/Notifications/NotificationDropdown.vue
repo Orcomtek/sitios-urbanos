@@ -18,7 +18,7 @@ const unreadCount = computed(() => {
 
 const loadNotifications = async () => {
     try {
-        const response = await axios.get(route('api.cockpit.notifications.index', { community_slug: communitySlug }));
+        const response = await axios.get(route('tenant.cockpit.notifications.index', { community_slug: communitySlug }));
         notifications.value = response.data.data;
     } catch (error) {
         console.error('Error loading notifications', error);
@@ -92,7 +92,7 @@ const getTargetRoute = (notification: any) => {
 const markAsRead = async (notification: any) => {
     if (!notification.read_at) {
         try {
-            await axios.patch(route('api.cockpit.notifications.read', {
+            await axios.patch(route('tenant.cockpit.notifications.read', {
                 community_slug: communitySlug,
                 id: notification.id
             }));
@@ -109,7 +109,7 @@ const markAsRead = async (notification: any) => {
 
 const markAllAsRead = async () => {
     try {
-        await axios.patch(route('api.cockpit.notifications.read-all', { community_slug: communitySlug }));
+        await axios.patch(route('tenant.cockpit.notifications.read-all', { community_slug: communitySlug }));
         notifications.value.forEach(n => n.read_at = new Date().toISOString());
     } catch (error) {}
 };

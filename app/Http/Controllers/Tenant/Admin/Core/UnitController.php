@@ -21,15 +21,21 @@ class UnitController extends Controller
     public function index(string $community_slug): Response
     {
         $community = $this->context->require();
+        $search = request('search');
 
         // Optimized for the grid, no heavy eager loading, only counts if necessary
         $units = $community->units()
             ->withCount('residents')
+            ->when($search, function ($query, $search) {
+                $query->where('identifier', 'ilike', '%'.$search.'%');
+            })
             ->orderBy('identifier')
-            ->paginate(50);
+            ->paginate(15)
+            ->withQueryString();
 
         return Inertia::render('Tenant/Admin/Core/Units/Index', [
             'units' => $units,
+            'filters' => request()->only(['search']),
         ]);
     }
 

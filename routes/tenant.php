@@ -14,6 +14,12 @@ use App\Http\Controllers\Tenant\Resident\Ecosystem\EcosystemController;
 use App\Http\Controllers\Tenant\Resident\Ecosystem\ProviderController as ResidentProviderController;
 use App\Http\Controllers\Tenant\Resident\Governance\PollController;
 use App\Http\Controllers\Tenant\Resident\Governance\PqrsController;
+use App\Http\Controllers\Api\Cockpit\ActivityTimelineController;
+use App\Http\Controllers\Api\Cockpit\AdminWorkQueueController;
+use App\Http\Controllers\Api\Cockpit\DashboardController as ApiCockpitDashboardController;
+use App\Http\Controllers\Api\Cockpit\NotificationController;
+use App\Http\Controllers\Api\Cockpit\ResidentCockpitController;
+use App\Http\Controllers\Api\Cockpit\WorkQueueController;
 use App\Http\Middleware\TenantMiddleware;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -37,6 +43,19 @@ Route::domain('{community_slug}.'.$centralDomain)
             return Inertia::location(route('login'));
         })->name('tenant.logout');
 
+        Route::prefix('_tenant/cockpit')->name('tenant.cockpit.')->group(function () {
+            Route::get('/dashboard', [ApiCockpitDashboardController::class, 'index'])->name('dashboard');
+            Route::get('/work-queue', [WorkQueueController::class, 'index'])->name('work-queue');
+            Route::get('/admin-work-queue', [AdminWorkQueueController::class, 'admin-work-queue'])->name('admin-work-queue');
+            Route::get('/resident', [ResidentCockpitController::class, 'index'])->name('resident');
+
+            Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+            Route::patch('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.read-all');
+            Route::patch('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
+
+            Route::get('/activity', [ActivityTimelineController::class, 'index'])->name('activity.index');
+        });
+
         Route::prefix('admin')->name('tenant.admin.')->group(function () {
             Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
@@ -49,6 +68,7 @@ Route::domain('{community_slug}.'.$centralDomain)
                     Route::post('/generator/generate', [UnitGeneratorController::class, 'generate'])->name('generator.generate');
                     Route::post('/generator/bulk-amenities', [UnitGeneratorController::class, 'bulkUpdateAmenities'])->name('generator.bulk-amenities');
                 });
+                Route::post('residents/dispatch-invitations', [ResidentController::class, 'dispatchInvitations'])->name('residents.dispatch-invitations');
                 Route::resource('units', UnitController::class);
                 Route::resource('residents', ResidentController::class);
 

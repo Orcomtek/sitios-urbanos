@@ -37,7 +37,7 @@ const payInvoice = async (invoiceId) => {
 
 const fetchData = async () => {
     try {
-        const response = await axios.get(route('api.cockpit.resident', { community_slug: communitySlug }));
+        const response = await axios.get(route('tenant.cockpit.resident', { community_slug: communitySlug }));
         data.value = response.data.data;
         error.value = null;
     } catch (e) {
@@ -194,6 +194,25 @@ const formatDate = (dateString) => {
                                     </li>
                                 </ul>
                                 <p v-else class="text-sm text-gray-500 italic mt-4">No tienes paquetes pendientes por recoger.</p>
+                            </div>
+                        </div>
+
+                        <!-- Access QR Code Widget -->
+                        <div class="bg-gradient-to-br from-indigo-50 to-white border text-card-foreground rounded-lg shadow-sm border-indigo-100 flex flex-col justify-between items-center py-8">
+                            <div class="text-center mb-4">
+                                <h3 class="font-bold text-lg text-indigo-900 tracking-tight">Tu Código QR de Acceso</h3>
+                                <p class="text-sm text-indigo-600">Úsalo para ingresar a la comunidad</p>
+                            </div>
+                            <div class="bg-white p-4 rounded-xl shadow-inner border border-gray-100 flex items-center justify-center w-40 h-40">
+                                <!-- Placeholder for actual QR code rendering -->
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-24 w-24 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm14 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
+                                </svg>
+                            </div>
+                            <div class="mt-4">
+                                <button class="text-sm font-semibold text-indigo-600 hover:text-indigo-800">
+                                    Generar Nuevo QR
+                                </button>
                             </div>
                         </div>
 

@@ -1967,126 +1967,171 @@ A deep refactoring of the resident and unit entities to establish strict Role-Bi
 4. **Topological Matrix Sector Scoping (`VisualMatrix.vue`):** Prevent matrix layout fragmentation by implementing standalone Block/Sector view filters instead of standard table pagination.
 5. **Dynamic Toast Notification System:** Replace all browser-native `alert()` commands with an elegant, un-intrusive Toast component (Success/Error/Warning) with auto-dismiss logic.
 
-## BLOCK 37 — SuperAdmin Control Plane (/system)
+## BLOCK 37 — Identity, Access & Onboarding Engine (RBAC)
 
 ### Status
 ⏳ Pending
 
 ### Description
-The global management dashboard for the SaaS owner (Orcomtek). This is the absolute top-level tier required to monetize and govern the multi-tenant architecture effectively.
+The bridge between raw data and real users. This block brings the records imported in the ETL to life, establishing the authentication system, strict role assignment, and credential dispatch so Administrators and Residents can access their respective Control Planes.
 
 **Scope & Execution Details:**
-* **SaaS Tiers & Subscriptions:** Creation of pricing plans (Base, Pro, Elite) mapping to feature availability and unit limits.
-* **Tenant Feature Overrides:** A module to manage commercial negotiations. It configures specific exceptions per community (e.g., 50 extra free SMS, discounted ePayco Take-Rate) via the `tenant_feature_overrides` table.
-* **Global Auditing:** Dashboard to monitor overall SaaS health, active communities, MRR (Monthly Recurring Revenue) metrics, and global system logs.
+*   **Access Management (Internal RBAC):** Granular profile creation for the Tenant Admin. Limited permissions mapping for Sub-administrators, Accountants, and Auditors.
+*   **Asynchronous Invitation Flow:** A system to trigger emails with temporary, cryptographically signed links to residents imported in Block 36.1, allowing them to securely set their passwords.
+*   **Resident Base Dashboard (Cockpit):** The main view upon resident login, integrating the Dynamic QR Code Generator (large TOTP on screen) for immediate access, and the urgent notifications panel.
 
-## BLOCK 38 — Dunning & Soft-Collection Strategy
+## BLOCK 38 — Extended Operational Module & Support (PQRS)
 
 ### Status
 ⏳ Pending
 
 ### Description
-An automated, UX-focused financial retention flow. This replaces aggressive collection tactics with a phased "Soft-Collection" strategy to handle unpaid community invoices without alienating the resident, while protecting the community's cash flow.
+Before processing payments, the community must be able to communicate and update its data. This block closes the Administrator's Control Plane in terms of customer service and census, while enabling basic self-management for the Resident.
 
 **Scope & Execution Details:**
-* **Friendly Reminders (Days 1-3):** Automated, empathetic notifications regarding failed or pending payments.
-* **Grace Periods:** Configurable parameters per community defining the acceptable delay window.
-* **Automated Service Degradation:** Gradual locking of non-essential services (e.g., Amenity reservations, quick QR generation) while keeping payment portals accessible. Escaping to manual legal handover only at the terminal stage.
+*   **Census Self-Management (My Unit):** Interface for residents to register/update their family group (co-residents), vehicles (license plates for gatehouse cross-referencing), and pets.
+*   **PQRS System (Helpdesk):** Administrator inbox with status traceability (Open, In Progress, Resolved). A simple form in the resident's Cockpit to raise tickets.
+*   **Mass Communications:** Digital bulletin board and broadcasting tool for the Administrator, capable of queuing messages via Email, SMS, or in-app push notifications.
 
-## BLOCK 39 — ePayco Split Commission Engine
+## BLOCK 39 — Core Financial Ledger
 
 ### Status
 ⏳ Pending
 
 ### Description
-The core monetization engine for the platform. This block implements the real-time financial orchestration required for the aggregator model using ePayco Split, dictating exact profit margins on every transaction.
+The fundamental accounting engine. Operating prior to payment gateways, this block establishes the mathematical truth of the property: who owes what, due dates, and audit trails.
 
 **Scope & Execution Details:**
-* **Commission Profiles:** Creation of the `commission_profiles` and `commission_rules` tables to handle dynamic calculation rates.
-* **Real-Time Split:** Logic to intercept payments (Administration fees, Marketplace purchases) and calculate: `Total Amount - Gateway Cost - Sitios Urbanos Take-Rate = Net Community/Provider Payout`.
-* **Ledger Integration:** Ensuring the immutable ledger records these splits transparently, separating platform fees from the unit's actual credited balance.
+*   **Recurring Billing (Cron Jobs):** Automated engine that evaluates the coefficient of each unit and mass-generates invoices (HOA fees/Administration) on the 1st of every month.
+*   **Balance & Accounting Notes Management:** Interface for the administrator to load initial balances, apply credit notes (surpluses), or debit notes (e.g., fines).
+*   **Resident Financial Plane:** Deployment of the "Current Account Status" widget ($0 or Pending Balance) and the history view to download dynamically generated Invoices and Clearance Certificates (Paz y Salvos) in PDF format.
 
-## BLOCK 40 — Cryptographic Access Engine (QR & Gates)
+## BLOCK 40 — Payment Gateway & Split Engine (ePayco)
 
 ### Status
 ⏳ Pending
 
 ### Description
-The operational boundary of the community. This block moves the Access module from a conceptual state to a fully functional, cryptographically secure entry system for the gatehouse.
+The connection of the Ledger with real money and the primary monetization engine of the platform. It implements real-time financial orchestration using the aggregator model.
 
 **Scope & Execution Details:**
-* **TOTP/HMAC QR Generation:** Producing time-sensitive, cryptographically signed QR codes that cannot be screenshotted and reused indefinitely.
-* **Guard UI Scanner:** A fast, mobile-friendly PWA interface for the security guard to scan codes.
-* **State Mutation:** Real-time backend validation of the signature, immediately mutating the `AccessInvitation` status to "Consumed" to prevent double-entry (replay attacks).
+*   **Quick Pay Button:** Integration of the ePayco checkout directly into the resident's Cockpit.
+*   **Real-Time Split Engine:** Mathematical logic to intercept the payment, calculate gateway costs, extract the Sitios Urbanos "Take-Rate" (Commission), and disburse the net funds to the community's bank account.
+*   **Automated Reconciliation:** Secure webhooks listening to ePayco to instantly mark Block 39 invoices as "Paid," eliminating human intervention.
 
-## BLOCK 41 — Forensic Audit & Device Security
+## BLOCK 41 — Dunning & Soft-Collection Strategy
 
 ### Status
 ⏳ Pending
 
 ### Description
-Establishing the legal and forensic shield for the platform. This guarantees that all critical operational and security actions are irrefutably tracked and that gatehouse access cannot be compromised via session theft.
+Accounts receivable automation. Replaces manual collection with a financial flow focused on retention and user experience, protecting the building's cash flow.
 
 **Scope & Execution Details:**
-* **Immutable Audit Trail:** Expanding `security_logs` to capture granular data on who generated an invitation, which specific guard validated it, at what exact timestamp, and attaching photo evidence if required by community rules.
-* **Device Tokens (Hardware Binding):** Implementing asymmetric signature validation or strict Device Tokens for the `guard` role. This ensures operational sessions can only be initiated from physically authorized devices at the gatehouse, preventing guards from logging in from home.
+*   **Interest & Reminder Engine:** Automated application of late fees based on Tenant policies, alongside empathetic notifications (Days 1-3) regarding failed or pending payments.
+*   **Automated Service Degradation:** Gradual locking of non-essential services (e.g., amenity reservations, voting) for units in default, while always keeping the payment portal accessible.
+*   **Collections Dashboard (Admin):** Managerial board to visualize global delinquency, manage grace periods, and export reports for legal collection.
 
-## BLOCK 42 — Resident P2P Ecosystem (Classifieds)
+## BLOCK 42 — Security Control Plane (Logbook & Cryptographic Scanner)
 
 ### Status
 ⏳ Pending
 
 ### Description
-The circular economy module designed to maximize resident engagement and retention. A neighbor-to-neighbor classifieds system built with strict privacy and moderation controls, operating completely outside the payment gateway.
+The operational boundary of the community. Equips security personnel with fast, error-proof tools to control who enters and exits the ecosystem.
 
 **Scope & Execution Details:**
-* **Exploration & Creation UI:** Resident dashboard views to browse active listings, post new items/services, and pause/edit their own publications.
-* **Privacy Engine:** Backend enforcement of contact visibility based on the resident's preference (`show_contact_info`), ensuring PII (email/phone) is never leaked via API endpoints without consent.
-* **Community Moderation:** Reporting mechanics for residents and management tools for admins to pause or remove inappropriate listings.
+*   **Access Scanner (PWA):** Ultra-fast mobile interface for the guard. Camera reader that validates Block 37 QR codes (TOTP) in milliseconds, mutating the state to "Consumed" to prevent replay attacks.
+*   **Digital Logbook & Parcels:** High-speed form to register manual visitors (ID, Name, Destination Unit) and package reception (triggering a Toast/Push to the resident).
+*   **VIP Pre-authorization:** View for the guard to quickly validate guests pre-approved by the resident in their self-management module.
 
-## BLOCK 42.1 — Dynamic Resource Allocation & Booking Engine (Communal Assets)
-**Phase:** Resident Experience & Governance
-**Objective:** Handle the lifecycle of floating, non-deeded assets (e.g., Communal Parking, BBQs, Event Rooms) outside the rigid topological matrix, utilizing a time-based booking and assignment system.
-**Key Deliverables:**
-1. **Resource Ledger:** A dynamic architecture (`communal_resources` and `bookings` tables) to register assets that can be reserved, raffled, or temporarily assigned to a Resident/Unit.
-2. **Booking & Eligibility Engine:** Logic to allow residents to reserve assets. Includes financial gates (e.g., "Resident must have $0 debt to enter the communal parking raffle").
-3. **Automated Assignment (Cron Jobs):** Automated quarterly/monthly rotation algorithms for high-demand floating assets like communal parking, completely decoupled from the physical Unit architecture.
-
-## BLOCK 43 — B2B2C Marketplace & Provider Directory
+## BLOCK 43 — Forensic Audit & Hardware Security
 
 ### Status
 ⏳ Pending
 
 ### Description
-The formal commercial layer of the ecosystem. This connects external businesses and vetted service providers to the residents, serving as the secondary monetization pillar for the SaaS.
+The legal shield of the platform. Guarantees that all security actions are irrefutable and that gatehouse accounts cannot be compromised externally.
 
 **Scope & Execution Details:**
-* **Provider Directory (Lead Gen):** UI for residents to browse vetted professionals (plumbers, electricians), view ratings, and request services. Incorporates visibility slots (Ads) for provider monetization.
-* **Marketplace Integration:** Formal storefronts for local businesses (Mini-markets, Pharmacies) featuring a shopping cart UX, order status tracking, and direct integration with the ePayco Split engine to collect the platform's Take-Rate on every sale.
+*   **Forensic Log (Incidents):** Immutable digital book for shift changes and incident reporting, with the capability to attach photographic evidence (stored in S3).
+*   **Hardware Binding (Device Tokens):** Implementation of asymmetric validation for the `guard` role. Ensures operational sessions can only be opened from authorized physical devices (gatehouse tablets), blocking remote access.
 
-## BLOCK 44 — Artificial Intelligence (Legal RAG)
+## BLOCK 44 — Governance (Voting & Document Management)
 
 ### Status
 ⏳ Pending
 
 ### Description
-Deploying generative AI to reduce the administrative burden on community managers. This chatbot answers resident queries using Retrieval-Augmented Generation (RAG) based purely on the specific legal documents of their community.
+Digitization of the community's legal bureaucracy, streamlining assemblies and access to official information.
 
 **Scope & Execution Details:**
-* **Document Ingestion (Embeddings):** Processing uploaded Community Rulebooks (Manuales de Convivencia) and bylaws into a vector database.
-* **Resident Chat Interface:** A localized chat widget within the resident cockpit.
-* **Strict Context Framing:** Ensuring the LLM only answers based on the ingested embeddings, preventing hallucinated policies and providing exact citations to the community rulebook.
+*   **Weighted Voting Engine:** Creation of official ballots. Real-time quorum validation and mathematical result calculation based strictly on the unit's *coefficient* (from Block 36 Matrix).
+*   **Voting Booth (Resident):** Secure, locked interface to cast votes during virtual assemblies.
+*   **Document Repository:** Organized cloud storage for the Administrator to upload Minutes, Bylaws, and Balance Sheets, accessible 24/7 by the Resident.
 
-## BLOCK 45 — Master UI/UX, Omnichannel & Demo Data Pack
+## BLOCK 45 — Resident P2P Ecosystem (Classifieds & Bookings)
 
 ### Status
 ⏳ Pending
 
 ### Description
-The final polish and production hardening block. This transitions the application from a functional MVP to a commercial-grade Enterprise software product ready for deployment and sales demos.
+Modules designed to maximize retention, daily app usage, and the circular economy among neighbors.
 
 **Scope & Execution Details:**
-* **Visual Refinement:** Application-wide pass to enforce Bento Grid consistency, professional Empty States, and micro-interactions.
-* **Async Omnichannel Engine:** Activating the Redis queued jobs for AWS SNS (SMS), Emails, and Push notifications, enforcing the Fair Use quota degradation logic.
-* **Idempotent Seeders:** Creation of the `Local Demo Data Pack`. A robust seeder suite that instantly generates fully populated multi-tenant environments (units, residents, financial history, polls) to facilitate QA testing and high-impact sales demonstrations.
-* **Production Hardening:** Final configuration of CORS, API Rate Limiting, Database Backups, and Laravel Reverb concurrency tuning.
+*   **Amenity Bookings (Dynamic Allocation):** Interactive calendar for common areas (BBQ, Social Room). Includes financial validation (access gate if in default) and definition of billable rental rates.
+*   **P2P Classifieds Wall:** UI to browse, create, and pause neighborhood listings.
+*   **Privacy & Moderation Engine:** Masking of contact data based on resident preferences, and a reporting panel for the Administrator to take down inappropriate posts.
+
+## BLOCK 46 — B2B2C Marketplace & Provider Directory
+
+### Status
+⏳ Pending
+
+### Description
+The external commercial layer and the second monetization pillar of the SaaS. Connects local businesses with the purchasing power of the community.
+
+**Scope & Execution Details:**
+*   **Approval & Directory (Lead Gen):** Administrator filter to validate providers (plumbers, ISPs). Resident interface to explore services and view ratings.
+*   **Transactional Marketplace:** Virtual storefronts for local businesses (Minimarkets, Pharmacies) with an integrated shopping cart.
+*   **Commercial Micro-Split:** Integration of these purchases with the Block 40 engine to extract a direct transactional Take-Rate for Sitios Urbanos on every order.
+
+## BLOCK 47 — Artificial Intelligence (Legal RAG)
+
+### Status
+⏳ Pending
+
+### Description
+Extreme reduction of administrative burden through a generative chatbot confined to the specific legal documents of each building.
+
+**Scope & Execution Details:**
+*   **Document Ingestion (Embeddings):** Processing of the Community Rulebooks (from Block 44) into a vector database.
+*   **Resident Chatbot:** Widget in the Cockpit to answer operational and coexistence questions.
+*   **Strict Context Framing:** Guardrails to prevent hallucinations, ensuring the AI only responds based on local regulations and cites the exact source.
+
+## BLOCK 48 — SuperAdmin Control Plane (The Business / /system)
+
+### Status
+⏳ Pending
+
+### Description
+The global dashboard for Orcomtek. Now that the entire system operates, this block allows governing, monetizing, and scaling the Multi-Tenant architecture.
+
+**Scope & Execution Details:**
+*   **Master Dashboard & Audit:** Global metrics (MRR, transacted GMV, Churn Rate). Forensic logs of server status.
+*   **SaaS Tiers & Subscriptions:** Creation of billing plans (Base, Pro, Elite) that lock or enable specific modules (e.g., Marketplace or RAG) for each community.
+*   **Tenant Feature Overrides:** Commercial negotiation module to configure exceptions (e.g., custom gateway commission % or extra free SMS) per building. Emergency suspension button for SaaS non-payment.
+
+## BLOCK 49 — Master UI/UX, Omnichannel & Demo Data Pack
+
+### Status
+⏳ Pending
+
+### Description
+The final polish. Transforms the MVP into an Enterprise product ready for corporate sales, high-impact demonstrations, and production deployment.
+
+**Scope & Execution Details:**
+*   **Total Visual Refinement:** Audit of "Quiet Luxury", Bento Grids, micro-interactions, and Empty States across all control planes.
+*   **Asynchronous Omnichannel Engine:** Final activation of Redis Workers to dispatch SMS (AWS SNS), mass emails, and Push Notifications under *Fair Use* rules.
+*   **Idempotent Seeders (Demo Pack):** Suite for generating fake data that creates complete communities (units, debts, residents, histories, and votes) in seconds for QA testing and flawless sales demos.
+*   **Production Hardening:** Strict configuration of CORS, API Rate Limiting, automated database backups, and concurrency tuning in Laravel Reverb.

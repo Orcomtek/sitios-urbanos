@@ -1,0 +1,4 @@
+{
+    "The password field must be at least 8 characters.": "La contraseña debe tener al menos 8 caracteres.",
+    "The password field confirmation does not match.": "La confirmación de la contraseña no coincide."
+}

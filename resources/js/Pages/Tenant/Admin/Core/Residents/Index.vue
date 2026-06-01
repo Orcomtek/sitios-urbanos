@@ -1,8 +1,13 @@
 <script setup lang="ts">
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, Link, usePage } from '@inertiajs/vue3';
-import { computed } from 'vue';
-import { PencilIcon, TrashIcon } from '@heroicons/vue/24/outline';
+import { computed, ref, watch } from 'vue';
+import { PencilIcon, TrashIcon, MagnifyingGlassIcon } from '@heroicons/vue/24/outline';
+import Pagination from '@/Components/ui/Pagination.vue';
+import ResidentFormModal from './Components/ResidentFormModal.vue';
+import ConfirmDeleteModal from '@/Components/ui/ConfirmDeleteModal.vue';
+import { router } from '@inertiajs/vue3';
+import { useToast } from '@/Composables/useToast';
 
 const props = defineProps<{
     residents: {
@@ -20,10 +25,83 @@ const props = defineProps<{
         }>;
         links: any[];
     };
+    filters?: {
+        search?: string;
+    };
+    units: Array<{
+        id: number;
+        identifier: string;
+    }>;
 }>();
 
 const page = usePage();
 const communitySlug = computed(() => (page.props.tenant as any)?.community?.slug);
+const { show: showToast } = useToast();
+
+const search = ref(props.filters?.search || '');
+
+let searchTimeout: ReturnType<typeof setTimeout>;
+watch(search, (value) => {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+        router.get(
+            route('tenant.admin.core.residents.index', { community_slug: communitySlug.value }),
+            { search: value },
+            { preserveState: true, preserveScroll: true, replace: true }
+        );
+    }, 300);
+});
+
+const isFormModalOpen = ref(false);
+const editResidentId = ref<number | null>(null);
+
+const openFormModal = (residentId: number | null = null) => {
+    editResidentId.value = residentId;
+    isFormModalOpen.value = true;
+};
+
+const closeFormModal = () => {
+    isFormModalOpen.value = false;
+    editResidentId.value = null;
+};
+
+const isDispatching = ref(false);
+const dispatchInvitations = () => {
+    isDispatching.value = true;
+    router.post(route('tenant.admin.core.residents.dispatch-invitations', { community_slug: communitySlug.value }), {}, {
+        onSuccess: () => {
+            showToast('Invitaciones encoladas exitosamente', 'success');
+        },
+        onFinish: () => {
+            isDispatching.value = false;
+        }
+    });
+};
+
+const isDeleteModalOpen = ref(false);
+const deleteResidentId = ref<number | null>(null);
+const isDeleting = ref(false);
+
+const deleteResident = (residentId: number) => {
+    deleteResidentId.value = residentId;
+    isDeleteModalOpen.value = true;
+};
+
+const confirmDelete = () => {
+    if (!deleteResidentId.value) return;
+    
+    isDeleting.value = true;
+    router.delete(route('tenant.admin.core.residents.destroy', { community_slug: communitySlug.value, resident: deleteResidentId.value }), {
+        onSuccess: () => {
+            showToast('Residente eliminado exitosamente', 'success');
+            isDeleteModalOpen.value = false;
+            deleteResidentId.value = null;
+        },
+        onFinish: () => {
+            isDeleting.value = false;
+        }
+    });
+};
 
 const getTaxonomyLabel = (type: string, value: string) => {
     const taxonomies = (page.props.taxonomies as any)?.[type] || [];
@@ -38,16 +116,36 @@ const getTaxonomyLabel = (type: string, value: string) => {
     <AppLayout>
             <div class="flex items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
                 <h2 class="text-xl font-semibold leading-tight text-gray-800">Residentes</h2>
-                <Link
-                    :href="route('tenant.admin.core.residents.create', { community_slug: communitySlug })"
-                    class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                >
-                    Nuevo Residente
-                </Link>
+                <div class="flex items-center gap-3">
+                    <button
+                        @click="dispatchInvitations"
+                        :disabled="isDispatching"
+                        class="rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:opacity-50"
+                    >
+                        {{ isDispatching ? 'Enviando...' : 'Enviar Invitaciones' }}
+                    </button>
+                    <button
+                        @click="openFormModal(null)"
+                        class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                    >
+                        Nuevo Residente
+                    </button>
+                </div>
             </div>
 
         <div class="py-12">
-            <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
+            <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 space-y-4">
+                
+                <!-- Search Bar -->
+                <div class="flex items-center justify-between">
+                    <div class="relative w-full max-w-sm">
+                        <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                            <MagnifyingGlassIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
+                        </div>
+                        <input type="text" v-model="search" class="block w-full rounded-md border-0 py-1.5 pl-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" placeholder="Buscar residente..." />
+                    </div>
+                </div>
+
                 <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                     <div class="p-6 text-gray-900 border-b border-gray-200">
                         <table class="min-w-full divide-y divide-gray-300">
@@ -87,9 +185,12 @@ const getTaxonomyLabel = (type: string, value: string) => {
                                     </td>
                                     <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
                                         <div class="flex items-center justify-end gap-3">
-                                            <Link :href="route('tenant.admin.core.residents.edit', { community_slug: communitySlug, resident: resident.id })" class="text-gray-400 hover:text-primary transition" title="Editar" aria-label="Editar">
+                                            <button @click.stop="openFormModal(resident.id)" class="text-gray-400 hover:text-primary transition" title="Editar" aria-label="Editar">
                                                 <PencilIcon class="w-5 h-5" />
-                                            </Link>
+                                            </button>
+                                            <button @click.stop="deleteResident(resident.id)" class="text-gray-400 hover:text-red-600 transition" title="Borrar" aria-label="Borrar">
+                                                <TrashIcon class="w-5 h-5" />
+                                            </button>
                                         </div>
                                     </td>
                                 </tr>
@@ -101,8 +202,25 @@ const getTaxonomyLabel = (type: string, value: string) => {
                             </tbody>
                         </table>
                     </div>
+                    <div class="px-6 py-4 border-t border-gray-200">
+                        <Pagination :links="residents.links" />
+                    </div>
                 </div>
             </div>
         </div>
+
+        <ResidentFormModal
+            :show="isFormModalOpen"
+            :resident-id="editResidentId"
+            :units="units"
+            @close="closeFormModal"
+        />
+
+        <ConfirmDeleteModal
+            :show="isDeleteModalOpen"
+            :processing="isDeleting"
+            @close="isDeleteModalOpen = false"
+            @confirm="confirmDelete"
+        />
     </AppLayout>
 </template>
