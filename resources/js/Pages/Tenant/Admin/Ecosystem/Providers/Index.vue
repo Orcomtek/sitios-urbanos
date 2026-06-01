@@ -10,8 +10,12 @@ import DangerButton from '@/Components/DangerButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import InputError from '@/Components/InputError.vue';
+import ConfirmDeleteModal from '@/Components/ui/ConfirmDeleteModal.vue';
+import { useToast } from '@/Composables/useToast';
+import { PencilIcon, TrashIcon, NoSymbolIcon, CheckCircleIcon } from '@heroicons/vue/24/outline';
 
 const page = usePage();
+const { show: showToast } = useToast();
 const communitySlug = (page.props.tenant as any)?.community?.slug;
 
 interface ContactDetail {
@@ -150,19 +154,35 @@ const toggleStatus = async (provider: Provider) => {
         await axios.patch(route('api.ecosystem.providers.update', { community_slug: communitySlug, provider: provider.id }), {
             status: newStatus,
         });
+        showToast(newStatus === 'inactive' ? 'Proveedor desactivado correctamente' : 'Proveedor activado correctamente', 'success');
         fetchProviders();
     } catch (error) {
         console.error('Error toggling status:', error);
     }
 };
 
-const deleteProvider = async (id: number) => {
-    if (!confirm('¿Está seguro de que desea eliminar este proveedor?')) return;
+const isDeleteModalOpen = ref(false);
+const deleteProviderId = ref<number | null>(null);
+const isDeleting = ref(false);
+
+const deleteProvider = (id: number) => {
+    deleteProviderId.value = id;
+    isDeleteModalOpen.value = true;
+};
+
+const confirmDelete = async () => {
+    if (!deleteProviderId.value) return;
+    isDeleting.value = true;
     try {
-        await axios.delete(route('api.ecosystem.providers.destroy', { community_slug: communitySlug, provider: id }));
+        await axios.delete(route('api.ecosystem.providers.destroy', { community_slug: communitySlug, provider: deleteProviderId.value }));
+        showToast('Proveedor eliminado correctamente', 'success');
+        isDeleteModalOpen.value = false;
+        deleteProviderId.value = null;
         fetchProviders();
     } catch (error) {
         console.error('Error deleting provider:', error);
+    } finally {
+        isDeleting.value = false;
     }
 };
 
@@ -261,11 +281,18 @@ const getError = (key: string): string | undefined => {
                                             <span v-else class="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">Inactivo</span>
                                         </td>
                                         <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                                            <button @click="toggleStatus(provider)" class="text-indigo-600 hover:text-indigo-900 mr-4">
-                                                {{ provider.status === 'active' ? 'Desactivar' : 'Activar' }}
-                                            </button>
-                                            <button @click="openEditModal(provider)" class="text-indigo-600 hover:text-indigo-900 mr-4">Editar</button>
-                                            <button @click="deleteProvider(provider.id)" class="text-red-600 hover:text-red-900">Eliminar</button>
+                                            <div class="flex items-center justify-end gap-3">
+                                                <button @click.stop="toggleStatus(provider)" class="text-gray-400 hover:text-indigo-600 transition" :title="provider.status === 'active' ? 'Desactivar' : 'Activar'" :aria-label="provider.status === 'active' ? 'Desactivar' : 'Activar'">
+                                                    <NoSymbolIcon v-if="provider.status === 'active'" class="w-5 h-5" />
+                                                    <CheckCircleIcon v-else class="w-5 h-5" />
+                                                </button>
+                                                <button @click.stop="openEditModal(provider)" class="text-gray-400 hover:text-primary transition" title="Editar" aria-label="Editar">
+                                                    <PencilIcon class="w-5 h-5" />
+                                                </button>
+                                                <button @click.stop="deleteProvider(provider.id)" class="text-gray-400 hover:text-red-600 transition" title="Borrar" aria-label="Borrar">
+                                                    <TrashIcon class="w-5 h-5" />
+                                                </button>
+                                            </div>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -375,6 +402,15 @@ const getError = (key: string): string | undefined => {
                 </div>
             </div>
         </Modal>
+
+        <ConfirmDeleteModal
+            :show="isDeleteModalOpen"
+            title="Eliminar Proveedor"
+            message="¿Estás seguro de que deseas eliminar este proveedor? Esta acción no se puede deshacer."
+            :processing="isDeleting"
+            @close="isDeleteModalOpen = false"
+            @confirm="confirmDelete"
+        />
 
     </AppLayout>
 </template>

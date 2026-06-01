@@ -12,7 +12,7 @@ class TransitionVisitorStatusAction
 {
     public function execute(Visitor $visitor, string $newStatus, User $user, Community $community): Visitor
     {
-        if (! $user->hasRoleInCommunity($community, CommunityRole::Admin, CommunityRole::Guard)) {
+        if (! $user->hasRoleInCommunity($community, CommunityRole::TenantAdmin, CommunityRole::Guard)) {
             throw ValidationException::withMessages([
                 'status' => 'No tienes permisos para registrar la entrada o salida de visitantes.',
             ]);

@@ -26,7 +26,7 @@ class AccessInvitationController extends Controller
 
         $query = AccessInvitation::with(['unit', 'visitor']);
 
-        if ($user->hasRoleInCommunity($tenantContext, 'admin') || $user->hasRoleInCommunity($tenantContext, 'guard')) {
+        if ($user->hasRoleInCommunity($tenantContext, 'tenant_admin') || $user->hasRoleInCommunity($tenantContext, 'guard')) {
             // Admins/guards can see all invitations within the community.
         } elseif ($user->hasRoleInCommunity($tenantContext, 'resident')) {
             // Residents can only see their own active units' invitations.
@@ -66,7 +66,7 @@ class AccessInvitationController extends Controller
         $tenantContext = app(TenantContext::class)->get();
         $user = $request->user();
 
-        if ($user->hasRoleInCommunity($tenantContext, 'resident') && ! $user->hasRoleInCommunity($tenantContext, 'admin') && ! $user->hasRoleInCommunity($tenantContext, 'guard')) {
+        if ($user->hasRoleInCommunity($tenantContext, 'resident') && ! $user->hasRoleInCommunity($tenantContext, 'tenant_admin') && ! $user->hasRoleInCommunity($tenantContext, 'guard')) {
             $hasAccess = Resident::where('community_id', $tenantContext->id)
                 ->where('user_id', $user->id)
                 ->where('is_active', true)
@@ -90,7 +90,7 @@ class AccessInvitationController extends Controller
         $tenantContext = app(TenantContext::class)->get();
         $user = $request->user();
 
-        if ($user->hasRoleInCommunity($tenantContext, 'resident') && ! $user->hasRoleInCommunity($tenantContext, 'admin') && ! $user->hasRoleInCommunity($tenantContext, 'guard')) {
+        if ($user->hasRoleInCommunity($tenantContext, 'resident') && ! $user->hasRoleInCommunity($tenantContext, 'tenant_admin') && ! $user->hasRoleInCommunity($tenantContext, 'guard')) {
             $hasAccess = Resident::where('community_id', $tenantContext->id)
                 ->where('user_id', $user->id)
                 ->where('is_active', true)
@@ -121,7 +121,7 @@ class AccessInvitationController extends Controller
         $user = $request->user();
 
         // Only guards or admins can consume an invitation directly at the gate.
-        if (! $user->hasRoleInCommunity($tenantContext, 'admin') && ! $user->hasRoleInCommunity($tenantContext, 'guard')) {
+        if (! $user->hasRoleInCommunity($tenantContext, 'tenant_admin') && ! $user->hasRoleInCommunity($tenantContext, 'guard')) {
             abort(403, 'Unauthorized to consume access invitations.');
         }
 

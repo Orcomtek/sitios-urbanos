@@ -25,7 +25,7 @@ class VisitorController extends Controller
 
         $query = Visitor::query()->with(['unit', 'creator']);
 
-        if (! $user->hasRoleInCommunity($community, CommunityRole::Admin, CommunityRole::Guard)) {
+        if (! $user->hasRoleInCommunity($community, CommunityRole::TenantAdmin, CommunityRole::Guard)) {
             $userUnitIds = Resident::where('user_id', $user->id)
                 ->pluck('unit_id');
 
@@ -53,7 +53,7 @@ class VisitorController extends Controller
 
         $user = $request->user();
 
-        $isAdmin = $user->hasRoleInCommunity($community, CommunityRole::Admin);
+        $isAdmin = $user->hasRoleInCommunity($community, CommunityRole::TenantAdmin);
 
         if (! $isAdmin) {
             $isResident = Resident::where('user_id', $user->id)
@@ -91,7 +91,7 @@ class VisitorController extends Controller
         $user = $request->user();
         $community = $this->context->require();
 
-        if (! $user->hasRoleInCommunity($community, CommunityRole::Admin, CommunityRole::Guard)) {
+        if (! $user->hasRoleInCommunity($community, CommunityRole::TenantAdmin, CommunityRole::Guard)) {
             $isResident = Resident::where('user_id', $user->id)
                 ->where('unit_id', $visitor->unit_id)
                 ->exists();

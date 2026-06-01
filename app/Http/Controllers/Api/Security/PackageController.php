@@ -25,7 +25,7 @@ class PackageController extends Controller
 
         $query = Package::query()->with(['unit', 'receiver', 'deliverer']);
 
-        if (! $user->hasRoleInCommunity($community, CommunityRole::Admin, CommunityRole::Guard)) {
+        if (! $user->hasRoleInCommunity($community, CommunityRole::TenantAdmin, CommunityRole::Guard)) {
             $userUnitIds = Resident::where('user_id', $user->id)
                 ->pluck('unit_id');
 
@@ -40,7 +40,7 @@ class PackageController extends Controller
         $community = $this->context->require();
         $user = $request->user();
 
-        if (! $user->hasRoleInCommunity($community, CommunityRole::Admin, CommunityRole::Guard)) {
+        if (! $user->hasRoleInCommunity($community, CommunityRole::TenantAdmin, CommunityRole::Guard)) {
             abort(403, 'No tienes permiso para registrar paquetes en esta unidad.');
         }
 
@@ -85,7 +85,7 @@ class PackageController extends Controller
         $user = $request->user();
         $community = $this->context->require();
 
-        if (! $user->hasRoleInCommunity($community, CommunityRole::Admin, CommunityRole::Guard)) {
+        if (! $user->hasRoleInCommunity($community, CommunityRole::TenantAdmin, CommunityRole::Guard)) {
             $isResident = Resident::where('user_id', $user->id)
                 ->where('unit_id', $package->unit_id)
                 ->exists();

@@ -27,7 +27,7 @@ class EmergencyEventController extends Controller
 
         $query = EmergencyEvent::query()->with(['unit', 'triggerer']);
 
-        if (! $user->hasRoleInCommunity($community, CommunityRole::Admin, CommunityRole::Guard)) {
+        if (! $user->hasRoleInCommunity($community, CommunityRole::TenantAdmin, CommunityRole::Guard)) {
             $userUnitIds = Resident::where('user_id', $user->id)
                 ->pluck('unit_id');
 
@@ -53,7 +53,7 @@ class EmergencyEventController extends Controller
         $user = $request->user();
 
         // Must be a resident of the unit, or an admin to trigger for a unit
-        if (! $user->hasRoleInCommunity($community, CommunityRole::Admin)) {
+        if (! $user->hasRoleInCommunity($community, CommunityRole::TenantAdmin)) {
             $isResident = Resident::where('user_id', $user->id)
                 ->where('unit_id', $validated['unit_id'])
                 ->exists();
@@ -75,7 +75,7 @@ class EmergencyEventController extends Controller
         $user = $request->user();
         $community = $this->context->require();
 
-        if (! $user->hasRoleInCommunity($community, CommunityRole::Admin, CommunityRole::Guard)) {
+        if (! $user->hasRoleInCommunity($community, CommunityRole::TenantAdmin, CommunityRole::Guard)) {
             $isResident = Resident::where('user_id', $user->id)
                 ->where('unit_id', $emergency->unit_id)
                 ->exists();
@@ -93,7 +93,7 @@ class EmergencyEventController extends Controller
         $user = $request->user();
         $community = $this->context->require();
 
-        if (! $user->hasRoleInCommunity($community, CommunityRole::Admin, CommunityRole::Guard)) {
+        if (! $user->hasRoleInCommunity($community, CommunityRole::TenantAdmin, CommunityRole::Guard)) {
             abort(403, 'No tienes permiso para gestionar esta emergencia.');
         }
 
@@ -111,7 +111,7 @@ class EmergencyEventController extends Controller
         $user = $request->user();
         $community = $this->context->require();
 
-        if (! $user->hasRoleInCommunity($community, CommunityRole::Admin, CommunityRole::Guard)) {
+        if (! $user->hasRoleInCommunity($community, CommunityRole::TenantAdmin, CommunityRole::Guard)) {
             abort(403, 'No tienes permiso para gestionar esta emergencia.');
         }
 

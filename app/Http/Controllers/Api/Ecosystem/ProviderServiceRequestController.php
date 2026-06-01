@@ -30,7 +30,7 @@ class ProviderServiceRequestController extends Controller
             ->latest();
 
         // If Resident, restrict to their own
-        if (! $user->hasRoleInCommunity($community, CommunityRole::Admin)) {
+        if (! $user->hasRoleInCommunity($community, CommunityRole::TenantAdmin)) {
             $resident = Resident::where('user_id', $user->id)
                 ->where('community_id', $community->id)
                 ->firstOrFail();

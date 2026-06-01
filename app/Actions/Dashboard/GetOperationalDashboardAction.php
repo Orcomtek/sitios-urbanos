@@ -31,7 +31,7 @@ class GetOperationalDashboardAction
             ],
         ];
 
-        if ($role === CommunityRole::Admin) {
+        if ($role === CommunityRole::TenantAdmin) {
             $dashboard['widgets']['pqrs'] = $this->getPqrsWidget();
             $dashboard['widgets']['polls'] = $this->getPollsWidget();
             $dashboard['widgets']['finance'] = $this->getFinanceWidget();

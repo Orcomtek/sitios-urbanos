@@ -15,7 +15,7 @@ class ActivityController extends Controller
 
     public function index(Request $request): Response
     {
-        $this->authorizeAccess($request, [CommunityRole::Admin, CommunityRole::Guard, CommunityRole::Resident]);
+        $this->authorizeAccess($request, [CommunityRole::TenantAdmin, CommunityRole::Guard, CommunityRole::Resident]);
 
         return Inertia::render('Tenant/Resident/Activity');
     }

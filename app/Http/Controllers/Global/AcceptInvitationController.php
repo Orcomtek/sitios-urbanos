@@ -42,7 +42,7 @@ class AcceptInvitationController extends Controller
             'invitation' => [
                 'token' => $invitation->token,
                 'email' => $invitation->email,
-                'name' => $resident ? $resident->full_name : null,
+                'name' => $invitation->name ?? ($resident ? $resident->full_name : null),
                 'community_name' => $invitation->community->name,
                 'role' => $invitation->role,
             ],
@@ -100,7 +100,7 @@ class AcceptInvitationController extends Controller
             $user = Auth::user();
         } else {
             $user = User::create([
-                'name' => $resident ? $resident->full_name : 'Usuario Invitado',
+                'name' => $invitation->name ?? ($resident ? $resident->full_name : 'Usuario Invitado'),
                 'email' => $invitation->email,
                 'password' => Hash::make($request->password),
             ]);
@@ -125,6 +125,10 @@ class AcceptInvitationController extends Controller
         $invitation->update([
             'status' => 'accepted',
         ]);
+
+        if (in_array($invitation->role, ['tenant_admin', 'sub_admin', 'accountant', 'auditor', 'guard'])) {
+            return \Inertia\Inertia::location(route('tenant.admin.dashboard', ['community_slug' => $invitation->community->slug]));
+        }
 
         return \Inertia\Inertia::location(route('tenant.resident.dashboard', ['community_slug' => $invitation->community->slug]));
     }

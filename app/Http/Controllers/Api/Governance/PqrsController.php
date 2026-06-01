@@ -27,7 +27,7 @@ class PqrsController extends Controller
     {
         $community = $this->context->require();
         $user = $request->user();
-        $isAdmin = $user->hasRoleInCommunity($community, CommunityRole::Admin);
+        $isAdmin = $user->hasRoleInCommunity($community, CommunityRole::TenantAdmin);
 
         $query = Pqrs::where('community_id', $community->id)->with('resident');
 
@@ -74,7 +74,7 @@ class PqrsController extends Controller
         // Notify admins
         $admins = User::whereHas('communities', function ($q) use ($community) {
             $q->where('community_id', $community->id)
-                ->where('role', CommunityRole::Admin->value);
+                ->where('role', CommunityRole::TenantAdmin->value);
         })->get();
 
         if ($admins->isNotEmpty()) {
@@ -98,7 +98,7 @@ class PqrsController extends Controller
             abort(404);
         }
 
-        $isAdmin = $user->hasRoleInCommunity($community, CommunityRole::Admin);
+        $isAdmin = $user->hasRoleInCommunity($community, CommunityRole::TenantAdmin);
 
         $resident = Resident::where('community_id', $community->id)
             ->where('user_id', $user->id)
@@ -127,7 +127,7 @@ class PqrsController extends Controller
             abort(404);
         }
 
-        if (! $user->hasRoleInCommunity($community, CommunityRole::Admin)) {
+        if (! $user->hasRoleInCommunity($community, CommunityRole::TenantAdmin)) {
             abort(403, 'Solo administradores pueden actualizar el estado del PQRS.');
         }
 

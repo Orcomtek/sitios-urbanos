@@ -22,7 +22,7 @@ class AdminWorkQueueController extends Controller
         $community = $tenantContext->require();
         $role = $user->roleInCommunity($community);
 
-        if ($role !== CommunityRole::Admin) {
+        if ($role !== CommunityRole::TenantAdmin) {
             abort(403, 'Access denied to the admin work queue.');
         }
 

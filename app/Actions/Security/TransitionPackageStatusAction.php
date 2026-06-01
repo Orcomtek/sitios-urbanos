@@ -12,7 +12,7 @@ class TransitionPackageStatusAction
 {
     public function execute(Package $package, string $newStatus, User $user, Community $community, ?string $notes = null): Package
     {
-        if (! $user->hasRoleInCommunity($community, CommunityRole::Admin, CommunityRole::Guard)) {
+        if (! $user->hasRoleInCommunity($community, CommunityRole::TenantAdmin, CommunityRole::Guard)) {
             throw ValidationException::withMessages([
                 'status' => 'No tienes permisos para registrar la entrega o devolución de paquetes.',
             ]);

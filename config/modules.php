@@ -14,6 +14,7 @@ return [
         'gobernanza' => 'Gobernanza',
         'finanzas' => 'Finanzas',
         'ecosistema' => 'Ecosistema',
+        'configuracion' => 'Configuración',
     ],
 
     /*
@@ -30,57 +31,64 @@ return [
             'name' => 'Unidades',
             'icon' => 'home',
             'route' => 'tenant.admin.core.units.index',
-            'roles' => ['admin'],
+            'roles' => ['tenant_admin', 'sub_admin'],
             'category' => 'operativo',
         ],
         'residents' => [
             'name' => 'Residentes',
             'icon' => 'users',
             'route' => 'tenant.admin.core.residents.index',
-            'roles' => ['admin'],
+            'roles' => ['tenant_admin', 'sub_admin'],
             'category' => 'operativo',
         ],
         'units_generator' => [
             'name' => 'Generador de Matriz',
             'icon' => 'table',
             'route' => 'tenant.admin.core.units.generator',
-            'roles' => ['admin'],
+            'roles' => ['tenant_admin'],
             'category' => 'operativo',
         ],
         'imports' => [
             'name' => 'Importar Datos',
             'icon' => 'arrow-up-tray',
             'route' => 'tenant.admin.core.imports.index',
-            'roles' => ['admin'],
+            'roles' => ['tenant_admin'],
             'category' => 'operativo',
         ],
         'polls' => [
             'name' => 'Votaciones',
             'icon' => 'chart-bar',
-            'route' => 'tenant.admin.dashboard', // Fallback for now
-            'roles' => ['admin', 'resident'],
+            'route' => '#', 
+            'roles' => ['tenant_admin', 'sub_admin', 'resident'],
             'category' => 'gobernanza',
         ],
         'finance' => [
             'name' => 'Finanzas',
             'icon' => 'currency-dollar',
-            'route' => 'tenant.admin.dashboard', // Fallback for now
-            'roles' => ['admin', 'resident'],
+            'route' => '#', 
+            'roles' => ['tenant_admin', 'sub_admin', 'accountant', 'resident'],
             'category' => 'finanzas',
         ],
         'providers' => [
             'name' => 'Proveedores',
             'icon' => 'users',
-            'route' => 'tenant.admin.ecosystem.providers', // Admins use ecosystem too, resident might have a different route, let's use the standard one
-            'roles' => ['admin', 'resident'],
+            'route' => 'tenant.admin.ecosystem.providers', 
+            'roles' => ['tenant_admin', 'sub_admin', 'resident'],
             'category' => 'ecosistema',
         ],
         'marketplace' => [
             'name' => 'Marketplace',
             'icon' => 'shopping-bag',
             'route' => 'tenant.resident.ecosystem.index',
-            'roles' => ['admin', 'resident'],
+            'roles' => ['tenant_admin', 'resident'],
             'category' => 'ecosistema',
+        ],
+        'team' => [
+            'name' => 'Equipo',
+            'icon' => 'users',
+            'route' => 'tenant.admin.settings.team.index',
+            'roles' => ['tenant_admin'],
+            'category' => 'configuracion',
         ],
     ],
 ];

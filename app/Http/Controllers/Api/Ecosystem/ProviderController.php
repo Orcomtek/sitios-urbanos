@@ -40,7 +40,7 @@ class ProviderController extends Controller
 
         $query = Provider::query();
 
-        if ($role !== CommunityRole::Admin->value) {
+        if ($role !== CommunityRole::TenantAdmin->value) {
             $query->where('status', ProviderStatus::ACTIVE->value);
         }
 

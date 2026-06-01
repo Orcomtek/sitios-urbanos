@@ -40,7 +40,7 @@ class ProviderPolicy
         }
 
         // Admin can view all providers (including inactive)
-        if ($role === CommunityRole::Admin->value) {
+        if ($role === CommunityRole::TenantAdmin->value) {
             return true;
         }
 
@@ -60,7 +60,7 @@ class ProviderPolicy
 
         $role = $user->communities()->where('community_id', $communityId)->first()?->pivot->role;
 
-        return $role === CommunityRole::Admin->value;
+        return $role === CommunityRole::TenantAdmin->value;
     }
 
     /**
@@ -75,7 +75,7 @@ class ProviderPolicy
 
         $role = $user->communities()->where('community_id', $communityId)->first()?->pivot->role;
 
-        return $role === CommunityRole::Admin->value;
+        return $role === CommunityRole::TenantAdmin->value;
     }
 
     /**
@@ -90,6 +90,6 @@ class ProviderPolicy
 
         $role = $user->communities()->where('community_id', $communityId)->first()?->pivot->role;
 
-        return $role === CommunityRole::Admin->value;
+        return $role === CommunityRole::TenantAdmin->value;
     }
 }

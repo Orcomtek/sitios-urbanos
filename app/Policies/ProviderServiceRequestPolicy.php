@@ -17,14 +17,14 @@ class ProviderServiceRequestPolicy
     {
         $community = $this->tenantContext->require();
 
-        return $user->hasRoleInCommunity($community, CommunityRole::Admin, CommunityRole::Resident);
+        return $user->hasRoleInCommunity($community, CommunityRole::TenantAdmin, CommunityRole::Resident);
     }
 
     public function view(User $user, ProviderServiceRequest $providerServiceRequest): bool
     {
         $community = $this->tenantContext->require();
 
-        if ($user->hasRoleInCommunity($community, CommunityRole::Admin)) {
+        if ($user->hasRoleInCommunity($community, CommunityRole::TenantAdmin)) {
             return true;
         }
 

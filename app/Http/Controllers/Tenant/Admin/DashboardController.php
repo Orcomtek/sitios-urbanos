@@ -15,21 +15,27 @@ class DashboardController extends Controller
 
     public function index(Request $request): Response
     {
-        $this->authorizeAccess($request, [CommunityRole::Admin, CommunityRole::Guard]);
+        $this->authorizeAccess($request, [
+            CommunityRole::TenantAdmin,
+            CommunityRole::SubAdmin,
+            CommunityRole::Accountant,
+            CommunityRole::Auditor,
+            CommunityRole::Guard,
+        ]);
 
         return Inertia::render('Tenant/Admin/Dashboard');
     }
 
     public function workQueue(Request $request): Response
     {
-        $this->authorizeAccess($request, [CommunityRole::Admin, CommunityRole::Guard]);
+        $this->authorizeAccess($request, [CommunityRole::TenantAdmin, CommunityRole::Guard]);
 
         return Inertia::render('Tenant/Admin/Core/WorkQueue');
     }
 
     public function adminWorkQueue(Request $request): Response
     {
-        $this->authorizeAccess($request, [CommunityRole::Admin]);
+        $this->authorizeAccess($request, [CommunityRole::TenantAdmin]);
 
         return Inertia::render('Tenant/Admin/Core/AdminWorkQueue');
     }

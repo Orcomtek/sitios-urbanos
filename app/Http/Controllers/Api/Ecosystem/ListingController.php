@@ -35,7 +35,7 @@ class ListingController extends Controller
 
         $query = Listing::with('resident')->latest();
 
-        $isAdmin = $user->hasRoleInCommunity($community, CommunityRole::Admin);
+        $isAdmin = $user->hasRoleInCommunity($community, CommunityRole::TenantAdmin);
 
         if (! $isAdmin) {
             $resident = Resident::where('user_id', $user->id)
@@ -86,7 +86,7 @@ class ListingController extends Controller
             abort(403, 'Guards cannot access listings.');
         }
 
-        $isAdmin = $user->hasRoleInCommunity($community, CommunityRole::Admin);
+        $isAdmin = $user->hasRoleInCommunity($community, CommunityRole::TenantAdmin);
 
         if (! $isAdmin) {
             $resident = Resident::where('user_id', $user->id)
@@ -132,7 +132,7 @@ class ListingController extends Controller
         $user = $request->user();
         $community = $this->context->require();
 
-        if (! $user->hasRoleInCommunity($community, CommunityRole::Admin)) {
+        if (! $user->hasRoleInCommunity($community, CommunityRole::TenantAdmin)) {
             abort(403, 'Only admins can moderate listings.');
         }
 

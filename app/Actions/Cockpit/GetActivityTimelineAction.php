@@ -15,7 +15,7 @@ class GetActivityTimelineAction
         $role = $user->roleInCommunity($community);
         $items = collect();
 
-        if ($role === CommunityRole::Admin || $role === CommunityRole::Guard) {
+        if ($role === CommunityRole::TenantAdmin || $role === CommunityRole::Guard) {
             // Admin/Guard -> Tenant operational SecurityLog events
             $logs = SecurityLog::where('community_id', $community->id)
                 ->latest('created_at')

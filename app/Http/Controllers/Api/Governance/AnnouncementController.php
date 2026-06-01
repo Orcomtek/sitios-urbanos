@@ -32,7 +32,7 @@ class AnnouncementController extends Controller
         $community = $this->context->require();
         $user = $request->user();
 
-        if (! $user->hasRoleInCommunity($community, CommunityRole::Admin)) {
+        if (! $user->hasRoleInCommunity($community, CommunityRole::TenantAdmin)) {
             abort(403, 'Solo administradores pueden crear anuncios.');
         }
 
@@ -62,7 +62,7 @@ class AnnouncementController extends Controller
         $community = $this->context->require();
         $user = $request->user();
 
-        if (! $user->hasRoleInCommunity($community, CommunityRole::Admin)) {
+        if (! $user->hasRoleInCommunity($community, CommunityRole::TenantAdmin)) {
             abort(403, 'Solo administradores pueden eliminar anuncios.');
         }
 

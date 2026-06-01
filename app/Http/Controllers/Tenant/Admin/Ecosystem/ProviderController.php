@@ -15,7 +15,7 @@ class ProviderController extends Controller
 
     public function index(Request $request): Response
     {
-        $this->authorizeAccess($request, [CommunityRole::Admin]);
+        $this->authorizeAccess($request, [CommunityRole::TenantAdmin]);
 
         return Inertia::render('Tenant/Admin/Ecosystem/Providers/Index');
     }

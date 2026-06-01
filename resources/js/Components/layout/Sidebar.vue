@@ -28,7 +28,7 @@ const navigationMenu = computed(() => (page.props as any).navigation_menu || [])
 
 const getRouteUrl = (routeName: string) => {
     try {
-        if (!communitySlug.value) return '#';
+        if (!communitySlug.value || routeName === '#') return '#';
         // @ts-ignore
         return route(routeName, { community_slug: communitySlug.value });
     } catch {

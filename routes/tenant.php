@@ -5,6 +5,7 @@ use App\Http\Controllers\Tenant\Admin\Core\BulkImportController;
 use App\Http\Controllers\Tenant\Admin\Core\ResidentController;
 use App\Http\Controllers\Tenant\Admin\Core\UnitController;
 use App\Http\Controllers\Tenant\Admin\Core\UnitGeneratorController;
+use App\Http\Controllers\Tenant\Admin\Settings\TeamController;
 use App\Http\Controllers\Tenant\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Tenant\Admin\Ecosystem\ProviderController as AdminProviderController;
 use App\Http\Controllers\Tenant\Resident\ActivityController;
@@ -79,6 +80,13 @@ Route::domain('{community_slug}.'.$centralDomain)
 
             Route::prefix('ecosystem')->name('ecosystem.')->group(function () {
                 Route::get('/providers', [AdminProviderController::class, 'index'])->name('providers');
+            });
+
+            Route::prefix('settings')->name('settings.')->group(function () {
+                Route::get('/team', [TeamController::class, 'index'])->name('team.index');
+                Route::post('/team/invite', [TeamController::class, 'invite'])->name('team.invite');
+                Route::put('/team/{user}', [TeamController::class, 'update'])->name('team.update');
+                Route::delete('/team/{user}', [TeamController::class, 'destroy'])->name('team.destroy');
             });
         });
 

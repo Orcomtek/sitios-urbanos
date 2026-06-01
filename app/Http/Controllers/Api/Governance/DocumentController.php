@@ -30,7 +30,7 @@ class DocumentController extends Controller
         $community = $this->context->require();
         $user = $request->user();
 
-        if (! $user->hasRoleInCommunity($community, CommunityRole::Admin)) {
+        if (! $user->hasRoleInCommunity($community, CommunityRole::TenantAdmin)) {
             abort(403, 'Solo administradores pueden subir documentos.');
         }
 
@@ -60,7 +60,7 @@ class DocumentController extends Controller
         $community = $this->context->require();
         $user = $request->user();
 
-        if (! $user->hasRoleInCommunity($community, CommunityRole::Admin)) {
+        if (! $user->hasRoleInCommunity($community, CommunityRole::TenantAdmin)) {
             abort(403, 'Solo administradores pueden eliminar documentos.');
         }
 
