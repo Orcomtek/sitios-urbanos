@@ -32,8 +32,16 @@ $centralDomain = config('app.central_domain');
 Route::domain('{community_slug}.'.$centralDomain)
     ->middleware(['web', 'auth', TenantMiddleware::class])
     ->group(function () {
-        Route::get('/', function (string $communitySlug) {
-            return redirect()->route('tenant.admin.core.units.index', ['community_slug' => $communitySlug]);
+        Route::get('/', function (string $communitySlug, Request $request) {
+            $user = $request->user();
+            $community = app(\App\Services\TenantContext::class)->get();
+            $role = $user->roleInCommunity($community)?->value;
+
+            if ($role === 'resident') {
+                return redirect()->route('tenant.resident.dashboard', ['community_slug' => $communitySlug]);
+            }
+
+            return redirect()->route('tenant.admin.dashboard', ['community_slug' => $communitySlug]);
         })->name('tenant.dashboard');
 
         Route::post('/logout', function (Request $request) {
@@ -57,7 +65,10 @@ Route::domain('{community_slug}.'.$centralDomain)
             Route::get('/activity', [ActivityTimelineController::class, 'index'])->name('activity.index');
         });
 
-        Route::prefix('admin')->name('tenant.admin.')->group(function () {
+        Route::prefix('admin')
+            ->name('tenant.admin.')
+            ->middleware('role:tenant_admin,sub_admin,accountant,guard')
+            ->group(function () {
             Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
             Route::prefix('core')->name('core.')->group(function () {
@@ -99,9 +110,28 @@ Route::domain('{community_slug}.'.$centralDomain)
             });
 
             Route::prefix('governance')->name('governance.')->group(function () {
-                Route::get('/pqrs', [PqrsController::class, 'index'])->name('pqrs');
+                Route::get('/pqrs', [\App\Http\Controllers\Tenant\Resident\TicketController::class, 'index'])->name('pqrs');
+                Route::post('/pqrs', [\App\Http\Controllers\Tenant\Resident\TicketController::class, 'store'])->name('pqrs.store');
+                Route::put('/pqrs/{ticket}', [\App\Http\Controllers\Tenant\Resident\TicketController::class, 'update'])->name('pqrs.update');
+                Route::delete('/pqrs/{ticket}', [\App\Http\Controllers\Tenant\Resident\TicketController::class, 'destroy'])->name('pqrs.destroy');
+                
                 Route::get('/polls', [PollController::class, 'index'])->name('polls.index');
                 Route::post('/polls/{poll}/vote', [SubmitPollVoteAction::class, 'handle'])->name('polls.vote');
+            });
+
+            Route::prefix('census')->name('census.')->group(function () {
+                Route::get('/', [\App\Http\Controllers\Tenant\Resident\CensusController::class, 'index'])->name('index');
+                Route::post('/family', [\App\Http\Controllers\Tenant\Resident\CensusController::class, 'storeFamilyMember'])->name('family.store');
+                Route::put('/family/{familyMember}', [\App\Http\Controllers\Tenant\Resident\CensusController::class, 'updateFamilyMember'])->name('family.update');
+                Route::delete('/family/{familyMember}', [\App\Http\Controllers\Tenant\Resident\CensusController::class, 'destroyFamilyMember'])->name('family.destroy');
+                
+                Route::post('/vehicles', [\App\Http\Controllers\Tenant\Resident\CensusController::class, 'storeVehicle'])->name('vehicles.store');
+                Route::put('/vehicles/{vehicle}', [\App\Http\Controllers\Tenant\Resident\CensusController::class, 'updateVehicle'])->name('vehicles.update');
+                Route::delete('/vehicles/{vehicle}', [\App\Http\Controllers\Tenant\Resident\CensusController::class, 'destroyVehicle'])->name('vehicles.destroy');
+
+                Route::post('/pets', [\App\Http\Controllers\Tenant\Resident\CensusController::class, 'storePet'])->name('pets.store');
+                Route::put('/pets/{pet}', [\App\Http\Controllers\Tenant\Resident\CensusController::class, 'updatePet'])->name('pets.update');
+                Route::delete('/pets/{pet}', [\App\Http\Controllers\Tenant\Resident\CensusController::class, 'destroyPet'])->name('pets.destroy');
             });
 
             Route::prefix('ecosystem')->name('ecosystem.')->group(function () {

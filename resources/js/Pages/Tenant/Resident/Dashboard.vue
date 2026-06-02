@@ -216,6 +216,23 @@ const formatDate = (dateString) => {
                             </div>
                         </div>
 
+                        <!-- Census Widget -->
+                        <div class="bg-white border text-card-foreground rounded-lg shadow-sm border-gray-100 flex flex-col justify-between">
+                            <div class="px-6 py-4 flex flex-col space-y-1.5 border-b border-gray-100 bg-gray-50/50">
+                                <div class="flex justify-between items-center">
+                                    <h3 class="font-semibold leading-none tracking-tight">Tu Censo</h3>
+                                </div>
+                                <p class="text-sm text-gray-500">Mantén al día tu grupo familiar, vehículos y mascotas.</p>
+                            </div>
+                            <div class="p-6">
+                                <div class="flex flex-col gap-4">
+                                    <Link :href="route('tenant.resident.census.index', { community_slug: $page.props.tenant.community.slug })" class="inline-flex justify-center items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150 w-full text-center">
+                                        Gestionar Datos del Censo
+                                    </Link>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Visitors Widget -->
                         <div class="bg-white border text-card-foreground rounded-lg shadow-sm border-gray-100">
                             <div class="px-6 py-4 flex flex-col space-y-1.5 border-b border-gray-100 bg-gray-50/50">

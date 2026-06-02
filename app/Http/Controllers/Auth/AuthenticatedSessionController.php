@@ -27,13 +27,28 @@ class AuthenticatedSessionController extends Controller
     /**
      * Handle an incoming authentication request.
      */
-    public function store(LoginRequest $request): RedirectResponse
+    public function store(LoginRequest $request): \Illuminate\Http\RedirectResponse|\Illuminate\Http\Response
     {
         $request->authenticate();
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('communities.index', absolute: false));
+        $user = $request->user();
+        $primaryCommunity = $user->communities()->first();
+
+        if ($primaryCommunity) {
+            $role = $primaryCommunity->pivot->role;
+
+            if ($role === 'resident') {
+                return \Inertia\Inertia::location(route('tenant.resident.dashboard', ['community_slug' => $primaryCommunity->slug]));
+            }
+
+            if (in_array($role, ['tenant_admin', 'sub_admin', 'accountant', 'guard'])) {
+                return \Inertia\Inertia::location(route('tenant.admin.dashboard', ['community_slug' => $primaryCommunity->slug]));
+            }
+        }
+
+        return \Inertia\Inertia::location(route('communities.index'));
     }
 
     /**

@@ -41,6 +41,13 @@ return [
             'roles' => ['tenant_admin', 'sub_admin'],
             'category' => 'operativo',
         ],
+        'census' => [
+            'name' => 'Mi Censo',
+            'icon' => 'users',
+            'route' => 'tenant.resident.census.index',
+            'roles' => ['resident'],
+            'category' => 'operativo',
+        ],
         'units_generator' => [
             'name' => 'Generador de Matriz',
             'icon' => 'table',
@@ -60,6 +67,13 @@ return [
             'icon' => 'chart-bar',
             'route' => '#', 
             'roles' => ['tenant_admin', 'sub_admin', 'resident'],
+            'category' => 'gobernanza',
+        ],
+        'pqrs' => [
+            'name' => 'PQRS',
+            'icon' => 'clipboard',
+            'route' => 'tenant.resident.governance.pqrs',
+            'roles' => ['resident'],
             'category' => 'gobernanza',
         ],
         'finance' => [

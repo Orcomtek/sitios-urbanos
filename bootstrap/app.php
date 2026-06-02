@@ -59,7 +59,23 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->alias([
             'tenant.feature' => EnsureTenantHasFeature::class,
+            'role' => \App\Http\Middleware\CheckCommunityRole::class,
         ]);
+
+        $middleware->redirectUsersTo(function (\Illuminate\Http\Request $request) {
+            $user = $request->user();
+            $primaryCommunity = $user?->communities()->first();
+
+            if ($primaryCommunity) {
+                $role = $primaryCommunity->pivot->role;
+                if ($role === 'resident') {
+                    return route('tenant.resident.dashboard', ['community_slug' => $primaryCommunity->slug]);
+                }
+                return route('tenant.admin.dashboard', ['community_slug' => $primaryCommunity->slug]);
+            }
+
+            return route('communities.index');
+        });
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
