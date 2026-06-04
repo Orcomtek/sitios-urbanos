@@ -18,6 +18,10 @@ const page = usePage();
 const communitySlug = (page.props.tenant as any)?.community?.slug;
 
 const getTaxonomyLabel = (type: string, value: string) => {
+    if (type === 'resident_type') {
+        if (value === 'family_owner') return 'Familiar (Propietario)';
+        if (value === 'family_tenant') return 'Familiar (Inquilino)';
+    }
     const taxonomies = (page.props.taxonomies as any)?.[type] || [];
     const item = taxonomies.find((t: any) => t.value === value);
     return item ? item.label : value;
@@ -91,14 +95,11 @@ const closePanel = () => {
                                 <li v-for="resident in unitData.residents" :key="resident.id" class="py-4 flex justify-between">
                                     <div>
                                         <p class="text-sm font-medium text-gray-900">{{ resident.full_name }}</p>
-                                        <p class="text-sm text-gray-500">{{ getTaxonomyLabel('resident_type', resident.resident_type) }}</p>
+                                        <p class="text-sm text-gray-500">{{ getTaxonomyLabel('resident_type', resident.computed_role || resident.resident_type) }}</p>
                                     </div>
                                     <div>
-                                        <span v-if="resident.is_active" class="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
+                                        <span class="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
                                             Activo
-                                        </span>
-                                        <span v-else class="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800">
-                                            Inactivo
                                         </span>
                                     </div>
                                 </li>

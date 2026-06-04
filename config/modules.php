@@ -14,6 +14,7 @@ return [
         'gobernanza' => 'Gobernanza',
         'finanzas' => 'Finanzas',
         'ecosistema' => 'Ecosistema',
+        'seguridad' => 'Seguridad',
         'configuracion' => 'Configuración',
     ],
 
@@ -48,6 +49,13 @@ return [
             'roles' => ['resident'],
             'category' => 'operativo',
         ],
+        'access' => [
+            'name' => 'Mis Accesos',
+            'icon' => 'key',
+            'route' => 'tenant.resident.access.index',
+            'roles' => ['resident'],
+            'category' => 'operativo',
+        ],
         'units_generator' => [
             'name' => 'Generador de Matriz',
             'icon' => 'table',
@@ -70,11 +78,25 @@ return [
             'category' => 'gobernanza',
         ],
         'pqrs' => [
-            'name' => 'PQRS',
+            'name' => 'Mis PQRS',
             'icon' => 'clipboard',
             'route' => 'tenant.resident.governance.pqrs',
             'roles' => ['resident'],
             'category' => 'gobernanza',
+        ],
+        'pqrs_admin' => [
+            'name' => 'Gestión PQRS',
+            'icon' => 'clipboard-document-list',
+            'route' => 'tenant.admin.governance.pqrs.index',
+            'roles' => ['tenant_admin', 'sub_admin'],
+            'category' => 'gobernanza',
+        ],
+        'radar' => [
+            'name' => 'Radar de Seguridad',
+            'icon' => 'shield-check',
+            'route' => 'tenant.admin.security.radar.index',
+            'roles' => ['tenant_admin', 'sub_admin', 'guard'],
+            'category' => 'seguridad',
         ],
         'finance' => [
             'name' => 'Finanzas',

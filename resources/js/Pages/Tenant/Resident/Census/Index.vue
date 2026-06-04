@@ -207,8 +207,14 @@ const getSpeciesLabel = (value: string) => {
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ member.contact_phone || 'N/A' }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                         <div class="flex items-center justify-end gap-3">
-                                            <button @click="openFamilyForm(member)" class="text-gray-400 hover:text-indigo-600 transition"><PencilIcon class="w-5 h-5" /></button>
-                                            <button @click="confirmDelete('family', member.id)" class="text-gray-400 hover:text-red-600 transition"><TrashIcon class="w-5 h-5" /></button>
+                                            <button @click="openFamilyForm(member)" class="relative group text-gray-400 hover:text-indigo-600 transition" aria-label="Editar">
+                                                <PencilIcon class="w-5 h-5" />
+                                                <span class="absolute bottom-full mb-2 hidden group-hover:block whitespace-nowrap bg-gray-800 text-white text-xs rounded py-1 px-2 z-10 left-1/2 -translate-x-1/2">Editar</span>
+                                            </button>
+                                            <button @click="confirmDelete('family', member.id)" class="relative group text-gray-400 hover:text-red-600 transition" aria-label="Eliminar">
+                                                <TrashIcon class="w-5 h-5" />
+                                                <span class="absolute bottom-full mb-2 hidden group-hover:block whitespace-nowrap bg-gray-800 text-white text-xs rounded py-1 px-2 z-10 left-1/2 -translate-x-1/2">Eliminar</span>
+                                            </button>
                                         </div>
                                     </td>
                                 </tr>
@@ -248,8 +254,14 @@ const getSpeciesLabel = (value: string) => {
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ vehicle.brand || 'N/A' }} / {{ vehicle.color || 'N/A' }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                         <div class="flex items-center justify-end gap-3">
-                                            <button @click="openVehicleForm(vehicle)" class="text-gray-400 hover:text-indigo-600 transition"><PencilIcon class="w-5 h-5" /></button>
-                                            <button @click="confirmDelete('vehicle', vehicle.id)" class="text-gray-400 hover:text-red-600 transition"><TrashIcon class="w-5 h-5" /></button>
+                                            <button @click="openVehicleForm(vehicle)" class="relative group text-gray-400 hover:text-indigo-600 transition" aria-label="Editar">
+                                                <PencilIcon class="w-5 h-5" />
+                                                <span class="absolute bottom-full mb-2 hidden group-hover:block whitespace-nowrap bg-gray-800 text-white text-xs rounded py-1 px-2 z-10 left-1/2 -translate-x-1/2">Editar</span>
+                                            </button>
+                                            <button @click="confirmDelete('vehicle', vehicle.id)" class="relative group text-gray-400 hover:text-red-600 transition" aria-label="Eliminar">
+                                                <TrashIcon class="w-5 h-5" />
+                                                <span class="absolute bottom-full mb-2 hidden group-hover:block whitespace-nowrap bg-gray-800 text-white text-xs rounded py-1 px-2 z-10 left-1/2 -translate-x-1/2">Eliminar</span>
+                                            </button>
                                         </div>
                                     </td>
                                 </tr>
@@ -289,8 +301,14 @@ const getSpeciesLabel = (value: string) => {
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ pet.breed || 'N/A' }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                         <div class="flex items-center justify-end gap-3">
-                                            <button @click="openPetForm(pet)" class="text-gray-400 hover:text-indigo-600 transition"><PencilIcon class="w-5 h-5" /></button>
-                                            <button @click="confirmDelete('pet', pet.id)" class="text-gray-400 hover:text-red-600 transition"><TrashIcon class="w-5 h-5" /></button>
+                                            <button @click="openPetForm(pet)" class="relative group text-gray-400 hover:text-indigo-600 transition" aria-label="Editar">
+                                                <PencilIcon class="w-5 h-5" />
+                                                <span class="absolute bottom-full mb-2 hidden group-hover:block whitespace-nowrap bg-gray-800 text-white text-xs rounded py-1 px-2 z-10 left-1/2 -translate-x-1/2">Editar</span>
+                                            </button>
+                                            <button @click="confirmDelete('pet', pet.id)" class="relative group text-gray-400 hover:text-red-600 transition" aria-label="Eliminar">
+                                                <TrashIcon class="w-5 h-5" />
+                                                <span class="absolute bottom-full mb-2 hidden group-hover:block whitespace-nowrap bg-gray-800 text-white text-xs rounded py-1 px-2 z-10 left-1/2 -translate-x-1/2">Eliminar</span>
+                                            </button>
                                         </div>
                                     </td>
                                 </tr>

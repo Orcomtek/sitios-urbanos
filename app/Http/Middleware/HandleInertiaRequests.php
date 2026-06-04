@@ -56,6 +56,29 @@ class HandleInertiaRequests extends Middleware
         $registryService = app(ModuleRegistryService::class);
         $navigationMenu = $registryService->getAuthorizedModules($activeCommunity, $activeRole);
 
+        if ($activeRole === 'resident' && $user && $activeCommunity) {
+            $pivot = \Illuminate\Support\Facades\DB::table('community_user')
+                ->where('user_id', $user->id)
+                ->where('community_id', $activeCommunity->id)
+                ->first();
+
+            if ($pivot && in_array($pivot->resident_role, ['family', 'familiar'])) {
+                foreach ($navigationMenu as &$group) {
+                    if (isset($group['items'])) {
+                        $group['items'] = array_filter($group['items'], function ($item) {
+                            return $item['key'] !== 'access';
+                        });
+                        $group['items'] = array_values($group['items']);
+                    }
+                }
+                // Remove empty groups
+                $navigationMenu = array_filter($navigationMenu, function ($group) {
+                    return count($group['items']) > 0;
+                });
+                $navigationMenu = array_values($navigationMenu);
+            }
+        }
+
         $tenantId = $activeCommunity?->id ?? 'global';
         $taxonomies = Cache::remember("taxonomies_tenant_{$tenantId}", now()->addDay(), function () {
             return SystemTaxonomy::forCurrentTenantOrGlobal()

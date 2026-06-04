@@ -203,5 +203,26 @@ Centralization of the frontend design system and dynamic rendering of navigation
   * Injected the fully authorized navigation tree globally via Inertia's middleware.
   * Centralized design tokens (Primary `#1F8A70`, Dark `#0F172A`) and established global Bento Grid CSS utilities (`.bento-card`, `.bento-grid`) for absolute UI consistency across all future modules.
 
+  # 🚨 CONTINGENCIA 10: Administración Delegada y Revocación en Cascada (Cascading Deactivation)
+
+**Fecha:** Junio 2026
+**Autor:** Camilo (CEO) / Arquitectura
+**Módulo:** Control de Accesos Multi-Tenant (Resident Cockpit)
+**Nivel de Criticidad:** ALTO (Brecha de Seguridad Potencial)
+
+## 1. Naturaleza del Problema
+En el modelo SaaS Multi-Tenant original, la tabla pivote `community_user` trataba a todos los usuarios de una unidad (Apto) como entidades independientes. Si un Propietario solicitaba la baja de un Inquilino, el sistema eliminaba al Inquilino, pero los familiares invitados por este (esposa, hijos) mantenían acceso al edificio, asambleas y botón de pánico (Registros Zombis con privilegios).
+
+## 2. Solución Arquitectónica (Delegated Administration)
+Implementación del patrón de "Patrocinio" (Sponsorship) y "Baja en Cascada":
+*   **Modificación DB:** Se inyectó `invited_by_user_id` y `resident_role` en `community_user` y `user_invitations`.
+*   **Gatillo de Seguridad (`RevokeAccessAction`):** Un servicio recursivo que, al revocar un "Nodo Padre" (ej. Inquilino Principal), busca y revoca automáticamente todos los "Nodos Hijos" (Familiares) asociados a esa unidad.
+*   **UI/UX:** Creación del módulo "Mis Accesos" en el Resident Cockpit, con visibilidad condicional (El Propietario puede invitar Inquilinos y Familia; el Inquilino solo Familia).
+
+## 3. Estado de Despliegue
+*   [x] Migraciones ejecutadas.
+*   [x] Lógica de cascada inyectada en el Backend.
+*   [x] Vistas Vue / Tailwind construidas.
+
 
 *Fin del Registro Activo.*

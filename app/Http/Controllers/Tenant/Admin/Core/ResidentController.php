@@ -25,9 +25,12 @@ class ResidentController extends Controller
     {
         $community = $this->context->require();
         $search = request('search');
+        $status = request('status', 'active');
 
         $residents = $community->residents()
             ->with('unit')
+            ->when($status === 'active', fn($q) => $q->where('is_active', true))
+            ->when($status === 'inactive', fn($q) => $q->where('is_active', false))
             ->when($search, function ($query, $search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('full_name', 'ilike', '%'.$search.'%')
@@ -43,7 +46,7 @@ class ResidentController extends Controller
 
         return Inertia::render('Tenant/Admin/Core/Residents/Index', [
             'residents' => $residents,
-            'filters' => request()->only(['search']),
+            'filters' => request()->only(['search', 'status']),
             'units' => $units,
         ]);
     }

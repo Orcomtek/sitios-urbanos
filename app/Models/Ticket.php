@@ -6,6 +6,7 @@ use App\Models\Traits\TenantScoped;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Ticket extends Model
 {
@@ -56,5 +57,13 @@ class Ticket extends Model
     public function unit(): BelongsTo
     {
         return $this->belongsTo(Unit::class);
+    }
+
+    /**
+     * @return HasMany<TicketReply, $this>
+     */
+    public function replies(): HasMany
+    {
+        return $this->hasMany(TicketReply::class);
     }
 }

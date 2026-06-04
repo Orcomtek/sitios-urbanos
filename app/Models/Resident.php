@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Resident extends Model
@@ -57,6 +58,30 @@ class Resident extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * @return HasMany<FamilyMember, $this>
+     */
+    public function familyMembers(): HasMany
+    {
+        return $this->hasMany(FamilyMember::class);
+    }
+
+    /**
+     * @return HasMany<Vehicle, $this>
+     */
+    public function vehicles(): HasMany
+    {
+        return $this->hasMany(Vehicle::class);
+    }
+
+    /**
+     * @return HasMany<Pet, $this>
+     */
+    public function pets(): HasMany
+    {
+        return $this->hasMany(Pet::class);
     }
 
     /**

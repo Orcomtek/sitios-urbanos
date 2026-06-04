@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
+use App\Enums\ResidentType;
 
 class AcceptInvitationController extends Controller
 {
@@ -113,12 +114,27 @@ class AcceptInvitationController extends Controller
             $invitation->community_id => [
                 'role' => $invitation->role,
                 'unit_id' => $invitation->unit_id,
+                'invited_by_user_id' => $invitation->invited_by,
+                'resident_role' => $invitation->resident_role,
             ],
         ]);
 
-        // Update Resident user_id
-        if ($resident && ! $resident->user_id) {
-            $resident->update(['user_id' => $user->id]);
+        // Update or Create Resident
+        if ($resident) {
+            if (! $resident->user_id) {
+                $resident->update(['user_id' => $user->id, 'is_active' => true]);
+            }
+        } else {
+            Resident::create([
+                'community_id' => $invitation->community_id,
+                'unit_id' => $invitation->unit_id,
+                'user_id' => $user->id,
+                'full_name' => $user->name ?? $invitation->name ?? 'Usuario Invitado',
+                'email' => $user->email,
+                'resident_type' => $invitation->resident_role === 'tenant' ? ResidentType::TENANT : ResidentType::DEPENDENT,
+                'pays_administration' => false,
+                'is_active' => true,
+            ]);
         }
 
         // Update invitation status

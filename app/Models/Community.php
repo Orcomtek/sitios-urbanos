@@ -34,7 +34,8 @@ class Community extends Model
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class)
-            ->withPivot(['role', 'unit_id']);
+            ->withPivot(['role', 'unit_id', 'invited_by_user_id', 'resident_role'])
+            ->withTimestamps();
     }
 
     /**

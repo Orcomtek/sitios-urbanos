@@ -38,8 +38,8 @@ class TenantMiddleware
         try {
             $community = $this->resolver->execute($user, $slug);
         } catch (ModelNotFoundException $e) {
-            // Mask the resolution failure as a generic 404 to prevent tenant enumeration
-            throw new NotFoundHttpException('Community not found.', $e);
+            // Graceful degradation for revoked access or missing tenant instead of throwing a blank 404
+            return redirect()->route('login')->withErrors(['email' => 'Tu acceso a esta comunidad ha sido revocado o no existe.']);
         }
 
         $this->context->set($community);

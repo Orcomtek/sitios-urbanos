@@ -8,6 +8,8 @@ use App\Http\Controllers\Tenant\Admin\Core\UnitGeneratorController;
 use App\Http\Controllers\Tenant\Admin\Settings\TeamController;
 use App\Http\Controllers\Tenant\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Tenant\Admin\Ecosystem\ProviderController as AdminProviderController;
+use App\Http\Controllers\Tenant\Admin\Governance\TicketController as AdminTicketController;
+use App\Http\Controllers\Tenant\Admin\Security\RadarController;
 use App\Http\Controllers\Tenant\Resident\ActivityController;
 use App\Http\Controllers\Tenant\Resident\Core\OperationController;
 use App\Http\Controllers\Tenant\Resident\DashboardController as ResidentDashboardController;
@@ -93,6 +95,19 @@ Route::domain('{community_slug}.'.$centralDomain)
                 Route::get('/providers', [AdminProviderController::class, 'index'])->name('providers');
             });
 
+            Route::prefix('governance')->name('governance.')->group(function () {
+                Route::resource('pqrs', AdminTicketController::class)
+                    ->parameters(['pqrs' => 'ticket'])
+                    ->only(['index', 'show']);
+                Route::put('/pqrs/{ticket}/status', [AdminTicketController::class, 'updateStatus'])->name('pqrs.status');
+                Route::post('/pqrs/{ticket}/reply', [AdminTicketController::class, 'reply'])->name('pqrs.reply');
+            });
+
+            Route::prefix('security')->name('security.')->group(function () {
+                Route::get('/radar', [RadarController::class, 'index'])->name('radar.index');
+                Route::get('/radar/search', [RadarController::class, 'search'])->name('radar.search');
+            });
+
             Route::prefix('settings')->name('settings.')->group(function () {
                 Route::get('/team', [TeamController::class, 'index'])->name('team.index');
                 Route::post('/team/invite', [TeamController::class, 'invite'])->name('team.invite');
@@ -111,6 +126,8 @@ Route::domain('{community_slug}.'.$centralDomain)
 
             Route::prefix('governance')->name('governance.')->group(function () {
                 Route::get('/pqrs', [\App\Http\Controllers\Tenant\Resident\TicketController::class, 'index'])->name('pqrs');
+                Route::get('/pqrs/{ticket}', [\App\Http\Controllers\Tenant\Resident\TicketController::class, 'show'])->name('pqrs.show');
+                Route::post('/pqrs/{ticket}/reply', [\App\Http\Controllers\Tenant\Resident\TicketController::class, 'reply'])->name('pqrs.reply');
                 Route::post('/pqrs', [\App\Http\Controllers\Tenant\Resident\TicketController::class, 'store'])->name('pqrs.store');
                 Route::put('/pqrs/{ticket}', [\App\Http\Controllers\Tenant\Resident\TicketController::class, 'update'])->name('pqrs.update');
                 Route::delete('/pqrs/{ticket}', [\App\Http\Controllers\Tenant\Resident\TicketController::class, 'destroy'])->name('pqrs.destroy');
@@ -137,6 +154,12 @@ Route::domain('{community_slug}.'.$centralDomain)
             Route::prefix('ecosystem')->name('ecosystem.')->group(function () {
                 Route::get('/', [EcosystemController::class, 'index'])->name('index');
                 Route::get('/providers', [ResidentProviderController::class, 'index'])->name('providers');
+            });
+
+            Route::prefix('access')->name('access.')->group(function () {
+                Route::get('/', [\App\Http\Controllers\Tenant\Resident\AccessController::class, 'index'])->name('index');
+                Route::post('/', [\App\Http\Controllers\Tenant\Resident\AccessController::class, 'store'])->name('store');
+                Route::delete('/{sponsoredUser}', [\App\Http\Controllers\Tenant\Resident\AccessController::class, 'revoke'])->name('revoke');
             });
         });
     });

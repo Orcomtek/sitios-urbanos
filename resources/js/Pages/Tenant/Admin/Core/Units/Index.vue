@@ -3,7 +3,7 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, Link, usePage, router } from '@inertiajs/vue3';
 import { computed, ref, watch } from 'vue';
 import axios from 'axios';
-import UnitSlideOver from './Components/UnitSlideOver.vue';
+import UnitResidentsModal from './Components/UnitResidentsModal.vue';
 import UnitFormModal from './Components/UnitFormModal.vue';
 import ConfirmDeleteModal from '@/Components/ui/ConfirmDeleteModal.vue';
 import Pagination from '@/Components/ui/Pagination.vue';
@@ -17,6 +17,8 @@ const props = defineProps<{
             identifier: string;
             type: string;
             status: string;
+            is_rented?: boolean;
+            residents?: any[];
         }>;
         links: any[];
     };
@@ -43,9 +45,8 @@ watch(search, (value) => {
     }, 300);
 });
 
-const isSlideOverOpen = ref(false);
-const selectedUnitId = ref<number | null>(null);
-const isLoadingUnit = ref(false);
+const isResidentsModalOpen = ref(false);
+const selectedUnit = ref<any>(null);
 
 const isFormModalOpen = ref(false);
 const editUnitId = ref<number | null>(null);
@@ -66,21 +67,14 @@ const getTaxonomyLabel = (type: string, value: string) => {
     return item ? item.label : value;
 };
 
-const openSlideOver = (unitId: number) => {
-    selectedUnitId.value = unitId;
-    isSlideOverOpen.value = true;
-    isLoadingUnit.value = true;
-    
-    // The SlideOver component handles the data fetching based on these reactive props
-    // We orchestrate the opening here
-    setTimeout(() => {
-        isLoadingUnit.value = false;
-    }, 100);
+const openResidentsModal = (unit: any) => {
+    selectedUnit.value = unit;
+    isResidentsModalOpen.value = true;
 };
 
-const closeSlideOver = () => {
-    isSlideOverOpen.value = false;
-    selectedUnitId.value = null;
+const closeResidentsModal = () => {
+    isResidentsModalOpen.value = false;
+    selectedUnit.value = null;
 };
 
 const isDeleteModalOpen = ref(false);
@@ -150,8 +144,11 @@ const confirmDelete = () => {
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-200">
-                                <tr v-for="unit in units.data" :key="unit.id" @click="openSlideOver(unit.id)" class="cursor-pointer hover:bg-gray-50 transition">
-                                    <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0">{{ unit.identifier }}</td>
+                                <tr v-for="unit in units.data" :key="unit.id" @click="openResidentsModal(unit)" class="cursor-pointer hover:bg-gray-50 transition">
+                                    <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0">
+                                        {{ unit.identifier }}
+                                        <span v-if="unit.is_rented" class="ml-2 inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-600/20">Arrendada</span>
+                                    </td>
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                         {{ getTaxonomyLabel('property_type', unit.type) }}
                                     </td>
@@ -167,14 +164,17 @@ const confirmDelete = () => {
                                     </td>
                                     <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
                                         <div class="flex items-center justify-end gap-3">
-                                            <button @click.stop="openSlideOver(unit.id)" class="text-gray-400 hover:text-primary transition" title="Residentes" aria-label="Residentes">
+                                            <button @click.stop="openResidentsModal(unit)" class="relative group text-gray-400 hover:text-indigo-600 transition" aria-label="Ver Residentes">
                                                 <UserGroupIcon class="w-5 h-5" />
+                                                <span class="absolute bottom-full mb-2 hidden group-hover:block whitespace-nowrap bg-gray-800 text-white text-xs rounded py-1 px-2 z-10 left-1/2 -translate-x-1/2">Ver Residentes</span>
                                             </button>
-                                            <button @click.stop="openFormModal(unit.id)" class="text-gray-400 hover:text-primary transition" title="Editar" aria-label="Editar">
+                                            <button @click.stop="openFormModal(unit.id)" class="relative group text-gray-400 hover:text-indigo-600 transition" aria-label="Editar">
                                                 <PencilIcon class="w-5 h-5" />
+                                                <span class="absolute bottom-full mb-2 hidden group-hover:block whitespace-nowrap bg-gray-800 text-white text-xs rounded py-1 px-2 z-10 left-1/2 -translate-x-1/2">Editar</span>
                                             </button>
-                                            <button @click.stop="deleteUnit(unit.id)" class="text-gray-400 hover:text-red-600 transition" title="Borrar" aria-label="Borrar">
+                                            <button @click.stop="deleteUnit(unit.id)" class="relative group text-gray-400 hover:text-red-600 transition" aria-label="Eliminar">
                                                 <TrashIcon class="w-5 h-5" />
+                                                <span class="absolute bottom-full mb-2 hidden group-hover:block whitespace-nowrap bg-gray-800 text-white text-xs rounded py-1 px-2 z-10 left-1/2 -translate-x-1/2">Eliminar</span>
                                             </button>
                                         </div>
                                     </td>
@@ -194,11 +194,10 @@ const confirmDelete = () => {
             </div>
         </div>
 
-        <UnitSlideOver 
-            :is-open="isSlideOverOpen"
-            :unit-id="selectedUnitId"
-            :is-loading="isLoadingUnit"
-            @close="closeSlideOver"
+        <UnitResidentsModal 
+            :show="isResidentsModalOpen"
+            :unit="selectedUnit"
+            @close="closeResidentsModal"
         />
 
         <UnitFormModal

@@ -59,6 +59,10 @@ class TicketController extends Controller
             abort(403);
         }
 
+        if ($ticket->status !== 'open') {
+            return back()->withErrors(['error' => 'No puedes modificar un ticket que ya no está abierto.']);
+        }
+
         $validated = $request->validate([
             'subject' => 'required|string|max:255',
             'description' => 'required|string',
@@ -79,9 +83,59 @@ class TicketController extends Controller
             abort(403);
         }
 
+        if ($ticket->status !== 'open') {
+            return back()->withErrors(['error' => 'No puedes eliminar un ticket que ya no está abierto.']);
+        }
+
         $ticket->delete();
 
         return back()->with('success', 'Ticket eliminado correctamente.');
+    }
+
+    public function show(string $communitySlug, Ticket $ticket)
+    {
+        $resident = $this->getActiveResident();
+
+        if (!$resident || $ticket->resident_id !== $resident->id) {
+            abort(403);
+        }
+
+        $ticket->load(['replies.user']);
+
+        $ticket->update(['has_unread_resident' => false]);
+
+        return Inertia::render('Tenant/Resident/Tickets/Show', [
+            'ticket' => $ticket,
+        ]);
+    }
+
+    public function reply(Request $request, string $communitySlug, Ticket $ticket)
+    {
+        $resident = $this->getActiveResident();
+
+        if (!$resident || $ticket->resident_id !== $resident->id) {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'message' => 'required|string|max:5000',
+        ]);
+
+        $ticket->replies()->create([
+            'user_id' => $request->user()->id,
+            'message' => $validated['message'],
+        ]);
+
+        $ticket->update(['has_unread_admin' => true]);
+
+        if ($ticket->community) {
+            $admins = $ticket->community->users()->wherePivot('role', 'admin')->get();
+            foreach ($admins as $admin) {
+                $admin->notify(new \App\Notifications\NewTicketReplyNotification($ticket));
+            }
+        }
+
+        return back()->with('success', 'Respuesta enviada exitosamente.');
     }
 
     private function getActiveResident()

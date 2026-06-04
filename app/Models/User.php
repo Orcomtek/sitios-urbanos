@@ -40,7 +40,8 @@ class User extends Authenticatable
     public function communities(): BelongsToMany
     {
         return $this->belongsToMany(Community::class)
-            ->withPivot(['role', 'unit_id']);
+            ->withPivot(['role', 'unit_id', 'invited_by_user_id', 'resident_role'])
+            ->withTimestamps();
     }
 
     /**
@@ -73,5 +74,29 @@ class User extends Authenticatable
         );
 
         return in_array($currentRole, array_filter($rolesToMatch), true);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
+     */
+    public function familyMembers()
+    {
+        return $this->hasManyThrough(FamilyMember::class, Resident::class);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
+     */
+    public function vehicles()
+    {
+        return $this->hasManyThrough(Vehicle::class, Resident::class);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
+     */
+    public function pets()
+    {
+        return $this->hasManyThrough(Pet::class, Resident::class);
     }
 }

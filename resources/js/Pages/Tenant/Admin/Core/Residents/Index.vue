@@ -27,6 +27,7 @@ const props = defineProps<{
     };
     filters?: {
         search?: string;
+        status?: string;
     };
     units: Array<{
         id: number;
@@ -39,14 +40,15 @@ const communitySlug = computed(() => (page.props.tenant as any)?.community?.slug
 const { show: showToast } = useToast();
 
 const search = ref(props.filters?.search || '');
+const selectedStatus = ref(props.filters?.status || 'active');
 
 let searchTimeout: ReturnType<typeof setTimeout>;
-watch(search, (value) => {
+watch([search, selectedStatus], ([newSearch, newStatus]) => {
     clearTimeout(searchTimeout);
     searchTimeout = setTimeout(() => {
         router.get(
             route('tenant.admin.core.residents.index', { community_slug: communitySlug.value }),
-            { search: value },
+            { search: newSearch, status: newStatus },
             { preserveState: true, preserveScroll: true, replace: true }
         );
     }, 300);
@@ -136,13 +138,22 @@ const getTaxonomyLabel = (type: string, value: string) => {
         <div class="py-12">
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 space-y-4">
                 
-                <!-- Search Bar -->
-                <div class="flex items-center justify-between">
-                    <div class="relative w-full max-w-sm">
-                        <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                            <MagnifyingGlassIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
+                <!-- Search and Filters -->
+                <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div class="flex items-center gap-4 w-full sm:w-auto">
+                        <div class="relative w-full max-w-sm sm:w-80">
+                            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                <MagnifyingGlassIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
+                            </div>
+                            <input type="text" v-model="search" class="block w-full rounded-md border-0 py-1.5 pl-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" placeholder="Buscar residente..." />
                         </div>
-                        <input type="text" v-model="search" class="block w-full rounded-md border-0 py-1.5 pl-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" placeholder="Buscar residente..." />
+                        <div class="relative">
+                            <select v-model="selectedStatus" class="block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                                <option value="active">Activos</option>
+                                <option value="inactive">Inactivos</option>
+                                <option value="all">Todos</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
 
@@ -185,11 +196,13 @@ const getTaxonomyLabel = (type: string, value: string) => {
                                     </td>
                                     <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
                                         <div class="flex items-center justify-end gap-3">
-                                            <button @click.stop="openFormModal(resident.id)" class="text-gray-400 hover:text-primary transition" title="Editar" aria-label="Editar">
+                                            <button @click.stop="openFormModal(resident.id)" class="relative group text-gray-400 hover:text-indigo-600 transition" aria-label="Editar">
                                                 <PencilIcon class="w-5 h-5" />
+                                                <span class="absolute bottom-full mb-2 hidden group-hover:block whitespace-nowrap bg-gray-800 text-white text-xs rounded py-1 px-2 z-10 left-1/2 -translate-x-1/2">Editar</span>
                                             </button>
-                                            <button @click.stop="deleteResident(resident.id)" class="text-gray-400 hover:text-red-600 transition" title="Borrar" aria-label="Borrar">
+                                            <button @click.stop="deleteResident(resident.id)" class="relative group text-gray-400 hover:text-red-600 transition" aria-label="Eliminar">
                                                 <TrashIcon class="w-5 h-5" />
+                                                <span class="absolute bottom-full mb-2 hidden group-hover:block whitespace-nowrap bg-gray-800 text-white text-xs rounded py-1 px-2 z-10 left-1/2 -translate-x-1/2">Eliminar</span>
                                             </button>
                                         </div>
                                     </td>

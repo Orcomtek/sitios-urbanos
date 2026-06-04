@@ -10,7 +10,8 @@ import {
     CurrencyDollarIcon, 
     ShoppingBagIcon,
     Bars3Icon,
-    ClipboardIcon
+    ClipboardIcon,
+    KeyIcon
 } from '@heroicons/vue/24/outline';
 
 const iconMap: Record<string, any> = {
@@ -22,6 +23,7 @@ const iconMap: Record<string, any> = {
     'currency-dollar': CurrencyDollarIcon,
     'shopping-bag': ShoppingBagIcon,
     'clipboard': ClipboardIcon,
+    'key': KeyIcon,
 };
 
 const page = usePage();

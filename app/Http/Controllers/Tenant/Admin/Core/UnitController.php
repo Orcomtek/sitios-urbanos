@@ -23,8 +23,19 @@ class UnitController extends Controller
         $community = $this->context->require();
         $search = request('search');
 
-        // Optimized for the grid, no heavy eager loading, only counts if necessary
         $units = $community->units()
+            ->select('units.*')
+            ->addSelect([
+                'is_rented' => \Illuminate\Support\Facades\DB::table('community_user')
+                    ->selectRaw('1')
+                    ->whereColumn('community_user.unit_id', 'units.id')
+                    ->where('community_user.community_id', $community->id)
+                    ->whereIn('community_user.resident_role', ['tenant', 'inquilino'])
+                    ->limit(1)
+            ])
+            ->with(['residents' => function($q) { 
+                $q->where('is_active', true)->with(['familyMembers', 'vehicles', 'pets']); 
+            }])
             ->withCount('residents')
             ->when($search, function ($query, $search) {
                 $query->where('identifier', 'ilike', '%'.$search.'%');
@@ -32,6 +43,39 @@ class UnitController extends Controller
             ->orderBy('identifier')
             ->paginate(15)
             ->withQueryString();
+
+        $units->getCollection()->transform(function ($unit) use ($community) {
+            $sponsorPivots = \Illuminate\Support\Facades\DB::table('community_user')
+                ->where('community_id', $community->id)
+                ->where('unit_id', $unit->id)
+                ->get()
+                ->keyBy('user_id');
+
+            foreach ($unit->residents as $resident) {
+                $pivot = $sponsorPivots->get($resident->user_id);
+                $role = $pivot->resident_role ?? $resident->resident_type->value;
+                $resident->computed_role = $role;
+
+                if (in_array($role, ['family', 'dependent'])) {
+                    $sponsorId = $pivot->invited_by_user_id ?? null;
+                    if ($sponsorId) {
+                        $sponsorPivot = $sponsorPivots->get($sponsorId);
+                        $sponsorRole = $sponsorPivot->resident_role ?? null;
+                        if (!$sponsorRole) {
+                            $sponsorResident = $unit->residents->firstWhere('user_id', $sponsorId);
+                            $sponsorRole = $sponsorResident ? $sponsorResident->resident_type->value : null;
+                        }
+
+                        if (in_array($sponsorRole, ['owner', 'propietario'])) {
+                            $resident->computed_role = 'family_owner';
+                        } elseif (in_array($sponsorRole, ['tenant', 'inquilino'])) {
+                            $resident->computed_role = 'family_tenant';
+                        }
+                    }
+                }
+            }
+            return $unit;
+        });
 
         return Inertia::render('Tenant/Admin/Core/Units/Index', [
             'units' => $units,
@@ -41,13 +85,48 @@ class UnitController extends Controller
 
     public function show(string $community_slug, Unit $unit)
     {
-        $this->context->require();
+        $community = $this->context->require();
 
-        // Eager load residents for the Slide-over context
         $unit->load(['residents' => function ($query) {
-            $query->orderBy('is_active', 'desc')
+            $query->where('is_active', true)
                 ->orderBy('full_name', 'asc');
         }]);
+
+        $unit->is_rented = \Illuminate\Support\Facades\DB::table('community_user')
+            ->where('community_id', $community->id)
+            ->where('unit_id', $unit->id)
+            ->whereIn('resident_role', ['tenant', 'inquilino'])
+            ->exists();
+
+        $sponsorPivots = \Illuminate\Support\Facades\DB::table('community_user')
+            ->where('community_id', $community->id)
+            ->where('unit_id', $unit->id)
+            ->get()
+            ->keyBy('user_id');
+
+        foreach ($unit->residents as $resident) {
+            $pivot = $sponsorPivots->get($resident->user_id);
+            $role = $pivot->resident_role ?? $resident->resident_type->value;
+            $resident->computed_role = $role;
+
+            if (in_array($role, ['family', 'dependent'])) {
+                $sponsorId = $pivot->invited_by_user_id ?? null;
+                if ($sponsorId) {
+                    $sponsorPivot = $sponsorPivots->get($sponsorId);
+                    $sponsorRole = $sponsorPivot->resident_role ?? null;
+                    if (!$sponsorRole) {
+                        $sponsorResident = $unit->residents->firstWhere('user_id', $sponsorId);
+                        $sponsorRole = $sponsorResident ? $sponsorResident->resident_type->value : null;
+                    }
+
+                    if (in_array($sponsorRole, ['owner', 'propietario'])) {
+                        $resident->computed_role = 'family_owner';
+                    } elseif (in_array($sponsorRole, ['tenant', 'inquilino'])) {
+                        $resident->computed_role = 'family_tenant';
+                    }
+                }
+            }
+        }
 
         // Returning as JSON to be consumed asynchronously by the Vue Slide-over
         if (request()->wantsJson()) {
