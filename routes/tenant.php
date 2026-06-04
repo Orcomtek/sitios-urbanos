@@ -61,8 +61,8 @@ Route::domain('{community_slug}.'.$centralDomain)
             Route::get('/resident', [ResidentCockpitController::class, 'index'])->name('resident');
 
             Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
-            Route::patch('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.read-all');
-            Route::patch('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
+            Route::patch('/notifications/read-all', [NotificationController::class, 'readAll'])->name('notifications.read-all');
+            Route::patch('/notifications/{id}/read', [NotificationController::class, 'read'])->name('notifications.read');
 
             Route::get('/activity', [ActivityTimelineController::class, 'index'])->name('activity.index');
         });

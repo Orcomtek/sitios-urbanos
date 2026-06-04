@@ -9,17 +9,21 @@ const userRole = (page.props.auth as any)?.user?.roles?.[0]?.name || 'resident';
 
 const userId = (page.props.auth as any)?.user?.id;
 
-const notifications = ref<any[]>([]);
+const notifications = computed(() => (page.props.unreadNotifications as any[]) || []);
 const isMenuOpen = ref(false);
 
 const unreadCount = computed(() => {
-    return notifications.value.filter(n => !n.read_at).length;
+    if (notifications.value.length > 0) {
+        return notifications.value.filter((n: any) => !n.read_at).length;
+    }
+    return (page.props.unreadNotificationsCount as number) || 0;
 });
 
 const loadNotifications = async () => {
     try {
         const response = await axios.get(route('tenant.cockpit.notifications.index', { community_slug: communitySlug }));
-        notifications.value = response.data.data;
+        // Only update if we absolutely need to, or just trigger an Inertia reload:
+        router.reload({ only: ['unreadNotifications', 'unreadNotificationsCount'] });
     } catch (error) {
         console.error('Error loading notifications', error);
     }
@@ -34,7 +38,7 @@ const debouncedLoadNotifications = () => {
 };
 
 onMounted(() => {
-    loadNotifications();
+    // REMOVED loadNotifications() on mount to prevent overriding Inertia props with empty state
     document.addEventListener('click', closeMenu);
     
     // @ts-ignore
@@ -69,49 +73,61 @@ const closeMenu = (e: MouseEvent) => {
 };
 
 const getTargetRoute = (notification: any) => {
-    const type = notification.data.type;
-    switch (type) {
-        case 'package_received':
-        case 'visitor_registered':
-        case 'invitation_consumed':
-            return route('tenant.resident.core.operations', { community_slug: communitySlug });
-        case 'pqrs_updated':
-            return route('tenant.resident.governance.pqrs', { community_slug: communitySlug });
-        case 'pqrs_created':
-            return route('tenant.admin.core.admin-work-queue', { community_slug: communitySlug });
-        case 'payment_confirmed':
-        case 'payment_failed':
-            return route('tenant.resident.dashboard', { community_slug: communitySlug });
-        case 'emergency_triggered':
-            return route('tenant.admin.core.work-queue', { community_slug: communitySlug });
-        default:
-            return route('tenant.admin.dashboard', { community_slug: communitySlug });
+    // 1. Bulletproof context check (Where is the user clicking from?)
+    const isAdminPanel = window.location.pathname.includes('/admin');
+
+    // 2. Robust ticket detection
+    const ticketId = notification.data?.ticket_id || notification.data?.id;
+    const isTicket = ticketId || notification.type?.includes('Ticket') || notification.data?.type?.includes('pqrs');
+
+    if (isTicket) {
+        if (isAdminPanel) {
+            return ticketId 
+                ? route('tenant.admin.governance.pqrs.show', { community_slug: communitySlug, ticket: ticketId })
+                : route('tenant.admin.governance.pqrs.index', { community_slug: communitySlug });
+        } else {
+            return ticketId 
+                ? route('tenant.resident.governance.pqrs.show', { community_slug: communitySlug, ticket: ticketId })
+                : route('tenant.resident.governance.pqrs.index', { community_slug: communitySlug });
+        }
     }
+
+    // 3. Fallbacks
+    return isAdminPanel
+        ? route('tenant.admin.dashboard', { community_slug: communitySlug })
+        : route('tenant.resident.dashboard', { community_slug: communitySlug });
 };
 
-const markAsRead = async (notification: any) => {
+const markAsRead = (notification: any) => {
     if (!notification.read_at) {
-        try {
-            await axios.patch(route('tenant.cockpit.notifications.read', {
-                community_slug: communitySlug,
-                id: notification.id
-            }));
-            notification.read_at = new Date().toISOString();
-        } catch (error) {}
-    }
-    
-    const targetUrl = getTargetRoute(notification);
-    if (targetUrl) {
-        isMenuOpen.value = false;
-        router.visit(targetUrl);
+        router.patch(route('tenant.cockpit.notifications.read', {
+            community_slug: communitySlug,
+            id: notification.id
+        }), {}, {
+            preserveScroll: true,
+            preserveState: true,
+            onSuccess: () => {
+                const targetUrl = getTargetRoute(notification);
+                if (targetUrl) {
+                    isMenuOpen.value = false;
+                    router.visit(targetUrl);
+                }
+            }
+        });
+    } else {
+        const targetUrl = getTargetRoute(notification);
+        if (targetUrl) {
+            isMenuOpen.value = false;
+            router.visit(targetUrl);
+        }
     }
 };
 
-const markAllAsRead = async () => {
-    try {
-        await axios.patch(route('tenant.cockpit.notifications.read-all', { community_slug: communitySlug }));
-        notifications.value.forEach(n => n.read_at = new Date().toISOString());
-    } catch (error) {}
+const markAllAsRead = () => {
+    router.patch(route('tenant.cockpit.notifications.read-all', { community_slug: communitySlug }), {}, {
+        preserveScroll: true,
+        preserveState: true,
+    });
 };
 
 const formatDate = (dateString: string) => {
@@ -168,10 +184,10 @@ const formatDate = (dateString: string) => {
                     >
                         <div class="flex-1 min-w-0">
                             <p class="text-sm font-medium" :class="!notification.read_at ? 'text-gray-900' : 'text-gray-600'">
-                                {{ notification.data.title }}
+                                {{ notification.data.title || notification.data.subject || 'Notificación' }}
                             </p>
                             <p class="text-xs text-gray-500 mt-0.5 line-clamp-2">
-                                {{ notification.data.message }}
+                                {{ notification.data.message || notification.data.description || '' }}
                             </p>
                             <p class="text-[10px] text-gray-400 mt-1">
                                 {{ formatDate(notification.created_at) }}

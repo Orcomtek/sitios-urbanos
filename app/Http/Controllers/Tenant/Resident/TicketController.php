@@ -19,7 +19,15 @@ class TicketController extends Controller
             abort(403, 'No tienes un perfil de residente activo en esta comunidad.');
         }
 
-        $tickets = Ticket::where('resident_id', $resident->id)->latest()->get();
+        $tickets = Ticket::where('resident_id', $resident->id)
+            ->latest()
+            ->get()
+            ->map(function ($ticket) {
+                $item = $ticket->toArray();
+                $item['has_unread_admin'] = (bool) $ticket->has_unread_admin;
+                $item['has_unread_resident'] = (bool) $ticket->has_unread_resident;
+                return $item;
+            });
 
         return Inertia::render('Tenant/Resident/Tickets/Index', [
             'tickets' => $tickets,
@@ -45,8 +53,16 @@ class TicketController extends Controller
         $validated['resident_id'] = $resident->id;
         $validated['unit_id'] = $resident->unit_id;
         $validated['status'] = 'open';
+        $validated['has_unread_admin'] = true;
 
-        Ticket::create($validated);
+        $ticket = Ticket::create($validated);
+
+        if ($ticket->community) {
+            $admins = $ticket->community->users()->wherePivotIn('role', ['tenant_admin', 'sub_admin'])->get();
+            foreach ($admins as $admin) {
+                $admin->notify(new \App\Notifications\NewTicketReplyNotification($ticket));
+            }
+        }
 
         return back()->with('success', 'Ticket creado correctamente.');
     }
@@ -129,7 +145,7 @@ class TicketController extends Controller
         $ticket->update(['has_unread_admin' => true]);
 
         if ($ticket->community) {
-            $admins = $ticket->community->users()->wherePivot('role', 'admin')->get();
+            $admins = $ticket->community->users()->wherePivotIn('role', ['tenant_admin', 'sub_admin'])->get();
             foreach ($admins as $admin) {
                 $admin->notify(new \App\Notifications\NewTicketReplyNotification($ticket));
             }

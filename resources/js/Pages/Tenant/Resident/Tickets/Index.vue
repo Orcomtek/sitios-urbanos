@@ -133,12 +133,14 @@ const formatDate = (dateString: string) => {
                                         <div class="text-xs text-gray-500">{{ formatDate(ticket.created_at) }}</div>
                                     </td>
                                     <td class="px-6 py-4">
-                                        <div class="flex items-center gap-2">
-                                            <span v-if="ticket.has_unread_resident" title="Mensaje no leído" class="relative flex h-3 w-3 flex-shrink-0">
+                                        <div class="flex items-center space-x-2">
+                                            <span v-if="ticket.has_unread_resident" class="relative flex h-3 w-3 shrink-0" title="Nuevo mensaje">
                                                 <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
                                                 <span class="relative inline-flex rounded-full h-3 w-3 bg-blue-500"></span>
                                             </span>
-                                            <div class="text-sm text-gray-900" :class="ticket.has_unread_resident ? 'font-semibold' : 'font-medium'">{{ ticket.subject }}</div>
+                                            <span :class="{'font-bold text-gray-900': ticket.has_unread_resident, 'text-gray-700': !ticket.has_unread_resident}">
+                                                {{ ticket.subject }}
+                                            </span>
                                         </div>
                                         <div class="text-sm text-gray-500 line-clamp-1 max-w-xs mt-1">{{ ticket.description }}</div>
                                     </td>

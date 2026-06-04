@@ -92,6 +92,8 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
             ],
+            'unreadNotificationsCount' => $request->user() ? $request->user()->unreadNotifications()->count() : 0,
+            'unreadNotifications' => $request->user() ? $request->user()->unreadNotifications()->take(5)->get() : [],
             'tenant' => [
                 'community' => $activeCommunity,
                 'role' => $activeRole,

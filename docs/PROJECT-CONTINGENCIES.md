@@ -205,6 +205,9 @@ Centralization of the frontend design system and dynamic rendering of navigation
 
   # 🚨 CONTINGENCIA 10: Administración Delegada y Revocación en Cascada (Cascading Deactivation)
 
+  ### Status
+⏳ [Resuelta]
+
 **Fecha:** Junio 2026
 **Autor:** Camilo (CEO) / Arquitectura
 **Módulo:** Control de Accesos Multi-Tenant (Resident Cockpit)
@@ -223,6 +226,46 @@ Implementación del patrón de "Patrocinio" (Sponsorship) y "Baja en Cascada":
 *   [x] Migraciones ejecutadas.
 *   [x] Lógica de cascada inyectada en el Backend.
 *   [x] Vistas Vue / Tailwind construidas.
+
+## Contingency 11: Entity Creation State Gap & Notification Hydration
+
+### Status
+⏳ [resuelta]
+
+**Date:** 2026-06-03
+**Module:** Governance (PQRS) & Global UI (Inertia/Vue)
+**Severity:** High (Operational SLA Blindspot)
+
+### 🚨 The Issue
+The system successfully handled state flags (`has_unread_admin`) and Laravel notifications during ticket *replies*, but the AI agent completely omitted these triggers during the initial ticket *creation* (`store` method). Consequently, newly created tickets defaulted to `false` (read state), bypassing the admin's visual radar. Additionally, the Inertia global middleware was not sharing the unread notification count, rendering the frontend Top Navigation Bell Icon unresponsive despite records existing in the database.
+
+### 🛠️ The Resolution
+1. **Creation State Enforcement:** Modified `TicketController@store` to explicitly set `has_unread_admin = true` upon instantiation of a new PQRS ticket.
+2. **Event Dispatching:** Enforced the immediate dispatch of the Notification class upon ticket creation, mirroring the reply logic.
+3. **Inertia Global Hydration:** Injected `unreadNotificationsCount` into Inertia's shared props via `HandleInertiaRequests.php` (or Tenant Middleware), calculating `$request->user()->unreadNotifications()->count()`.
+4. **Reactive UI Binding:** Bound the global Vue Layout Bell Icon to reactively display a red notification badge strictly when `page.props.unreadNotificationsCount > 0`.
+
+### 🧠 Architectural Takeaway (RIGOR)
+**Tunnel Vision Prevention:** Whenever implementing state tracking or notification events on an entity, the entire CRUD lifecycle must be audited. Do not isolate logic to update/reply methods while ignoring the initial creation phase. Furthermore, backend notifications are useless in an SPA (TALL stack) unless they are hydrated into the frontend via Inertia Shared Props.
+
+## Contingency 12: Notification Payload Dropout & Component Render Failure
+
+### Status ⏳ [Pending]
+
+**Date:** 2026-06-03
+**Module:** Governance (PQRS) & Notifications UI
+**Severity:** High (UI/UX Breakdown & Data Obfuscation)
+
+### 🚨 The Issue
+The previous implementation (Contingency 11) successfully registered the unread state in the database and updated the global notification count badge. However, a "Ghost Data" anomaly occurred: the dropdown menu rendered empty ("No tienes notificaciones") because the actual notification payload was not shared with the frontend. Concurrently, the visual "blue dot" indicator failed to render in the datatable, indicating a disconnect between the Controller's JSON payload mapping and the Vue component's conditional rendering logic.
+
+### 🛠️ The Resolution
+1. **Payload Hydration:** Updated `HandleInertiaRequests.php` to broadcast not just the count, but the actual array of unread notification objects (`unreadNotifications`) to the global Inertia state.
+2. **Dropdown Data Binding:** Refactored `NotificationDropdown.vue` to reactively consume `page.props.unreadNotifications` directly, eliminating asynchronous race conditions.
+3. **Strict UI Injection:** Forced a structural HTML/Tailwind update in the `Index.vue` datatables (Admin and Resident) to ensure the `has_unread_admin` and `has_unread_resident` boolean flags strictly toggle the pulsating blue indicator and typography weights.
+
+### 🧠 Architectural Takeaway (RIGOR)
+**State vs. Payload Synchronization:** Supplying a boolean or count to a frontend component is insufficient if the component's internal logic relies on iterating through an object array. In TALL/Inertia architectures, backend payload mapping must strictly align with frontend prop expectations to prevent silent render failures.
 
 
 *Fin del Registro Activo.*

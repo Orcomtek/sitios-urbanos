@@ -21,6 +21,8 @@ class Ticket extends Model
         'type',
         'status',
         'is_anonymous',
+        'has_unread_admin',
+        'has_unread_resident',
     ];
 
     /**
@@ -32,6 +34,8 @@ class Ticket extends Model
     {
         return [
             'is_anonymous' => 'boolean',
+            'has_unread_admin' => 'boolean',
+            'has_unread_resident' => 'boolean',
         ];
     }
 

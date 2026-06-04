@@ -29,36 +29,16 @@ class NotificationController extends Controller
         ]);
     }
 
-    public function markAsRead(Request $request, string $community_slug, string $id): JsonResponse
+    public function read(Request $request, string $community_slug, string $id): \Illuminate\Http\RedirectResponse
     {
-        $community = $this->context->require();
-        $user = $request->user();
-
-        $notification = $user->notifications()
-            ->where('data->community_id', $community->id)
-            ->where('id', $id)
-            ->firstOrFail();
-
+        $notification = $request->user()->notifications()->findOrFail($id);
         $notification->markAsRead();
-
-        return response()->json([
-            'message' => 'Notification marked as read.',
-            'data' => $notification,
-        ]);
+        return back();
     }
 
-    public function markAllAsRead(Request $request, string $community_slug): JsonResponse
+    public function readAll(Request $request, string $community_slug): \Illuminate\Http\RedirectResponse
     {
-        $community = $this->context->require();
-        $user = $request->user();
-
-        $user->unreadNotifications()
-            ->where('data->community_id', $community->id)
-            ->get()
-            ->markAsRead();
-
-        return response()->json([
-            'message' => 'All visible notifications marked as read.',
-        ]);
+        $request->user()->unreadNotifications->markAsRead();
+        return back();
     }
 }

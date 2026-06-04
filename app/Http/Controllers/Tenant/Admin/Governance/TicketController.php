@@ -14,20 +14,21 @@ class TicketController extends Controller
     public function index(): Response
     {
         $tickets = Ticket::with(['resident', 'unit'])
-            ->latest()
+            ->orderBy('created_at', 'desc')
             ->get()
-            ->map(function ($ticket) {
-                if ($ticket->is_anonymous) {
-                    if ($ticket->resident) {
-                        $ticket->resident->full_name = 'Residente Anónimo';
-                        $ticket->resident->email = null;
-                        $ticket->resident->phone = null;
-                    }
-                    if ($ticket->unit) {
-                        $ticket->unit->identifier = 'Unidad Protegida';
-                    }
-                }
-                return $ticket;
+            ->map(function($ticket) {
+                return [
+                    'id' => $ticket->id,
+                    'subject' => $ticket->subject,
+                    'description' => $ticket->description,
+                    'type' => $ticket->type,
+                    'status' => $ticket->status,
+                    'is_anonymous' => $ticket->is_anonymous,
+                    'created_at' => $ticket->created_at,
+                    'resident' => $ticket->resident,
+                    'unit' => $ticket->unit,
+                    'has_unread_admin' => (bool) $ticket->has_unread_admin,
+                ];
             });
 
         return Inertia::render('Tenant/Admin/Governance/Tickets/Index', [
