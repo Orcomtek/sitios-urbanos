@@ -103,7 +103,7 @@ const formatDate = (dateString: string) => {
                 <div class="bg-white border text-card-foreground rounded-lg shadow-sm border-gray-100">
                     <div class="px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between border-b border-gray-100 bg-gray-50/50">
                         <div class="flex items-center space-x-3">
-                            <div class="bg-indigo-100 text-indigo-600 p-2 rounded-lg">
+                            <div class="bg-emerald-100 text-emerald-600 p-2 rounded-lg">
                                 <ChatBubbleLeftRightIcon class="w-6 h-6" />
                             </div>
                             <div>
@@ -111,7 +111,7 @@ const formatDate = (dateString: string) => {
                                 <p class="text-sm text-gray-500 mt-1">Administra tus Peticiones, Quejas, Reclamos y Sugerencias.</p>
                             </div>
                         </div>
-                        <button @click="openForm()" class="mt-4 sm:mt-0 inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                        <button @click="openForm()" class="mt-4 sm:mt-0 inline-flex items-center px-4 py-2 bg-emerald-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-emerald-700 focus:bg-emerald-700 active:bg-emerald-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition ease-in-out duration-150">
                             Crear Ticket
                         </button>
                     </div>
@@ -135,8 +135,8 @@ const formatDate = (dateString: string) => {
                                     <td class="px-6 py-4">
                                         <div class="flex items-center space-x-2">
                                             <span v-if="ticket.has_unread_resident" class="relative flex h-3 w-3 shrink-0" title="Nuevo mensaje">
-                                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                                                <span class="relative inline-flex rounded-full h-3 w-3 bg-blue-500"></span>
+                                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-slate-400 opacity-75"></span>
+                                                <span class="relative inline-flex rounded-full h-3 w-3 bg-slate-500"></span>
                                             </span>
                                             <span :class="{'font-bold text-gray-900': ticket.has_unread_resident, 'text-gray-700': !ticket.has_unread_resident}">
                                                 {{ ticket.subject }}
@@ -156,7 +156,7 @@ const formatDate = (dateString: string) => {
                                         <span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset"
                                             :class="{
                                                 'bg-yellow-50 text-yellow-800 ring-yellow-600/20': ticket.status === 'open',
-                                                'bg-blue-50 text-blue-700 ring-blue-600/20': ticket.status === 'in_progress',
+                                                'bg-slate-50 text-slate-700 ring-slate-600/20': ticket.status === 'in_progress',
                                                 'bg-green-50 text-green-700 ring-green-600/20': ticket.status === 'resolved',
                                                 'bg-gray-50 text-gray-600 ring-gray-500/10': ticket.status === 'closed',
                                             }">
@@ -165,11 +165,11 @@ const formatDate = (dateString: string) => {
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                         <div class="flex items-center justify-end gap-3">
-                                            <Link :href="route('tenant.resident.governance.pqrs.show', { community_slug: communitySlug, ticket: ticket.id })" class="text-gray-400 hover:text-indigo-600 transition" title="Ver Ticket">
+                                            <Link :href="route('tenant.resident.governance.pqrs.show', { community_slug: communitySlug, ticket: ticket.id })" class="text-gray-400 hover:text-emerald-600 transition" title="Ver Ticket">
                                                 <EyeIcon class="w-5 h-5" />
                                             </Link>
                                             <template v-if="ticket.status === 'open'">
-                                                <button @click="openForm(ticket)" class="text-gray-400 hover:text-indigo-600 transition"><PencilIcon class="w-5 h-5" /></button>
+                                                <button @click="openForm(ticket)" class="text-gray-400 hover:text-emerald-600 transition"><PencilIcon class="w-5 h-5" /></button>
                                                 <button @click="confirmDelete(ticket.id)" class="text-gray-400 hover:text-red-600 transition"><TrashIcon class="w-5 h-5" /></button>
                                             </template>
                                         </div>

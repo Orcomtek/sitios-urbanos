@@ -48,7 +48,7 @@ const handleSubmit = () => {
                 type="text" 
                 required 
                 maxlength="100"
-                class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm"
+                class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 sm:text-sm"
                 placeholder="Ej. Vendo Bicicleta"
             >
         </div>
@@ -60,7 +60,7 @@ const handleSubmit = () => {
                 required 
                 rows="4"
                 maxlength="1000"
-                class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm"
+                class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 sm:text-sm"
                 placeholder="Describe el artículo o servicio..."
             ></textarea>
         </div>
@@ -71,7 +71,7 @@ const handleSubmit = () => {
                 <select 
                     v-model="form.category" 
                     required
-                    class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm"
+                    class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 sm:text-sm"
                 >
                     <option value="items">Artículos</option>
                     <option value="services">Servicios</option>
@@ -86,7 +86,7 @@ const handleSubmit = () => {
                     type="number" 
                     min="0"
                     step="0.01"
-                    class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm"
+                    class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 sm:text-sm"
                     placeholder="Dejar en blanco si es a convenir"
                 >
             </div>
@@ -98,7 +98,7 @@ const handleSubmit = () => {
                     id="show_contact_info" 
                     v-model="form.show_contact_info" 
                     type="checkbox" 
-                    class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                    class="h-4 w-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500"
                 >
             </div>
             <div class="ml-3 text-sm">
@@ -111,14 +111,14 @@ const handleSubmit = () => {
             <button 
                 type="button" 
                 @click="emit('cancel')"
-                class="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                class="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
             >
                 Cancelar
             </button>
             <button 
                 type="submit" 
                 :disabled="processing"
-                class="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50"
+                class="inline-flex justify-center rounded-md border border-transparent bg-emerald-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 disabled:opacity-50"
             >
                 <svg v-if="processing" class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>

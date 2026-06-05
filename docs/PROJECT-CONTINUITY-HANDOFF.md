@@ -1970,7 +1970,7 @@ A deep refactoring of the resident and unit entities to establish strict Role-Bi
 ## BLOCK 37 — Identity, Access & Onboarding Engine (RBAC)
 
 ### Status
-⏳ Pending
+✅ completed
 
 ### Description
 The bridge between raw data and real users. This block brings the records imported in the ETL to life, establishing the authentication system, strict role assignment, and credential dispatch so Administrators and Residents can access their respective Control Planes.
@@ -1983,7 +1983,7 @@ The bridge between raw data and real users. This block brings the records import
 ## BLOCK 38 — Extended Operational Module & Support (PQRS)
 
 ### Status
-⏳ Pending
+✅ completed
 
 ### Description
 Before processing payments, the community must be able to communicate and update its data. This block closes the Administrator's Control Plane in terms of customer service and census, while enabling basic self-management for the Resident.
@@ -1992,6 +1992,20 @@ Before processing payments, the community must be able to communicate and update
 *   **Census Self-Management (My Unit):** Interface for residents to register/update their family group (co-residents), vehicles (license plates for gatehouse cross-referencing), and pets.
 *   **PQRS System (Helpdesk):** Administrator inbox with status traceability (Open, In Progress, Resolved). A simple form in the resident's Cockpit to raise tickets.
 *   **Mass Communications:** Digital bulletin board and broadcasting tool for the Administrator, capable of queuing messages via Email, SMS, or in-app push notifications.
+
+## BLOCK 38.1 — Resident Logistics & Moving Workflows
+
+### Status
+⏳ pending
+
+### Description
+Logistics extension of the operational module (Block 38). A transactional engine to manage move-in, move-out, and internal transfer requests. It eliminates physical paperwork, ensures security control at the gatehouse, and lays the groundwork for future building asset assignment (freight elevators, temporary parking).
+
+**Scope & Execution Details:**
+*   **Request Engine (Resident UI):** Request form (Move-in, Move-out, Internal Transfer) with date selectors, time ranges, and a description of the move's scale (light, medium, heavy).
+*   **Admin Approval Workflow:** Logistics panel for Administrators to Approve, Deny, or Modify the requested date/time.
+*   **Asset Assignment (Preparedness):** Administrative capacity to assign logistics resources descriptively (e.g., "North Freight Elevator Authorized"). This is prepared at the database level (`JSON payload`) for future relational integration with the Assets module.
+*   **State Machine & Audit Trail:** Strict and immutable traceability of state changes and administrative authorizations.
 
 ## BLOCK 39 — Core Financial Ledger
 

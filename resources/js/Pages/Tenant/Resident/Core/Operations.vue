@@ -169,12 +169,12 @@ const getStatusBadgeClass = (status) => {
     switch(status) {
         case 'active': return 'bg-green-100 text-green-800 border-green-200';
         case 'pending': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-        case 'entered': return 'bg-blue-100 text-blue-800 border-blue-200';
+        case 'entered': return 'bg-slate-100 text-slate-800 border-slate-200';
         case 'exited': return 'bg-gray-100 text-gray-800 border-gray-200';
         case 'used': return 'bg-gray-100 text-gray-800 border-gray-200';
         case 'revoked': return 'bg-red-100 text-red-800 border-red-200';
         case 'expired': return 'bg-red-50 text-red-600 border-red-100';
-        case 'received': return 'bg-blue-100 text-blue-800 border-blue-200';
+        case 'received': return 'bg-slate-100 text-slate-800 border-slate-200';
         case 'delivered': return 'bg-green-100 text-green-800 border-green-200';
         default: return 'bg-gray-100 text-gray-800 border-gray-200';
     }
@@ -234,7 +234,7 @@ const translateVisitorType = (type) => {
                             <h3 class="font-semibold text-lg text-gray-800">Invitaciones de Acceso</h3>
                             <p class="text-xs text-gray-500 mt-1">Genera códigos de acceso para tus invitados.</p>
                         </div>
-                        <button class="text-indigo-600 hover:text-indigo-800 font-medium text-sm focus:outline-none">
+                        <button class="text-emerald-600 hover:text-emerald-800 font-medium text-sm focus:outline-none">
                             {{ isCreatingInvitation ? 'Cancelar' : 'Crear Nueva' }}
                         </button>
                     </div>
@@ -248,7 +248,7 @@ const translateVisitorType = (type) => {
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-1">Unidad Autorizada</label>
-                                    <select v-model="invitationForm.unit_id" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                    <select v-model="invitationForm.unit_id" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm">
                                         <option value="" disabled>Selecciona tu unidad</option>
                                         <option v-for="unit in activeUnits" :key="unit.id" :value="unit.id">
                                             {{ unit.unit_number }}
@@ -258,7 +258,7 @@ const translateVisitorType = (type) => {
                                 
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-1">Visitante Previo (Opcional)</label>
-                                    <select v-model="invitationForm.visitor_id" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                    <select v-model="invitationForm.visitor_id" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm">
                                         <option value="">Ninguno</option>
                                         <!-- Only showing loaded expected visitors for convenience, or could be empty. In the current API we just list recent visitors -->
                                         <option v-for="v in visitors" :key="v.id" :value="v.id">
@@ -271,16 +271,16 @@ const translateVisitorType = (type) => {
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-1">Válido hasta (Opcional)</label>
-                                    <input type="datetime-local" v-model="invitationForm.expires_at" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" />
+                                    <input type="datetime-local" v-model="invitationForm.expires_at" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm" />
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-1">Notas (Nombre del invitado / Detalle)</label>
-                                    <input type="text" v-model="invitationForm.notes" maxlength="1000" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="Ej: Juan Pérez para cena" />
+                                    <input type="text" v-model="invitationForm.notes" maxlength="1000" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm" placeholder="Ej: Juan Pérez para cena" />
                                 </div>
                             </div>
 
                             <div class="flex justify-end pt-2">
-                                <button type="submit" :disabled="invitationForm.processing" class="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 disabled:opacity-50">
+                                <button type="submit" :disabled="invitationForm.processing" class="inline-flex justify-center rounded-md border border-transparent bg-emerald-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-emerald-700 focus:outline-none focus:ring-2 disabled:opacity-50">
                                     <span v-if="invitationForm.processing">Enviando...</span>
                                     <span v-else>Generar Invitación</span>
                                 </button>
@@ -297,7 +297,7 @@ const translateVisitorType = (type) => {
                             <li v-for="inv in invitations" :key="inv.id" class="p-4 sm:px-6 hover:bg-gray-50 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                                 <div>
                                     <div class="flex items-center space-x-2">
-                                        <span class="font-mono font-bold text-lg text-indigo-700 tracking-wider bg-indigo-50 px-2 py-1 rounded">{{ inv.code }}</span>
+                                        <span class="font-mono font-bold text-lg text-emerald-700 tracking-wider bg-emerald-50 px-2 py-1 rounded">{{ inv.code }}</span>
                                         <span class="inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium border" :class="getStatusBadgeClass(inv.status)">
                                             {{ translateStatus(inv.status) }}
                                         </span>
@@ -326,7 +326,7 @@ const translateVisitorType = (type) => {
                             <h3 class="font-semibold text-lg text-gray-800">Visitantes</h3>
                             <p class="text-xs text-gray-500 mt-1">Registra visitantes esperados y revisa el historial.</p>
                         </div>
-                        <button class="text-indigo-600 hover:text-indigo-800 font-medium text-sm focus:outline-none">
+                        <button class="text-emerald-600 hover:text-emerald-800 font-medium text-sm focus:outline-none">
                             {{ isCreatingVisitor ? 'Cancelar' : 'Registrar Nuevo' }}
                         </button>
                     </div>
@@ -336,18 +336,18 @@ const translateVisitorType = (type) => {
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-1">Nombre Completo</label>
-                                    <input type="text" v-model="visitorForm.name" required maxlength="255" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" />
+                                    <input type="text" v-model="visitorForm.name" required maxlength="255" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm" />
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-1">Identificación (Opcional)</label>
-                                    <input type="text" v-model="visitorForm.document_number" maxlength="255" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" />
+                                    <input type="text" v-model="visitorForm.document_number" maxlength="255" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm" />
                                 </div>
                             </div>
 
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-1">Unidad</label>
-                                    <select v-model="visitorForm.unit_id" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                    <select v-model="visitorForm.unit_id" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm">
                                         <option value="" disabled>Selecciona tu unidad</option>
                                         <option v-for="unit in activeUnits" :key="unit.id" :value="unit.id">
                                             {{ unit.unit_number }}
@@ -356,7 +356,7 @@ const translateVisitorType = (type) => {
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-1">Tipo de Visitante</label>
-                                    <select v-model="visitorForm.type" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                    <select v-model="visitorForm.type" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm">
                                         <option value="visitor">Visita</option>
                                         <option value="delivery">Domicilio / Entrega</option>
                                         <option value="service">Servicio Técnico</option>
@@ -365,17 +365,17 @@ const translateVisitorType = (type) => {
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-1">Fecha Esperada (Opcional)</label>
-                                    <input type="datetime-local" v-model="visitorForm.expected_at" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" />
+                                    <input type="datetime-local" v-model="visitorForm.expected_at" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm" />
                                 </div>
                             </div>
                             
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Notas</label>
-                                <input type="text" v-model="visitorForm.notes" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="Detalles de la visita..." />
+                                <input type="text" v-model="visitorForm.notes" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm" placeholder="Detalles de la visita..." />
                             </div>
 
                             <div class="flex justify-end pt-2">
-                                <button type="submit" :disabled="visitorForm.processing" class="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 disabled:opacity-50">
+                                <button type="submit" :disabled="visitorForm.processing" class="inline-flex justify-center rounded-md border border-transparent bg-emerald-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-emerald-700 focus:outline-none focus:ring-2 disabled:opacity-50">
                                     <span v-if="visitorForm.processing">Enviando...</span>
                                     <span v-else>Guardar Visitante</span>
                                 </button>

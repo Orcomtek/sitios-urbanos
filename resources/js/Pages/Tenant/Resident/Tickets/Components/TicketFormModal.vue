@@ -73,7 +73,7 @@ const submit = () => {
                     <select
                         id="type"
                         v-model="form.type"
-                        class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                        class="mt-1 block w-full border-gray-300 focus:border-emerald-500 focus:ring-emerald-500 rounded-md shadow-sm"
                         required
                     >
                         <option value="peticion">Petición (P)</option>
@@ -106,7 +106,7 @@ const submit = () => {
                         id="description"
                         v-model="form.description"
                         rows="4"
-                        class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                        class="mt-1 block w-full border-gray-300 focus:border-emerald-500 focus:ring-emerald-500 rounded-md shadow-sm"
                         required
                         placeholder="Describe detalladamente tu solicitud..."
                     ></textarea>
@@ -119,7 +119,7 @@ const submit = () => {
                             id="is_anonymous"
                             v-model="form.is_anonymous"
                             type="checkbox"
-                            class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                            class="h-4 w-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-600"
                         />
                     </div>
                     <div class="ml-3 text-sm leading-6">

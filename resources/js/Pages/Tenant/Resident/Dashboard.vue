@@ -109,19 +109,19 @@ const formatDate = (dateString) => {
                 <div v-else-if="data" class="space-y-6">
                     
                     <!-- Finance Summary (Full width highlight) -->
-                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100 rounded-lg shadow-sm">
-                        <div class="px-6 py-4 border-b border-blue-100">
-                            <h3 class="text-blue-900 text-lg font-medium">Resumen Financiero</h3>
+                    <div class="bg-gradient-to-r from-slate-50 to-emerald-50 border border-slate-100 rounded-lg shadow-sm">
+                        <div class="px-6 py-4 border-b border-slate-100">
+                            <h3 class="text-slate-900 text-lg font-medium">Resumen Financiero</h3>
                         </div>
                         <div class="px-6 py-4">
                             <div class="flex flex-col sm:flex-row sm:items-center justify-between">
                                 <div>
-                                    <p class="text-sm text-blue-700 font-medium">Deuda Pendiente</p>
-                                    <p class="text-3xl font-bold text-blue-900">{{ formatCurrency(data.finance.pending_amount) }}</p>
+                                    <p class="text-sm text-slate-700 font-medium">Deuda Pendiente</p>
+                                    <p class="text-3xl font-bold text-slate-900">{{ formatCurrency(data.finance.pending_amount) }}</p>
                                 </div>
                                 <div class="mt-4 sm:mt-0 text-left sm:text-right">
-                                    <p class="text-sm text-blue-700 font-medium">Facturas Pendientes</p>
-                                    <p class="text-2xl font-semibold text-blue-800">{{ data.finance.pending_count }}</p>
+                                    <p class="text-sm text-slate-700 font-medium">Facturas Pendientes</p>
+                                    <p class="text-2xl font-semibold text-slate-800">{{ data.finance.pending_count }}</p>
                                 </div>
                             </div>
                         </div>
@@ -159,7 +159,7 @@ const formatDate = (dateString) => {
                                             v-if="invoice.status === 'pending'"
                                             @click="payInvoice(invoice.id)" 
                                             :disabled="processingPayment === invoice.id"
-                                            class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150 disabled:opacity-50 gap-2"
+                                            class="inline-flex items-center px-4 py-2 bg-emerald-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-emerald-700 focus:bg-emerald-700 active:bg-emerald-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition ease-in-out duration-150 disabled:opacity-50 gap-2"
                                         >
                                             <svg v-if="processingPayment === invoice.id" class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -198,10 +198,10 @@ const formatDate = (dateString) => {
                         </div>
 
                         <!-- Access QR Code Widget -->
-                        <div class="bg-gradient-to-br from-indigo-50 to-white border text-card-foreground rounded-lg shadow-sm border-indigo-100 flex flex-col justify-between items-center py-8">
+                        <div class="bg-gradient-to-br from-emerald-50 to-white border text-card-foreground rounded-lg shadow-sm border-emerald-100 flex flex-col justify-between items-center py-8">
                             <div class="text-center mb-4">
-                                <h3 class="font-bold text-lg text-indigo-900 tracking-tight">Tu Código QR de Acceso</h3>
-                                <p class="text-sm text-indigo-600">Úsalo para ingresar a la comunidad</p>
+                                <h3 class="font-bold text-lg text-emerald-900 tracking-tight">Tu Código QR de Acceso</h3>
+                                <p class="text-sm text-emerald-600">Úsalo para ingresar a la comunidad</p>
                             </div>
                             <div class="bg-white p-4 rounded-xl shadow-inner border border-gray-100 flex items-center justify-center w-40 h-40">
                                 <!-- Placeholder for actual QR code rendering -->
@@ -210,7 +210,7 @@ const formatDate = (dateString) => {
                                 </svg>
                             </div>
                             <div class="mt-4">
-                                <button class="text-sm font-semibold text-indigo-600 hover:text-indigo-800">
+                                <button class="text-sm font-semibold text-emerald-600 hover:text-emerald-800">
                                     Generar Nuevo QR
                                 </button>
                             </div>
@@ -226,7 +226,7 @@ const formatDate = (dateString) => {
                             </div>
                             <div class="p-6">
                                 <div class="flex flex-col gap-4">
-                                    <Link :href="route('tenant.resident.census.index', { community_slug: $page.props.tenant.community.slug })" class="inline-flex justify-center items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150 w-full text-center">
+                                    <Link :href="route('tenant.resident.census.index', { community_slug: $page.props.tenant.community.slug })" class="inline-flex justify-center items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150 w-full text-center">
                                         Gestionar Datos del Censo
                                     </Link>
                                 </div>
@@ -247,7 +247,7 @@ const formatDate = (dateString) => {
                                             <p class="text-xs text-gray-500">Unidad: {{ visitor.unit ? visitor.unit.unit_number : 'N/A' }}</p>
                                         </div>
                                         <span class="px-2 py-1 text-xs rounded-full font-medium" :class="{
-                                            'bg-blue-100 text-blue-800': visitor.status === 'pending',
+                                            'bg-slate-100 text-slate-800': visitor.status === 'pending',
                                             'bg-green-100 text-green-800': visitor.status === 'entered'
                                         }">
                                             {{ visitor.status === 'pending' ? 'Esperado' : 'Ingresó' }}
@@ -285,7 +285,7 @@ const formatDate = (dateString) => {
                             <div class="px-6 py-4 flex flex-col space-y-1.5 border-b border-gray-100 bg-gray-50/50">
                                 <div class="flex justify-between items-center">
                                     <h3 class="font-semibold leading-none tracking-tight">Tus PQRS en Curso</h3>
-                                    <Link :href="route('tenant.resident.governance.pqrs', { community_slug: $page.props.tenant.community.slug })" class="text-xs font-semibold text-indigo-600 hover:text-indigo-800">
+                                    <Link :href="route('tenant.resident.governance.pqrs', { community_slug: $page.props.tenant.community.slug })" class="text-xs font-semibold text-emerald-600 hover:text-emerald-800">
                                         Gestionar PQRS &rarr;
                                     </Link>
                                 </div>
@@ -300,7 +300,7 @@ const formatDate = (dateString) => {
                                         </div>
                                         <span class="px-2 py-1 text-xs rounded-full font-medium whitespace-nowrap" :class="{
                                             'bg-yellow-100 text-yellow-800': pqrs.status === 'open',
-                                            'bg-blue-100 text-blue-800': pqrs.status === 'in_progress'
+                                            'bg-slate-100 text-slate-800': pqrs.status === 'in_progress'
                                         }">
                                             {{ pqrs.status === 'open' ? 'Abierta' : 'En Progreso' }}
                                         </span>

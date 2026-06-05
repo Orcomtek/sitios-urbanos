@@ -128,6 +128,7 @@ Route::domain('{community_slug}.'.$centralDomain)
                 Route::get('/pqrs', [\App\Http\Controllers\Tenant\Resident\TicketController::class, 'index'])->name('pqrs');
                 Route::get('/pqrs/{ticket}', [\App\Http\Controllers\Tenant\Resident\TicketController::class, 'show'])->name('pqrs.show');
                 Route::post('/pqrs/{ticket}/reply', [\App\Http\Controllers\Tenant\Resident\TicketController::class, 'reply'])->name('pqrs.reply');
+                Route::post('/pqrs/{ticket}/reopen', [\App\Http\Controllers\Tenant\Resident\TicketController::class, 'reopen'])->name('pqrs.reopen');
                 Route::post('/pqrs', [\App\Http\Controllers\Tenant\Resident\TicketController::class, 'store'])->name('pqrs.store');
                 Route::put('/pqrs/{ticket}', [\App\Http\Controllers\Tenant\Resident\TicketController::class, 'update'])->name('pqrs.update');
                 Route::delete('/pqrs/{ticket}', [\App\Http\Controllers\Tenant\Resident\TicketController::class, 'destroy'])->name('pqrs.destroy');

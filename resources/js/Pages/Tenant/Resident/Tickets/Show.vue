@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import AppLayout from '@/Layouts/AppLayout.vue';
+import Modal from '@/Components/Modal.vue';
 import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { ArrowLeftIcon, ChatBubbleLeftEllipsisIcon, EyeSlashIcon, UserCircleIcon } from '@heroicons/vue/24/outline';
 import { useToast } from '@/Composables/useToast';
 
@@ -17,6 +18,22 @@ const { show: showToast } = useToast();
 const replyForm = useForm({
     message: '',
 });
+
+const isReopenModalOpen = ref(false);
+const reopenForm = useForm({
+    reason: '',
+});
+
+const confirmReopen = () => {
+    reopenForm.post(route('tenant.resident.governance.pqrs.reopen', { community_slug: communitySlug.value, ticket: props.ticket.id }), {
+        preserveScroll: true,
+        onSuccess: () => {
+            isReopenModalOpen.value = false;
+            reopenForm.reset();
+            showToast('Ticket reabierto exitosamente', 'success');
+        }
+    });
+};
 
 const sendReply = () => {
     replyForm.post(route('tenant.resident.governance.pqrs.reply', { community_slug: communitySlug.value, ticket: props.ticket.id }), {
@@ -75,7 +92,7 @@ const formatDate = (dateString: string) => {
                 <span class="inline-flex items-center gap-1 rounded-md bg-gray-100 px-2 py-1 text-xs font-medium text-gray-600 border border-gray-200">
                     {{ getTypeLabel(ticket.type) }}
                 </span>
-                <span v-if="ticket.is_anonymous" class="inline-flex items-center gap-1 rounded-md bg-indigo-50 px-2 py-1 text-xs font-medium text-indigo-700 border border-indigo-200">
+                <span v-if="ticket.is_anonymous" class="inline-flex items-center gap-1 rounded-md bg-emerald-50 px-2 py-1 text-xs font-medium text-emerald-700 border border-emerald-200">
                     <EyeSlashIcon class="w-3 h-3" /> Anónimo
                 </span>
             </div>
@@ -97,7 +114,7 @@ const formatDate = (dateString: string) => {
                                         <span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset"
                                             :class="{
                                                 'bg-yellow-50 text-yellow-800 ring-yellow-600/20': ticket.status === 'open',
-                                                'bg-blue-50 text-blue-700 ring-blue-600/20': ticket.status === 'in_progress',
+                                                'bg-slate-50 text-slate-700 ring-slate-600/20': ticket.status === 'in_progress',
                                                 'bg-green-50 text-green-700 ring-green-600/20': ticket.status === 'resolved',
                                                 'bg-gray-50 text-gray-600 ring-gray-500/10': ticket.status === 'closed',
                                             }">
@@ -145,7 +162,7 @@ const formatDate = (dateString: string) => {
                                             • {{ formatDate(reply.created_at) }}
                                         </div>
                                         <div class="rounded-2xl px-4 py-2 text-sm inline-block shadow-sm"
-                                            :class="reply.user_id === currentUser.id ? 'bg-indigo-600 text-white rounded-tr-sm' : 'bg-white border border-gray-100 text-gray-800 rounded-tl-sm'">
+                                            :class="reply.user_id === currentUser.id ? 'bg-emerald-600 text-white rounded-tr-sm' : 'bg-white border border-gray-100 text-gray-800 rounded-tl-sm'">
                                             <span class="whitespace-pre-wrap">{{ reply.message }}</span>
                                         </div>
                                     </div>
@@ -154,19 +171,25 @@ const formatDate = (dateString: string) => {
 
                             <!-- Formulario de Respuesta -->
                             <div class="p-4 border-t border-gray-100 bg-white rounded-b-lg">
-                                <form @submit.prevent="sendReply" class="flex gap-3">
+                                <form v-if="['open', 'in_progress'].includes(ticket.status)" @submit.prevent="sendReply" class="flex gap-3">
                                     <textarea 
                                         v-model="replyForm.message" 
                                         rows="2" 
-                                        class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm resize-none" 
+                                        class="block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm resize-none" 
                                         placeholder="Escribe una respuesta..."></textarea>
                                     <button 
                                         type="submit" 
                                         :disabled="replyForm.processing || !replyForm.message.trim()"
-                                        class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150 disabled:opacity-50">
+                                        class="inline-flex items-center px-4 py-2 bg-emerald-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-emerald-700 focus:bg-emerald-700 active:bg-emerald-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition ease-in-out duration-150 disabled:opacity-50">
                                         Enviar
                                     </button>
                                 </form>
+                                <div v-else class="text-center py-4">
+                                    <p class="text-sm text-gray-500 mb-3">Este ticket ha sido cerrado.</p>
+                                    <button @click="isReopenModalOpen = true" class="inline-flex items-center px-4 py-2 bg-emerald-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-emerald-700 focus:bg-emerald-700 active:bg-emerald-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                                        Reabrir Ticket
+                                    </button>
+                                </div>
                                 <div v-if="replyForm.errors.message" class="text-xs text-red-600 mt-1">{{ replyForm.errors.message }}</div>
                             </div>
                         </div>
@@ -175,5 +198,40 @@ const formatDate = (dateString: string) => {
 
             </div>
         </div>
+        <Modal :show="isReopenModalOpen" @close="isReopenModalOpen = false">
+            <div class="p-6">
+                <h2 class="text-lg font-medium text-gray-900">
+                    Reabrir Ticket
+                </h2>
+                <p class="mt-1 text-sm text-gray-600">
+                    Por favor, indique el motivo por el cual necesita reabrir este ticket.
+                </p>
+
+                <div class="mt-4">
+                    <label for="reason" class="block text-sm font-medium text-gray-700">Motivo de la reapertura</label>
+                    <textarea
+                        id="reason"
+                        v-model="reopenForm.reason"
+                        rows="3"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm resize-none"
+                        placeholder="Explique el motivo..."
+                    ></textarea>
+                    <div v-if="reopenForm.errors.reason" class="text-xs text-red-600 mt-1">{{ reopenForm.errors.reason }}</div>
+                </div>
+
+                <div class="mt-6 flex justify-end gap-3">
+                    <button @click="isReopenModalOpen = false" class="px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors">
+                        Cancelar
+                    </button>
+                    <button
+                        @click="confirmReopen"
+                        :disabled="reopenForm.processing || !reopenForm.reason.trim()"
+                        class="inline-flex items-center px-4 py-2 bg-emerald-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-emerald-700 focus:bg-emerald-700 active:bg-emerald-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition ease-in-out duration-150 disabled:opacity-50 disabled:bg-emerald-300"
+                    >
+                        Confirmar Reapertura
+                    </button>
+                </div>
+            </div>
+        </Modal>
     </AppLayout>
 </template>

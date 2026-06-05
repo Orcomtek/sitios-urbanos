@@ -121,7 +121,7 @@ const cancelForm = () => {
                 <button 
                     v-if="!showForm"
                     @click="showForm = true; editingListing = null;"
-                    class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700"
+                    class="inline-flex items-center px-4 py-2 bg-emerald-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-emerald-700"
                 >
                     + Publicar Anuncio
                 </button>
@@ -193,7 +193,7 @@ const cancelForm = () => {
                             <button 
                                 v-if="!showForm"
                                 @click="showForm = true"
-                                class="inline-flex items-center px-4 py-2 border border-indigo-300 rounded-md font-semibold text-xs text-indigo-700 uppercase tracking-widest hover:bg-indigo-50"
+                                class="inline-flex items-center px-4 py-2 border border-emerald-300 rounded-md font-semibold text-xs text-emerald-700 uppercase tracking-widest hover:bg-emerald-50"
                             >
                                 Crear anuncio
                             </button>

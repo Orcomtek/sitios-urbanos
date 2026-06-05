@@ -40,7 +40,7 @@ onUnmounted(() => {
 
 
 const getSourceColor = (source: string) => {
-    return source === 'security_log' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800';
+    return source === 'security_log' ? 'bg-slate-100 text-slate-800' : 'bg-purple-100 text-purple-800';
 };
 
 const getSourceLabel = (source: string) => {

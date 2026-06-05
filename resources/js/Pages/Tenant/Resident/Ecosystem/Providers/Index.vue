@@ -167,7 +167,7 @@ const translateCategory = (catValue: string) => {
                     <button 
                         @click="selectedCategory = ''"
                         :class="['px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors', 
-                                selectedCategory === '' ? 'bg-indigo-600 text-white shadow' : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200']"
+                                selectedCategory === '' ? 'bg-emerald-600 text-white shadow' : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200']"
                     >
                         Todos
                     </button>
@@ -182,7 +182,7 @@ const translateCategory = (catValue: string) => {
                             v-for="cat in categories" :key="cat.value"
                             @click="selectedCategory = cat.value"
                             :class="['px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors', 
-                                    selectedCategory === cat.value ? 'bg-indigo-600 text-white shadow' : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200']"
+                                    selectedCategory === cat.value ? 'bg-emerald-600 text-white shadow' : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200']"
                         >
                             {{ cat.label }}
                         </button>
@@ -190,7 +190,7 @@ const translateCategory = (catValue: string) => {
                 </div>
 
                 <div v-if="loading" class="flex justify-center items-center py-20">
-                    <svg class="animate-spin h-10 w-10 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <svg class="animate-spin h-10 w-10 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
@@ -209,7 +209,7 @@ const translateCategory = (catValue: string) => {
                     <div v-for="provider in filteredProviders" :key="provider.id" class="bg-white overflow-hidden shadow-sm rounded-xl border border-gray-100 flex flex-col hover:shadow-md transition-shadow">
                         <div class="p-6 flex-1">
                             <div class="flex items-center justify-between mb-4">
-                                <span class="inline-flex items-center rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-semibold text-indigo-700">
+                                <span class="inline-flex items-center rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-700">
                                     {{ translateCategory(provider.category) }}
                                 </span>
                             </div>
@@ -274,7 +274,7 @@ const translateCategory = (catValue: string) => {
                             id="description"
                             v-model="form.description"
                             rows="4"
-                            class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm sm:text-sm"
+                            class="mt-1 block w-full border-gray-300 focus:border-emerald-500 focus:ring-emerald-500 rounded-md shadow-sm sm:text-sm"
                             placeholder="Ej. Fuga de agua en el lavamanos principal..."
                             required
                         ></textarea>
@@ -286,7 +286,7 @@ const translateCategory = (catValue: string) => {
                         <select
                             id="urgency"
                             v-model="form.urgency"
-                            class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm sm:text-sm"
+                            class="mt-1 block w-full border-gray-300 focus:border-emerald-500 focus:ring-emerald-500 rounded-md shadow-sm sm:text-sm"
                         >
                             <option v-for="u in urgencies" :key="u.value" :value="u.value">{{ u.label }}</option>
                         </select>

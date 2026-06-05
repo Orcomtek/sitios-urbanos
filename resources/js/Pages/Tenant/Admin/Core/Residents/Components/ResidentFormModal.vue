@@ -101,11 +101,12 @@ const close = () => {
                     <div>
                         <label for="unit_id" class="block text-sm font-medium leading-6 text-gray-900">Unidad</label>
                         <div class="mt-2">
-                            <select id="unit_id" v-model="form.unit_id" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-slate-900 sm:text-sm sm:leading-6">
+                            <select id="unit_id" v-model="form.unit_id" :disabled="isEditing" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-slate-900 sm:text-sm sm:leading-6 disabled:bg-gray-50 disabled:text-gray-500 disabled:cursor-not-allowed disabled:ring-gray-200">
                                 <option value="" disabled>Seleccione una unidad</option>
                                 <option v-for="unit in units" :key="unit.id" :value="unit.id">{{ unit.identifier }}</option>
                             </select>
                         </div>
+                        <p v-if="isEditing" class="mt-1 text-xs text-gray-500">Por seguridad e integridad del historial, la unidad no puede ser modificada. Si el residente se muda, desactívelo aquí y regístrelo en la nueva unidad.</p>
                         <p v-if="form.errors.unit_id" class="mt-2 text-sm text-red-600">{{ form.errors.unit_id }}</p>
                     </div>
 

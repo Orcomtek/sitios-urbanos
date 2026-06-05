@@ -143,8 +143,8 @@ const getSpeciesLabel = (value: string) => {
                 
                 <!-- Bento Grid / Tabs -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                    <button @click="activeTab = 'family'" :class="[activeTab === 'family' ? 'ring-2 ring-indigo-500 bg-indigo-50' : 'bg-white hover:bg-gray-50', 'relative flex items-center p-6 space-x-4 border text-card-foreground rounded-lg shadow-sm border-gray-100 transition']">
-                        <div :class="[activeTab === 'family' ? 'bg-indigo-100 text-indigo-600' : 'bg-gray-100 text-gray-500', 'p-3 rounded-full']">
+                    <button @click="activeTab = 'family'" :class="[activeTab === 'family' ? 'ring-2 ring-emerald-500 bg-emerald-50' : 'bg-white hover:bg-gray-50', 'relative flex items-center p-6 space-x-4 border text-card-foreground rounded-lg shadow-sm border-gray-100 transition']">
+                        <div :class="[activeTab === 'family' ? 'bg-emerald-100 text-emerald-600' : 'bg-gray-100 text-gray-500', 'p-3 rounded-full']">
                             <UserGroupIcon class="w-6 h-6" />
                         </div>
                         <div class="text-left">
@@ -153,8 +153,8 @@ const getSpeciesLabel = (value: string) => {
                         </div>
                     </button>
 
-                    <button @click="activeTab = 'vehicles'" :class="[activeTab === 'vehicles' ? 'ring-2 ring-indigo-500 bg-indigo-50' : 'bg-white hover:bg-gray-50', 'relative flex items-center p-6 space-x-4 border text-card-foreground rounded-lg shadow-sm border-gray-100 transition']">
-                        <div :class="[activeTab === 'vehicles' ? 'bg-indigo-100 text-indigo-600' : 'bg-gray-100 text-gray-500', 'p-3 rounded-full']">
+                    <button @click="activeTab = 'vehicles'" :class="[activeTab === 'vehicles' ? 'ring-2 ring-emerald-500 bg-emerald-50' : 'bg-white hover:bg-gray-50', 'relative flex items-center p-6 space-x-4 border text-card-foreground rounded-lg shadow-sm border-gray-100 transition']">
+                        <div :class="[activeTab === 'vehicles' ? 'bg-emerald-100 text-emerald-600' : 'bg-gray-100 text-gray-500', 'p-3 rounded-full']">
                             <TruckIcon class="w-6 h-6" />
                         </div>
                         <div class="text-left">
@@ -163,8 +163,8 @@ const getSpeciesLabel = (value: string) => {
                         </div>
                     </button>
 
-                    <button @click="activeTab = 'pets'" :class="[activeTab === 'pets' ? 'ring-2 ring-indigo-500 bg-indigo-50' : 'bg-white hover:bg-gray-50', 'relative flex items-center p-6 space-x-4 border text-card-foreground rounded-lg shadow-sm border-gray-100 transition']">
-                        <div :class="[activeTab === 'pets' ? 'bg-indigo-100 text-indigo-600' : 'bg-gray-100 text-gray-500', 'p-3 rounded-full']">
+                    <button @click="activeTab = 'pets'" :class="[activeTab === 'pets' ? 'ring-2 ring-emerald-500 bg-emerald-50' : 'bg-white hover:bg-gray-50', 'relative flex items-center p-6 space-x-4 border text-card-foreground rounded-lg shadow-sm border-gray-100 transition']">
+                        <div :class="[activeTab === 'pets' ? 'bg-emerald-100 text-emerald-600' : 'bg-gray-100 text-gray-500', 'p-3 rounded-full']">
                             <HeartIcon class="w-6 h-6" />
                         </div>
                         <div class="text-left">
@@ -181,7 +181,7 @@ const getSpeciesLabel = (value: string) => {
                             <h3 class="font-semibold leading-none tracking-tight">Grupo Familiar</h3>
                             <p class="text-sm text-gray-500 mt-1">Personas que residen contigo en la unidad.</p>
                         </div>
-                        <button @click="openFamilyForm()" class="mt-4 sm:mt-0 inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                        <button @click="openFamilyForm()" class="mt-4 sm:mt-0 inline-flex items-center px-4 py-2 bg-emerald-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-emerald-700 focus:bg-emerald-700 active:bg-emerald-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition ease-in-out duration-150">
                             Agregar Familiar
                         </button>
                     </div>
@@ -207,7 +207,7 @@ const getSpeciesLabel = (value: string) => {
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ member.contact_phone || 'N/A' }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                         <div class="flex items-center justify-end gap-3">
-                                            <button @click="openFamilyForm(member)" class="relative group text-gray-400 hover:text-indigo-600 transition" aria-label="Editar">
+                                            <button @click="openFamilyForm(member)" class="relative group text-gray-400 hover:text-emerald-600 transition" aria-label="Editar">
                                                 <PencilIcon class="w-5 h-5" />
                                                 <span class="absolute bottom-full mb-2 hidden group-hover:block whitespace-nowrap bg-gray-800 text-white text-xs rounded py-1 px-2 z-10 left-1/2 -translate-x-1/2">Editar</span>
                                             </button>
@@ -233,7 +233,7 @@ const getSpeciesLabel = (value: string) => {
                             <h3 class="font-semibold leading-none tracking-tight">Vehículos</h3>
                             <p class="text-sm text-gray-500 mt-1">Carros, motos o bicicletas registrados.</p>
                         </div>
-                        <button @click="openVehicleForm()" class="mt-4 sm:mt-0 inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                        <button @click="openVehicleForm()" class="mt-4 sm:mt-0 inline-flex items-center px-4 py-2 bg-emerald-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-emerald-700 focus:bg-emerald-700 active:bg-emerald-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition ease-in-out duration-150">
                             Agregar Vehículo
                         </button>
                     </div>
@@ -254,7 +254,7 @@ const getSpeciesLabel = (value: string) => {
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ vehicle.brand || 'N/A' }} / {{ vehicle.color || 'N/A' }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                         <div class="flex items-center justify-end gap-3">
-                                            <button @click="openVehicleForm(vehicle)" class="relative group text-gray-400 hover:text-indigo-600 transition" aria-label="Editar">
+                                            <button @click="openVehicleForm(vehicle)" class="relative group text-gray-400 hover:text-emerald-600 transition" aria-label="Editar">
                                                 <PencilIcon class="w-5 h-5" />
                                                 <span class="absolute bottom-full mb-2 hidden group-hover:block whitespace-nowrap bg-gray-800 text-white text-xs rounded py-1 px-2 z-10 left-1/2 -translate-x-1/2">Editar</span>
                                             </button>
@@ -280,7 +280,7 @@ const getSpeciesLabel = (value: string) => {
                             <h3 class="font-semibold leading-none tracking-tight">Mascotas</h3>
                             <p class="text-sm text-gray-500 mt-1">Mascotas que residen contigo en la unidad.</p>
                         </div>
-                        <button @click="openPetForm()" class="mt-4 sm:mt-0 inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                        <button @click="openPetForm()" class="mt-4 sm:mt-0 inline-flex items-center px-4 py-2 bg-emerald-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-emerald-700 focus:bg-emerald-700 active:bg-emerald-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition ease-in-out duration-150">
                             Agregar Mascota
                         </button>
                     </div>
@@ -301,7 +301,7 @@ const getSpeciesLabel = (value: string) => {
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ pet.breed || 'N/A' }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                         <div class="flex items-center justify-end gap-3">
-                                            <button @click="openPetForm(pet)" class="relative group text-gray-400 hover:text-indigo-600 transition" aria-label="Editar">
+                                            <button @click="openPetForm(pet)" class="relative group text-gray-400 hover:text-emerald-600 transition" aria-label="Editar">
                                                 <PencilIcon class="w-5 h-5" />
                                                 <span class="absolute bottom-full mb-2 hidden group-hover:block whitespace-nowrap bg-gray-800 text-white text-xs rounded py-1 px-2 z-10 left-1/2 -translate-x-1/2">Editar</span>
                                             </button>

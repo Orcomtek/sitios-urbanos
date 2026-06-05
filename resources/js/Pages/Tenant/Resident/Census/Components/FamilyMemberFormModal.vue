@@ -85,7 +85,7 @@ const submit = () => {
                     <select
                         id="relationship"
                         v-model="form.relationship"
-                        class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                        class="mt-1 block w-full border-gray-300 focus:border-emerald-500 focus:ring-emerald-500 rounded-md shadow-sm"
                         required
                     >
                         <option value="spouse">Cónyuge</option>
@@ -112,7 +112,7 @@ const submit = () => {
                         id="is_minor"
                         type="checkbox"
                         v-model="form.is_minor"
-                        class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500"
+                        class="rounded border-gray-300 text-emerald-600 shadow-sm focus:ring-emerald-500"
                     />
                     <label for="is_minor" class="ml-2 block text-sm text-gray-900">
                         Es menor de edad

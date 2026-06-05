@@ -93,7 +93,7 @@ const formatDate = (dateString: string) => {
                         <button 
                             v-if="currentResidentRole === 'owner' || currentResidentRole === 'propietario'" 
                             @click="openInviteModal('tenant')"
-                            class="px-4 py-2 bg-indigo-600 text-white rounded-md text-sm font-medium hover:bg-indigo-700 transition">
+                            class="px-4 py-2 bg-emerald-600 text-white rounded-md text-sm font-medium hover:bg-emerald-700 transition">
                             Invitar Inquilino
                         </button>
                         <!-- El botón de familiar se muestra siempre -->
@@ -119,7 +119,7 @@ const formatDate = (dateString: string) => {
                                         <h4 class="font-semibold text-gray-900">{{ user.name }}</h4>
                                         <p class="text-sm text-gray-500">{{ user.email }}</p>
                                     </div>
-                                    <span class="px-2 py-1 text-xs font-semibold rounded-full bg-indigo-50 text-indigo-700">
+                                    <span class="px-2 py-1 text-xs font-semibold rounded-full bg-emerald-50 text-emerald-700">
                                         {{ getRoleLabel(user.resident_role) }}
                                     </span>
                                 </div>

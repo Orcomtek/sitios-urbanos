@@ -105,7 +105,7 @@ const formatDate = (dateString) => {
                             <h3 class="font-semibold text-lg text-gray-800">Radicar Nueva PQRS</h3>
                             <p class="text-xs text-gray-500 mt-1">Envía una nueva petición, queja, reclamo o sugerencia a la administración.</p>
                         </div>
-                        <button class="text-indigo-600 hover:text-indigo-800 font-medium text-sm focus:outline-none">
+                        <button class="text-emerald-600 hover:text-emerald-800 font-medium text-sm focus:outline-none">
                             {{ isCreating ? 'Cancelar' : 'Crear Nueva' }}
                         </button>
                     </div>
@@ -119,7 +119,7 @@ const formatDate = (dateString) => {
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-1">Tipo de Solicitud</label>
-                                    <select v-model="form.type" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                    <select v-model="form.type" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm">
                                         <option value="petition">Petición</option>
                                         <option value="complaint">Queja</option>
                                         <option value="claim">Reclamo</option>
@@ -129,18 +129,18 @@ const formatDate = (dateString) => {
                                 
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-1">Asunto</label>
-                                    <input type="text" v-model="form.subject" required maxlength="255" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="Resumen corto de tu solicitud" />
+                                    <input type="text" v-model="form.subject" required maxlength="255" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm" placeholder="Resumen corto de tu solicitud" />
                                 </div>
                             </div>
 
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
-                                <textarea v-model="form.description" required rows="4" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="Detalla tu petición, sugerencia, queja o reclamo..."></textarea>
+                                <textarea v-model="form.description" required rows="4" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm" placeholder="Detalla tu petición, sugerencia, queja o reclamo..."></textarea>
                             </div>
 
                             <div class="flex items-start">
                                 <div class="flex h-5 items-center">
-                                    <input id="is_anonymous" v-model="form.is_anonymous" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                                    <input id="is_anonymous" v-model="form.is_anonymous" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500">
                                 </div>
                                 <div class="ml-3 text-sm">
                                     <label for="is_anonymous" class="font-medium text-gray-700">Enviar como Anónimo</label>
@@ -149,7 +149,7 @@ const formatDate = (dateString) => {
                             </div>
 
                             <div class="flex justify-end pt-4">
-                                <button type="submit" :disabled="form.processing" class="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50">
+                                <button type="submit" :disabled="form.processing" class="inline-flex justify-center rounded-md border border-transparent bg-emerald-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 disabled:opacity-50">
                                     <svg v-if="form.processing" class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
@@ -165,7 +165,7 @@ const formatDate = (dateString) => {
                 <div class="bg-white rounded-lg shadow-sm border border-gray-200">
                     <div class="px-6 py-4 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
                         <h3 class="font-semibold text-lg text-gray-800">Historial de Solicitudes</h3>
-                        <button @click="fetchData" class="text-sm text-gray-600 hover:text-indigo-600 focus:outline-none flex items-center">
+                        <button @click="fetchData" class="text-sm text-gray-600 hover:text-emerald-600 focus:outline-none flex items-center">
                             <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
                             Actualizar
                         </button>
@@ -197,7 +197,7 @@ const formatDate = (dateString) => {
                                         </span>
                                         <span class="inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium border" :class="{
                                             'bg-yellow-100 text-yellow-800 border-yellow-200': pqrs.status === 'open',
-                                            'bg-blue-100 text-blue-800 border-blue-200': pqrs.status === 'in_progress',
+                                            'bg-slate-100 text-slate-800 border-slate-200': pqrs.status === 'in_progress',
                                             'bg-green-100 text-green-800 border-green-200': pqrs.status === 'resolved',
                                             'bg-gray-100 text-gray-800 border-gray-200': pqrs.status === 'closed'
                                         }">
@@ -211,7 +211,7 @@ const formatDate = (dateString) => {
                                     <p class="text-xs text-gray-500 mt-1">Radicado el {{ formatDate(pqrs.created_at) }}</p>
                                 </div>
                                 <div class="mt-4 sm:mt-0 flex-shrink-0">
-                                    <button class="text-sm font-medium text-indigo-600 focus:outline-none">
+                                    <button class="text-sm font-medium text-emerald-600 focus:outline-none">
                                         {{ expanded[pqrs.id] ? 'Cerrar Detalles' : 'Ver Detalles' }}
                                     </button>
                                 </div>
@@ -224,12 +224,12 @@ const formatDate = (dateString) => {
                                     <p class="text-sm text-gray-800 whitespace-pre-line">{{ pqrs.description }}</p>
                                 </div>
                                 
-                                <div v-if="pqrs.admin_response" class="bg-blue-50 border border-blue-100 p-4 rounded-md">
+                                <div v-if="pqrs.admin_response" class="bg-slate-50 border border-slate-100 p-4 rounded-md">
                                     <div class="flex items-center justify-between mb-2">
-                                        <h5 class="text-xs font-medium text-blue-800 uppercase tracking-wider">Respuesta de la Administración</h5>
-                                        <span v-if="pqrs.responded_at" class="text-xs text-blue-600">{{ formatDate(pqrs.responded_at) }}</span>
+                                        <h5 class="text-xs font-medium text-slate-800 uppercase tracking-wider">Respuesta de la Administración</h5>
+                                        <span v-if="pqrs.responded_at" class="text-xs text-slate-600">{{ formatDate(pqrs.responded_at) }}</span>
                                     </div>
-                                    <p class="text-sm text-blue-900 whitespace-pre-line">{{ pqrs.admin_response }}</p>
+                                    <p class="text-sm text-slate-900 whitespace-pre-line">{{ pqrs.admin_response }}</p>
                                 </div>
                                 <div v-else class="text-sm text-gray-500 italic border-l-2 border-gray-200 pl-3">
                                     Aún no hay respuesta de la administración para esta solicitud.

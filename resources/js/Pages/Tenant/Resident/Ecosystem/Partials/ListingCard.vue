@@ -47,13 +47,13 @@ const isOwnListing = computed(() => {
 
 <template>
     <div class="bg-white border rounded-lg shadow-sm border-gray-200 overflow-hidden flex flex-col h-full relative">
-        <div v-if="isOwnListing && !isOwner" class="absolute top-0 right-0 bg-indigo-100 text-indigo-800 text-xs font-bold px-2 py-1 rounded-bl-lg z-10">
+        <div v-if="isOwnListing && !isOwner" class="absolute top-0 right-0 bg-emerald-100 text-emerald-800 text-xs font-bold px-2 py-1 rounded-bl-lg z-10">
             Tu anuncio
         </div>
 
         <div class="p-5 flex-1 flex flex-col space-y-4">
             <div class="flex justify-between items-start">
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-800">
                     {{ categoryMap[listing.category] || listing.category }}
                 </span>
                 <span v-if="isOwner && statusMap[listing.status]" 
@@ -65,7 +65,7 @@ const isOwnListing = computed(() => {
             
             <div>
                 <h3 class="text-lg font-bold text-gray-900 line-clamp-2">{{ listing.title }}</h3>
-                <p class="text-xl font-semibold text-indigo-600 mt-1">{{ formattedPrice }}</p>
+                <p class="text-xl font-semibold text-emerald-600 mt-1">{{ formattedPrice }}</p>
             </div>
             
             <p class="text-gray-600 text-sm flex-1 whitespace-pre-wrap line-clamp-4">{{ listing.description }}</p>
@@ -101,7 +101,7 @@ const isOwnListing = computed(() => {
             <button 
                 v-if="['active', 'paused'].includes(listing.status)"
                 @click="emit('edit', listing)" 
-                class="text-sm font-medium text-indigo-600 hover:text-indigo-900 focus:outline-none hover:underline"
+                class="text-sm font-medium text-emerald-600 hover:text-emerald-900 focus:outline-none hover:underline"
             >
                 Editar
             </button>

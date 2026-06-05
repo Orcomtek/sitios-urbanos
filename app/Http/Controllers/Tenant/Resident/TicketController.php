@@ -133,6 +133,10 @@ class TicketController extends Controller
             abort(403);
         }
 
+        if (!in_array($ticket->status, ['open', 'in_progress'])) {
+            abort(403, 'Ticket cerrado.');
+        }
+
         $validated = $request->validate([
             'message' => 'required|string|max:5000',
         ]);
@@ -152,6 +156,42 @@ class TicketController extends Controller
         }
 
         return back()->with('success', 'Respuesta enviada exitosamente.');
+    }
+
+    public function reopen(Request $request, string $communitySlug, Ticket $ticket)
+    {
+        $resident = $this->getActiveResident();
+
+        if (!$resident || $ticket->resident_id !== $resident->id) {
+            abort(403);
+        }
+
+        if ($ticket->status === 'open') {
+            return back()->withErrors(['error' => 'El ticket ya está abierto.']);
+        }
+
+        $validated = $request->validate([
+            'reason' => 'required|string|max:500',
+        ]);
+
+        $ticket->update([
+            'status' => 'open',
+            'has_unread_admin' => true,
+        ]);
+
+        $ticket->replies()->create([
+            'user_id' => $request->user()->id,
+            'message' => "Ticket reabierto. Motivo: " . $validated['reason'],
+        ]);
+
+        if ($ticket->community) {
+            $admins = $ticket->community->users()->wherePivotIn('role', ['tenant_admin', 'sub_admin'])->get();
+            foreach ($admins as $admin) {
+                $admin->notify(new \App\Notifications\NewTicketReplyNotification($ticket));
+            }
+        }
+
+        return back()->with('success', 'Ticket reabierto correctamente.');
     }
 
     private function getActiveResident()

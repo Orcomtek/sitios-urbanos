@@ -135,7 +135,7 @@ const formatDate = (dateString: string) => {
 
                             <!-- Formulario de Respuesta -->
                             <div class="p-4 border-t border-gray-100 bg-white rounded-b-lg">
-                                <form @submit.prevent="sendReply" class="flex gap-3">
+                                <form v-if="['open', 'in_progress'].includes(ticket.status)" @submit.prevent="sendReply" class="flex gap-3">
                                     <textarea 
                                         v-model="replyForm.message" 
                                         rows="2" 
@@ -148,6 +148,9 @@ const formatDate = (dateString: string) => {
                                         Enviar
                                     </button>
                                 </form>
+                                <div v-else class="text-center py-4">
+                                    <p class="text-sm text-gray-500">Este ticket ha sido cerrado. Para reabrirlo, el residente debe enviar una solicitud de reapertura con un motivo o puede cambiar el estado manualmente en la gestión del ticket.</p>
+                                </div>
                                 <div v-if="replyForm.errors.message" class="text-xs text-red-600 mt-1">{{ replyForm.errors.message }}</div>
                             </div>
                         </div>

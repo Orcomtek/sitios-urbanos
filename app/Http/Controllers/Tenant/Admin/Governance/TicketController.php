@@ -148,6 +148,10 @@ class TicketController extends Controller
             'message' => 'required|string|max:5000',
         ]);
 
+        if (!in_array($ticket->status, ['open', 'in_progress'])) {
+            abort(403, 'Ticket cerrado.');
+        }
+
         $ticket->replies()->create([
             'user_id' => $request->user()->id,
             'message' => $validated['message'],
