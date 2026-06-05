@@ -89,7 +89,7 @@ const formatDate = (dateString: string) => {
                 <span class="inline-flex items-center gap-1 rounded-md bg-gray-100 px-2 py-1 text-xs font-medium text-gray-600 border border-gray-200">
                     {{ getTypeLabel(ticket.type) }}
                 </span>
-                <span v-if="ticket.is_anonymous" class="inline-flex items-center gap-1 rounded-md bg-indigo-50 px-2 py-1 text-xs font-medium text-indigo-700 border border-indigo-200">
+                <span v-if="ticket.is_anonymous" class="inline-flex items-center gap-1 rounded-md bg-slate-50 px-2 py-1 text-xs font-medium text-slate-800 border border-slate-200">
                     <EyeSlashIcon class="w-3 h-3" /> Anónimo
                 </span>
             </div>
@@ -126,7 +126,7 @@ const formatDate = (dateString: string) => {
                                             • {{ formatDate(reply.created_at) }}
                                         </div>
                                         <div class="rounded-2xl px-4 py-2 text-sm inline-block shadow-sm"
-                                            :class="reply.user_id === currentUser.id ? 'bg-indigo-600 text-white rounded-tr-sm' : 'bg-white border border-gray-100 text-gray-800 rounded-tl-sm'">
+                                            :class="reply.user_id === currentUser.id ? 'bg-emerald-600 text-white rounded-tr-sm' : 'bg-white border border-gray-100 text-gray-800 rounded-tl-sm'">
                                             <span class="whitespace-pre-wrap">{{ reply.message }}</span>
                                         </div>
                                     </div>
@@ -139,12 +139,12 @@ const formatDate = (dateString: string) => {
                                     <textarea 
                                         v-model="replyForm.message" 
                                         rows="2" 
-                                        class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm resize-none" 
+                                        class="block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm resize-none" 
                                         placeholder="Escribe una respuesta..."></textarea>
                                     <button 
                                         type="submit" 
                                         :disabled="replyForm.processing || !replyForm.message.trim()"
-                                        class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150 disabled:opacity-50">
+                                        class="inline-flex items-center px-4 py-2 bg-emerald-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-emerald-700 focus:bg-emerald-700 active:bg-emerald-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition ease-in-out duration-150 disabled:opacity-50 disabled:bg-emerald-300">
                                         Enviar
                                     </button>
                                 </form>
@@ -162,8 +162,8 @@ const formatDate = (dateString: string) => {
                             
                             <div class="space-y-4">
                                 <div class="flex items-center space-x-3">
-                                    <div class="flex-shrink-0 h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center">
-                                        <span class="text-indigo-700 font-medium text-sm uppercase">
+                                    <div class="flex-shrink-0 h-10 w-10 rounded-full bg-slate-100 flex items-center justify-center">
+                                        <span class="text-slate-800 font-medium text-sm uppercase">
                                             {{ ticket.resident?.full_name?.substring(0, 2) || 'UN' }}
                                         </span>
                                     </div>
@@ -186,7 +186,7 @@ const formatDate = (dateString: string) => {
                                         </div>
                                         <div v-if="residentContext">
                                             <label class="text-xs text-gray-500 block mb-1">Rol</label>
-                                            <span class="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10 text-center leading-tight">
+                                            <span class="inline-flex items-center rounded-md bg-slate-50 px-2 py-1 text-xs font-medium text-slate-700 ring-1 ring-inset ring-slate-700/10 text-center leading-tight">
                                                 {{ getRoleLabel(residentContext.role) }}
                                             </span>
                                         </div>
@@ -222,7 +222,7 @@ const formatDate = (dateString: string) => {
                             <div class="space-y-4">
                                 <div>
                                     <label class="text-xs text-gray-500">Estado</label>
-                                    <select v-model="statusForm.status" @change="updateStatus" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                    <select v-model="statusForm.status" @change="updateStatus" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm">
                                         <option value="open">Abierto</option>
                                         <option value="in_progress">En Progreso</option>
                                         <option value="resolved">Resuelto</option>

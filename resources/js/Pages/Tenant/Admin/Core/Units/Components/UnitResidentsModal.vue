@@ -62,7 +62,7 @@ const close = () => {
 
 <template>
     <Modal :show="show" @close="close" maxWidth="2xl">
-        <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-indigo-700 text-white rounded-t-lg">
+        <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-slate-900 text-white rounded-t-lg">
             <h2 class="text-lg font-medium" id="modal-title">Detalles de Unidad</h2>
             <button @click="close" class="text-white hover:text-gray-200">
                 <span class="sr-only">Cerrar panel</span>
@@ -82,7 +82,7 @@ const close = () => {
                         <p class="mt-1 text-sm font-semibold text-gray-900">
                             {{ unit.identifier }}
                             <span class="font-normal text-gray-500">({{ getTaxonomyLabel('property_type', unit.property_type || unit.type) }})</span>
-                            <span v-if="unit.is_rented" class="ml-2 inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-600/20">Arrendada</span>
+                            <span v-if="unit.is_rented" class="ml-2 inline-flex items-center rounded-md bg-slate-50 px-2 py-1 text-xs font-medium text-slate-700 ring-1 ring-inset ring-slate-600/20">Arrendada</span>
                         </p>
                     </div>
                     <div class="border-t sm:border-t-0 sm:border-l border-gray-200 pt-4 sm:pt-0 sm:pl-4">
@@ -98,7 +98,7 @@ const close = () => {
                 <div class="pt-2">
                     <div class="flex justify-between items-center mb-4">
                         <h3 class="text-lg font-medium text-gray-900">Residentes</h3>
-                        <Link :href="route('tenant.admin.core.residents.create', { community_slug: communitySlug, unit_id: unit.id })" class="text-sm text-indigo-600 font-medium hover:text-indigo-900">
+                        <Link :href="route('tenant.admin.core.residents.create', { community_slug: communitySlug, unit_id: unit.id })" class="text-sm text-slate-600 font-medium hover:text-slate-900">
                             + Añadir
                         </Link>
                     </div>

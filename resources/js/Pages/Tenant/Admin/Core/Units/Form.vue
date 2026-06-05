@@ -109,7 +109,7 @@ const submit = () => {
 
                         <div class="mt-6 flex items-center justify-end gap-x-6">
                             <button type="button" onclick="window.history.back()" class="text-sm font-semibold leading-6 text-gray-900">Cancelar</button>
-                            <button type="submit" :disabled="form.processing" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                            <button type="submit" :disabled="form.processing" class="rounded-md bg-emerald-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus:ring-emerald-500 focus-visible:outline-emerald-500 transition-colors">
                                 {{ isEditing ? 'Guardar Cambios' : 'Crear Unidad' }}
                             </button>
                         </div>

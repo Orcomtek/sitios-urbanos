@@ -96,7 +96,7 @@ const getRoleLabel = (role: string) => {
     <AppLayout>
         <template #header>
             <div class="flex items-center space-x-3">
-                <div class="bg-indigo-100 text-indigo-600 p-2 rounded-lg">
+                <div class="bg-emerald-100 text-emerald-600 p-2 rounded-lg">
                     <ShieldCheckIcon class="w-6 h-6" />
                 </div>
                 <div>
@@ -122,7 +122,7 @@ const getRoleLabel = (role: string) => {
                         placeholder="Buscar placa, nombre, unidad..." 
                     />
                     <div v-if="isSearching" class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
-                        <svg class="animate-spin h-6 w-6 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <svg class="animate-spin h-6 w-6 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
@@ -135,7 +135,7 @@ const getRoleLabel = (role: string) => {
                     <!-- Unidades -->
                     <div v-if="results.units.length > 0" class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden col-span-1 lg:col-span-2">
                         <div class="px-4 py-3 bg-indigo-50/50 border-b border-gray-100 flex items-center gap-2">
-                            <HomeIcon class="w-5 h-5 text-indigo-600" />
+                            <HomeIcon class="w-5 h-5 text-emerald-600" />
                             <h3 class="font-semibold text-indigo-900">Unidades</h3>
                         </div>
                         <div class="p-4 grid grid-cols-1 sm:grid-cols-2 gap-4">

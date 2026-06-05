@@ -59,7 +59,7 @@ const closePanel = () => {
             <div
                 class="w-screen max-w-md transform transition ease-in-out duration-500 sm:duration-700 h-full flex flex-col bg-white shadow-xl overflow-y-auto relative"
             >
-                <div class="px-4 py-6 sm:px-6 bg-indigo-700 text-white flex justify-between items-center">
+                <div class="px-4 py-6 sm:px-6 bg-slate-900 text-white flex justify-between items-center">
                     <h2 class="text-lg font-medium" id="slide-over-title">Detalles de Unidad</h2>
                     <button @click="closePanel" class="text-white hover:text-gray-200">
                         <span class="sr-only">Cerrar panel</span>
@@ -86,7 +86,7 @@ const closePanel = () => {
                         <div class="border-t border-gray-200 pt-6">
                             <div class="flex justify-between items-center mb-4">
                                 <h3 class="text-lg font-medium text-gray-900">Residentes</h3>
-                                <Link :href="route('tenant.admin.core.residents.create', { community_slug: communitySlug, unit_id: unitData.id })" class="text-sm text-indigo-600 font-medium hover:text-indigo-900">
+                                <Link :href="route('tenant.admin.core.residents.create', { community_slug: communitySlug, unit_id: unitData.id })" class="text-sm text-slate-600 font-medium hover:text-slate-900">
                                     + Añadir
                                 </Link>
                             </div>

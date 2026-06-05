@@ -116,48 +116,46 @@ const getTaxonomyLabel = (type: string, value: string) => {
     <Head title="Residentes" />
 
     <AppLayout>
-            <div class="flex items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
-                <h2 class="text-xl font-semibold leading-tight text-gray-800">Residentes</h2>
-                <div class="flex items-center gap-3">
-                    <button
-                        @click="dispatchInvitations"
-                        :disabled="isDispatching"
-                        class="rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:opacity-50"
-                    >
-                        {{ isDispatching ? 'Enviando...' : 'Enviar Invitaciones' }}
-                    </button>
-                    <button
-                        @click="openFormModal(null)"
-                        class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                    >
-                        Nuevo Residente
-                    </button>
-                </div>
-            </div>
+        <template #header>
+            <h2 class="text-xl font-semibold leading-tight text-gray-800">Residentes</h2>
+        </template>
 
         <div class="py-12">
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 space-y-4">
-                
-                <!-- Search and Filters -->
-                <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
-                    <div class="flex items-center gap-4 w-full sm:w-auto">
-                        <div class="relative w-full max-w-sm sm:w-80">
-                            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                                <MagnifyingGlassIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
+                <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
+                    <!-- Search, Filters and Actions -->
+                    <div class="p-6 border-b border-gray-200 flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <div class="flex items-center gap-4 w-full sm:w-auto flex-wrap">
+                            <div class="relative w-full max-w-sm sm:w-80">
+                                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                    <MagnifyingGlassIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
+                                </div>
+                                <input type="text" v-model="search" class="block w-full rounded-md border-0 py-1.5 pl-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" placeholder="Buscar residente..." />
                             </div>
-                            <input type="text" v-model="search" class="block w-full rounded-md border-0 py-1.5 pl-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" placeholder="Buscar residente..." />
+                            <div class="relative">
+                                <select v-model="selectedStatus" class="block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                                    <option value="active">Activos</option>
+                                    <option value="inactive">Inactivos</option>
+                                    <option value="all">Todos</option>
+                                </select>
+                            </div>
                         </div>
-                        <div class="relative">
-                            <select v-model="selectedStatus" class="block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                                <option value="active">Activos</option>
-                                <option value="inactive">Inactivos</option>
-                                <option value="all">Todos</option>
-                            </select>
+                        <div class="flex items-center gap-3">
+                            <button
+                                @click="dispatchInvitations"
+                                :disabled="isDispatching"
+                                class="bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 px-4 py-2 rounded-md text-sm font-medium transition-colors disabled:opacity-50 whitespace-nowrap"
+                            >
+                                {{ isDispatching ? 'Enviando...' : 'Enviar Invitaciones' }}
+                            </button>
+                            <button
+                                @click="openFormModal(null)"
+                                class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors whitespace-nowrap"
+                            >
+                                + Añadir Residente
+                            </button>
                         </div>
                     </div>
-                </div>
-
-                <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                     <div class="p-6 text-gray-900 border-b border-gray-200">
                         <table class="min-w-full divide-y divide-gray-300">
                             <thead>

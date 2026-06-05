@@ -60,7 +60,7 @@ const formatDate = (dateString: string) => {
                 <div class="bg-white border text-card-foreground rounded-lg shadow-sm border-gray-100">
                     <div class="px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between border-b border-gray-100 bg-gray-50/50">
                         <div class="flex items-center space-x-3">
-                            <div class="bg-indigo-100 text-indigo-600 p-2 rounded-lg">
+                            <div class="bg-emerald-100 text-emerald-600 p-2 rounded-lg">
                                 <ClipboardDocumentListIcon class="w-6 h-6" />
                             </div>
                             <div>
@@ -128,7 +128,7 @@ const formatDate = (dateString: string) => {
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                         <div class="flex items-center justify-end gap-3">
-                                            <Link :href="route('tenant.admin.governance.pqrs.show', { community_slug: communitySlug, ticket: ticket.id })" class="relative group text-gray-400 hover:text-indigo-600 transition" aria-label="Ver Detalles">
+                                            <Link :href="route('tenant.admin.governance.pqrs.show', { community_slug: communitySlug, ticket: ticket.id })" class="relative group text-gray-400 hover:text-emerald-600 transition" aria-label="Ver Detalles">
                                                 <EyeIcon class="w-5 h-5" />
                                                 <span class="absolute bottom-full mb-2 hidden group-hover:block whitespace-nowrap bg-gray-800 text-white text-xs rounded py-1 px-2 z-10 left-1/2 -translate-x-1/2">Ver Detalles</span>
                                             </Link>

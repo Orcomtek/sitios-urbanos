@@ -49,7 +49,7 @@ const finish = () => {
                     </button>
                     <Link
                         :href="route('tenant.admin.core.units.index', { community_slug: communitySlug })"
-                        class="text-sm font-semibold text-indigo-600 hover:text-indigo-500 py-2"
+                        class="text-sm font-semibold text-slate-600 hover:text-slate-900 py-2"
                     >
                         Salir
                     </Link>
@@ -64,14 +64,14 @@ const finish = () => {
                 <nav aria-label="Progress" class="mb-8">
                     <ol role="list" class="space-y-4 md:flex md:space-x-8 md:space-y-0">
                         <li class="md:flex-1">
-                            <button @click="currentStep = 1" :class="[currentStep === 1 ? 'border-indigo-600' : 'border-gray-200 hover:border-gray-300', 'group flex flex-col border-t-4 py-2 w-full text-left']">
-                                <span :class="[currentStep === 1 ? 'text-indigo-600' : 'text-gray-500 group-hover:text-gray-700', 'text-sm font-medium']">Paso 1</span>
+                            <button @click="currentStep = 1" :class="[currentStep === 1 ? 'border-emerald-600' : 'border-gray-200 hover:border-gray-300', 'group flex flex-col border-t-4 py-2 w-full text-left']">
+                                <span :class="[currentStep === 1 ? 'text-emerald-600' : 'text-gray-500 group-hover:text-gray-700', 'text-sm font-medium']">Paso 1</span>
                                 <span class="text-sm font-medium">Generación Estructural</span>
                             </button>
                         </li>
                         <li class="md:flex-1">
-                            <button @click="currentStep = 2" :disabled="units.length === 0" :class="[currentStep === 2 ? 'border-indigo-600' : 'border-gray-200 hover:border-gray-300', 'group flex flex-col border-t-4 py-2 w-full text-left disabled:opacity-50 disabled:cursor-not-allowed']">
-                                <span :class="[currentStep === 2 ? 'text-indigo-600' : 'text-gray-500 group-hover:text-gray-700', 'text-sm font-medium']">Paso 2</span>
+                            <button @click="currentStep = 2" :disabled="units.length === 0" :class="[currentStep === 2 ? 'border-emerald-600' : 'border-gray-200 hover:border-gray-300', 'group flex flex-col border-t-4 py-2 w-full text-left disabled:opacity-50 disabled:cursor-not-allowed']">
+                                <span :class="[currentStep === 2 ? 'text-emerald-600' : 'text-gray-500 group-hover:text-gray-700', 'text-sm font-medium']">Paso 2</span>
                                 <span class="text-sm font-medium">Asignación Visual (Matriz)</span>
                             </button>
                         </li>

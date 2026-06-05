@@ -224,7 +224,7 @@ const getError = (key: string): string | undefined => {
                         </div>
                         
                         <div v-if="loading" class="text-center py-10">
-                            <svg class="animate-spin h-8 w-8 text-indigo-600 mx-auto mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <svg class="animate-spin h-8 w-8 text-slate-900 mx-auto mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                             </svg>
@@ -267,7 +267,7 @@ const getError = (key: string): string | undefined => {
                                             <div class="font-normal text-gray-500 text-xs truncate max-w-xs">{{ provider.description }}</div>
                                         </td>
                                         <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                            <span class="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10">{{ translateCategory(provider.category) }}</span>
+                                            <span class="inline-flex items-center rounded-md bg-slate-50 px-2 py-1 text-xs font-medium text-slate-700 ring-1 ring-inset ring-slate-700/10">{{ translateCategory(provider.category) }}</span>
                                         </td>
                                         <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                             <ul class="list-none m-0 p-0">
@@ -282,7 +282,7 @@ const getError = (key: string): string | undefined => {
                                         </td>
                                         <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
                                             <div class="flex items-center justify-end gap-3">
-                                                <button @click.stop="toggleStatus(provider)" class="text-gray-400 hover:text-indigo-600 transition" :title="provider.status === 'active' ? 'Desactivar' : 'Activar'" :aria-label="provider.status === 'active' ? 'Desactivar' : 'Activar'">
+                                                <button @click.stop="toggleStatus(provider)" class="text-gray-400 hover:text-slate-600 transition" :title="provider.status === 'active' ? 'Desactivar' : 'Activar'" :aria-label="provider.status === 'active' ? 'Desactivar' : 'Activar'">
                                                     <NoSymbolIcon v-if="provider.status === 'active'" class="w-5 h-5" />
                                                     <CheckCircleIcon v-else class="w-5 h-5" />
                                                 </button>
@@ -328,7 +328,7 @@ const getError = (key: string): string | undefined => {
                         <select
                             id="category"
                             v-model="form.category"
-                            class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                            class="mt-1 block w-full border-gray-300 focus:border-slate-900 focus:ring-slate-900 rounded-md shadow-sm"
                             :disabled="isLoadingCategories || categories.length === 0"
                         >
                             <option v-if="isLoadingCategories" disabled value="">Cargando categorías...</option>
@@ -344,7 +344,7 @@ const getError = (key: string): string | undefined => {
                             id="description"
                             v-model="form.description"
                             rows="3"
-                            class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                            class="mt-1 block w-full border-gray-300 focus:border-slate-900 focus:ring-slate-900 rounded-md shadow-sm"
                         ></textarea>
                         <p class="text-sm text-red-600 mt-1" v-if="form.errors.description">{{ form.errors.description }}</p>
                     </div>
@@ -352,7 +352,7 @@ const getError = (key: string): string | undefined => {
                     <div class="border-t border-gray-200 pt-4 mt-6">
                         <div class="flex justify-between items-center mb-4">
                             <h3 class="text-sm font-medium text-gray-900">Datos de Contacto</h3>
-                            <button type="button" @click="addContact" class="text-sm text-indigo-600 hover:text-indigo-900 font-medium">
+                            <button type="button" @click="addContact" class="text-sm text-slate-600 hover:text-slate-900 font-medium">
                                 + Agregar contacto
                             </button>
                         </div>
@@ -361,7 +361,7 @@ const getError = (key: string): string | undefined => {
                             <div class="w-1/3">
                                 <select
                                     v-model="contact.type"
-                                    class="block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-sm"
+                                    class="block w-full border-gray-300 focus:border-slate-900 focus:ring-slate-900 rounded-md shadow-sm text-sm"
                                 >
                                     <option value="phone">Teléfono</option>
                                     <option value="whatsapp">WhatsApp</option>

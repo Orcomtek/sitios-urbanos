@@ -92,7 +92,7 @@ const close = () => {
             </div>
 
             <div v-if="isLoading" class="mt-4 flex justify-center py-8">
-                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-slate-900"></div>
             </div>
 
             <form v-else @submit.prevent="submit" class="mt-4">
@@ -101,7 +101,7 @@ const close = () => {
                     <div>
                         <label for="unit_id" class="block text-sm font-medium leading-6 text-gray-900">Unidad</label>
                         <div class="mt-2">
-                            <select id="unit_id" v-model="form.unit_id" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                            <select id="unit_id" v-model="form.unit_id" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-slate-900 sm:text-sm sm:leading-6">
                                 <option value="" disabled>Seleccione una unidad</option>
                                 <option v-for="unit in units" :key="unit.id" :value="unit.id">{{ unit.identifier }}</option>
                             </select>
@@ -113,7 +113,7 @@ const close = () => {
                         <div class="sm:col-span-2">
                             <label for="full_name" class="block text-sm font-medium leading-6 text-gray-900">Nombre Completo</label>
                             <div class="mt-2">
-                                <input type="text" id="full_name" v-model="form.full_name" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+                                <input type="text" id="full_name" v-model="form.full_name" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-slate-900 sm:text-sm sm:leading-6" />
                             </div>
                             <p v-if="form.errors.full_name" class="mt-2 text-sm text-red-600">{{ form.errors.full_name }}</p>
                         </div>
@@ -123,7 +123,7 @@ const close = () => {
                         <div>
                             <label for="email" class="block text-sm font-medium leading-6 text-gray-900">Correo Electrónico (Opcional)</label>
                             <div class="mt-2">
-                                <input type="email" id="email" v-model="form.email" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+                                <input type="email" id="email" v-model="form.email" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-slate-900 sm:text-sm sm:leading-6" />
                             </div>
                             <p v-if="form.errors.email" class="mt-2 text-sm text-red-600">{{ form.errors.email }}</p>
                         </div>
@@ -131,7 +131,7 @@ const close = () => {
                         <div>
                             <label for="phone" class="block text-sm font-medium leading-6 text-gray-900">Teléfono (Opcional)</label>
                             <div class="mt-2">
-                                <input type="text" id="phone" v-model="form.phone" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+                                <input type="text" id="phone" v-model="form.phone" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-slate-900 sm:text-sm sm:leading-6" />
                             </div>
                             <p v-if="form.errors.phone" class="mt-2 text-sm text-red-600">{{ form.errors.phone }}</p>
                         </div>
@@ -141,7 +141,7 @@ const close = () => {
                         <div>
                             <label for="resident_type" class="block text-sm font-medium leading-6 text-gray-900">Tipo de Residente</label>
                             <div class="mt-2">
-                                <select id="resident_type" v-model="form.resident_type" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                                <select id="resident_type" v-model="form.resident_type" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-slate-900 sm:text-sm sm:leading-6">
                                     <option value="" disabled>Seleccione un tipo</option>
                                     <option v-for="type in (page.props.taxonomies as any)?.resident_type" :key="type.value" :value="type.value">
                                         {{ type.label }}
@@ -154,7 +154,7 @@ const close = () => {
                         <div class="flex flex-col gap-y-4">
                             <div class="relative flex gap-x-3 mt-8">
                                 <div class="flex h-6 items-center">
-                                    <input id="is_active" v-model="form.is_active" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600" />
+                                    <input id="is_active" v-model="form.is_active" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-slate-900 focus:ring-slate-900" />
                                 </div>
                                 <div class="text-sm leading-6">
                                     <label for="is_active" class="font-medium text-gray-900">Activo</label>
@@ -165,7 +165,7 @@ const close = () => {
 
                             <div class="relative flex gap-x-3">
                                 <div class="flex h-6 items-center">
-                                    <input id="pays_administration" v-model="form.pays_administration" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600" />
+                                    <input id="pays_administration" v-model="form.pays_administration" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-slate-900 focus:ring-slate-900" />
                                 </div>
                                 <div class="text-sm leading-6">
                                     <label for="pays_administration" class="font-medium text-gray-900">Paga Administración</label>
@@ -197,7 +197,7 @@ const close = () => {
 
                 <div class="mt-6 flex items-center justify-end gap-x-3">
                     <button type="button" @click="close" class="text-sm font-semibold leading-6 text-gray-900 px-3 py-2 hover:bg-gray-50 rounded-md">Cancelar</button>
-                    <button type="submit" :disabled="form.processing" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                    <button type="submit" :disabled="form.processing" class="rounded-md bg-emerald-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus:ring-emerald-500 focus-visible:outline-emerald-500 transition-colors">
                         {{ isEditing ? 'Guardar Cambios' : 'Crear Residente' }}
                     </button>
                 </div>

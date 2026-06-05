@@ -184,7 +184,7 @@ const toggleAmenity = (val: string) => {
         <div class="sticky top-0 z-10 bg-white border border-gray-200 shadow-sm rounded-lg p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div class="flex items-center gap-4 flex-wrap">
                 <span class="text-sm font-medium text-gray-700">
-                    Seleccionadas: <span class="font-bold text-indigo-600">{{ selectedUnitIds.size }}</span>
+                    Seleccionadas: <span class="font-bold text-slate-900">{{ selectedUnitIds.size }}</span>
                 </span>
                 
                 <div class="h-6 w-px bg-gray-300 hidden sm:block"></div>
@@ -192,7 +192,7 @@ const toggleAmenity = (val: string) => {
                 <div class="flex items-center gap-3">
                     <span class="text-sm text-gray-500">Amenidades:</span>
                     <label v-for="amenity in availableAmenities" :key="amenity.value" class="inline-flex items-center cursor-pointer group">
-                        <input type="checkbox" :checked="form.amenities.includes(amenity.value)" @change="toggleAmenity(amenity.value)" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-600" />
+                        <input type="checkbox" :checked="form.amenities.includes(amenity.value)" @change="toggleAmenity(amenity.value)" class="rounded border-gray-300 text-slate-900 shadow-sm focus:ring-slate-900" />
                         <span class="ml-2 flex items-center gap-1.5 text-sm text-gray-700 group-hover:text-gray-900 transition">
                             <span :class="['w-2.5 h-2.5 rounded-full', getAmenityColor(amenity.value)]"></span>
                             {{ amenity.label }}
@@ -202,7 +202,7 @@ const toggleAmenity = (val: string) => {
             </div>
             
             <div class="flex items-center gap-3">
-                <button type="button" @click="submitAmenities" :disabled="form.processing || selectedUnitIds.size === 0" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:opacity-50">
+                <button type="button" @click="submitAmenities" :disabled="form.processing || selectedUnitIds.size === 0" class="rounded-md bg-emerald-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus:ring-emerald-500 focus-visible:outline-emerald-500 transition-colors disabled:opacity-50">
                     {{ form.processing ? 'Aplicando...' : 'Aplicar Amenidades' }}
                 </button>
                 <button type="button" @click="emit('finish')" class="rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
@@ -218,7 +218,7 @@ const toggleAmenity = (val: string) => {
                     @click="selectedSector = block.name"
                     :class="[
                         selectedSector === block.name
-                            ? 'border-indigo-500 text-indigo-600'
+                            ? 'border-slate-900 text-slate-900'
                             : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700',
                         'whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium transition-colors'
                     ]"
@@ -260,8 +260,8 @@ const toggleAmenity = (val: string) => {
                                          :class="[
                                             'relative w-full h-16 sm:h-20 rounded-md border-2 cursor-pointer transition flex flex-col items-center justify-center p-1',
                                             selectedUnitIds.has(floor.unitsMap[line].id) 
-                                                ? 'border-indigo-600 bg-indigo-50 text-indigo-700 shadow-inner' 
-                                                : 'border-gray-200 bg-white hover:border-indigo-300 hover:bg-gray-50 text-gray-900'
+                                                ? 'border-slate-900 bg-slate-50 text-slate-800 shadow-inner' 
+                                                : 'border-gray-200 bg-white hover:border-slate-300 hover:bg-gray-50 text-gray-900'
                                          ]">
                                         <span class="text-xs font-bold">{{ floor.unitsMap[line].identifier.split('-').pop() || floor.unitsMap[line].identifier.split(' ').pop() }}</span>
                                         <div class="mt-1 flex gap-1 flex-wrap justify-center">

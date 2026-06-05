@@ -45,28 +45,28 @@ const getTaxonomies = (type: string) => {
                 
                 <div>
                     <label for="pattern" class="block text-sm font-medium leading-6 text-gray-900">Patrón de Nomenclatura</label>
-                    <input type="text" v-model="form.pattern" id="pattern" class="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" placeholder="Torre {B} - Apto {P}{U}" />
+                    <input type="text" v-model="form.pattern" id="pattern" class="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-slate-900 sm:text-sm sm:leading-6" placeholder="Torre {B} - Apto {P}{U}" />
                     <p class="text-xs text-gray-500 mt-1">{B} = Bloque, {P} = Piso, {U} = Unidad</p>
                 </div>
 
                 <div>
                     <label for="blocks" class="block text-sm font-medium leading-6 text-gray-900">Bloques</label>
-                    <input type="number" v-model="form.blocks" id="blocks" min="1" class="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+                    <input type="number" v-model="form.blocks" id="blocks" min="1" class="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-slate-900 sm:text-sm sm:leading-6" />
                 </div>
 
                 <div>
                     <label for="floors" class="block text-sm font-medium leading-6 text-gray-900">Pisos</label>
-                    <input type="number" v-model="form.floors" id="floors" min="1" class="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+                    <input type="number" v-model="form.floors" id="floors" min="1" class="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-slate-900 sm:text-sm sm:leading-6" />
                 </div>
 
                 <div>
                     <label for="units" class="block text-sm font-medium leading-6 text-gray-900">Unidades x Piso</label>
-                    <input type="number" v-model="form.units" id="units" min="1" class="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+                    <input type="number" v-model="form.units" id="units" min="1" class="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-slate-900 sm:text-sm sm:leading-6" />
                 </div>
 
                 <div>
                     <label for="property_type" class="block text-sm font-medium leading-6 text-gray-900">Tipo de Propiedad</label>
-                    <select id="property_type" v-model="form.property_type" class="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                    <select id="property_type" v-model="form.property_type" class="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-slate-900 sm:text-sm sm:leading-6">
                         <option v-for="type in getTaxonomies('property_type')" :key="type.value" :value="type.value">
                             {{ type.label }}
                         </option>
@@ -74,7 +74,7 @@ const getTaxonomies = (type: string) => {
                 </div>
 
                 <div class="md:col-span-5 flex justify-end mt-2">
-                    <button type="submit" :disabled="form.processing" class="inline-flex items-center justify-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                    <button type="submit" :disabled="form.processing" class="inline-flex items-center justify-center rounded-md bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus:ring-emerald-500 focus-visible:outline-emerald-500 transition-colors">
                         {{ form.processing ? 'Generando...' : 'Generar' }}
                     </button>
                 </div>

@@ -177,7 +177,7 @@ const formatErrorRows = (errors: any[]) => {
                         <button 
                             @click="uploadFile" 
                             :disabled="!file || isUploading || isProcessing"
-                            class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 disabled:opacity-50"
+                            class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 disabled:bg-emerald-300 disabled:opacity-50 transition-colors"
                         >
                             {{ isUploading ? 'Subiendo...' : 'Iniciar Importación' }}
                         </button>

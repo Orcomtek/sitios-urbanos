@@ -124,16 +124,21 @@ const openEditModal = (member) => {
                     <div>
                         <h2 class="text-xl font-semibold leading-tight text-gray-800">Administración de Equipo</h2>
                     </div>
-                    <PrimaryButton @click="showInviteModal = true">
-                        + Invitar Miembro
-                    </PrimaryButton>
                 </div>
 
                 <!-- Team Members Grid (Quiet Luxury style) -->
                 <div class="bg-white border text-card-foreground rounded-lg shadow-sm border-gray-100">
-                    <div class="px-6 py-4 flex flex-col space-y-1.5 border-b border-gray-100 bg-gray-50/50">
-                        <h3 class="font-semibold leading-none tracking-tight text-gray-900">Miembros Activos</h3>
-                        <p class="text-sm text-gray-500">Administradores y personal con acceso al sistema.</p>
+                    <div class="px-6 py-4 flex flex-row items-center justify-between border-b border-gray-100 bg-gray-50/50">
+                        <div class="flex flex-col space-y-1.5">
+                            <h3 class="font-semibold leading-none tracking-tight text-gray-900">Miembros Activos</h3>
+                            <p class="text-sm text-gray-500">Administradores y personal con acceso al sistema.</p>
+                        </div>
+                        <button
+                            @click="showInviteModal = true"
+                            class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors whitespace-nowrap"
+                        >
+                            + Invitar Miembro
+                        </button>
                     </div>
                     
                     <div class="overflow-x-auto">
@@ -152,8 +157,8 @@ const openEditModal = (member) => {
                                     <td class="px-6 py-4 text-gray-500">{{ member.email }}</td>
                                     <td class="px-6 py-4">
                                         <span class="px-2.5 py-1 text-xs rounded-full font-medium" :class="{
-                                            'bg-indigo-100 text-indigo-800': member.role === 'tenant_admin',
-                                            'bg-blue-100 text-blue-800': member.role === 'sub_admin',
+                                            'bg-slate-100 text-slate-800': member.role === 'tenant_admin',
+                                            'bg-slate-100 text-slate-800': member.role === 'sub_admin',
                                             'bg-green-100 text-green-800': member.role === 'accountant',
                                             'bg-yellow-100 text-yellow-800': member.role === 'auditor',
                                             'bg-gray-100 text-gray-800': member.role === 'guard'
@@ -261,7 +266,7 @@ const openEditModal = (member) => {
                         <select
                             id="role"
                             v-model="form.role"
-                            class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                            class="mt-1 block w-full border-gray-300 focus:border-slate-900 focus:ring-slate-900 rounded-md shadow-sm"
                             required
                         >
                             <option value="sub_admin">Sub Administrador</option>
