@@ -45,6 +45,11 @@ class UnitController extends Controller
             ->withQueryString();
 
         $units->getCollection()->transform(function ($unit) use ($community) {
+            $taxonomies = \Illuminate\Support\Facades\Cache::get("taxonomies_tenant_{$community->id}") 
+                ?? \App\Models\SystemTaxonomy::forCurrentTenantOrGlobal()->get(['type', 'label', 'value'])->groupBy('type')->toArray();
+            
+            $propertyTypes = collect($taxonomies['property_type'] ?? [])->keyBy('value');
+
             $sponsorPivots = \Illuminate\Support\Facades\DB::table('community_user')
                 ->where('community_id', $community->id)
                 ->where('unit_id', $unit->id)
@@ -74,6 +79,23 @@ class UnitController extends Controller
                     }
                 }
             }
+
+            $owner = $unit->residents->first(function ($resident) {
+                return in_array($resident->computed_role, ['owner', 'propietario']);
+            });
+
+            $unit->owner = $owner ? [
+                'name' => $owner->full_name,
+                'phone' => $owner->phone,
+                'email' => $owner->email,
+            ] : null;
+
+            $unit->type_label = $propertyTypes->get($unit->property_type)['label'] ?? $unit->property_type ?? 'No definido';
+            
+            $amenities = $unit->amenities ?? [];
+            $unit->parking = $amenities['parking_description'] ?? (in_array('parking', $amenities) ? 'Parqueadero asignado' : null);
+            $unit->storage = $amenities['storage_description'] ?? (in_array('storage', $amenities) ? 'Depósito asignado' : null);
+
             return $unit;
         });
 

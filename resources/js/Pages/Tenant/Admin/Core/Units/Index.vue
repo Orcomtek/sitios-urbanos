@@ -7,7 +7,7 @@ import UnitResidentsModal from './Components/UnitResidentsModal.vue';
 import UnitFormModal from './Components/UnitFormModal.vue';
 import ConfirmDeleteModal from '@/Components/ui/ConfirmDeleteModal.vue';
 import Pagination from '@/Components/ui/Pagination.vue';
-import { PencilIcon, TrashIcon, UserGroupIcon, MagnifyingGlassIcon } from '@heroicons/vue/24/outline';
+import { PencilIcon, TrashIcon, UserGroupIcon, MagnifyingGlassIcon, PhoneIcon, ChatBubbleOvalLeftIcon, EnvelopeIcon, ArchiveBoxIcon, KeyIcon } from '@heroicons/vue/24/outline';
 import { useToast } from '@/Composables/useToast';
 
 const props = defineProps<{
@@ -16,9 +16,17 @@ const props = defineProps<{
             id: number;
             identifier: string;
             type: string;
+            type_label?: string;
             status: string;
             is_rented?: boolean;
             residents?: any[];
+            parking?: string | null;
+            storage?: string | null;
+            owner?: {
+                name: string;
+                phone: string;
+                email: string;
+            } | null;
         }>;
         links: any[];
     };
@@ -137,6 +145,7 @@ const confirmDelete = () => {
                                 <tr>
                                     <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0">Identificador</th>
                                     <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Tipo</th>
+                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Propietario / Contacto</th>
                                     <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Estado</th>
                                     <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-0">
                                         <span class="sr-only">Acciones</span>
@@ -148,9 +157,41 @@ const confirmDelete = () => {
                                     <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0">
                                         {{ unit.identifier }}
                                         <span v-if="unit.is_rented" class="ml-2 inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-600/20">Arrendada</span>
+                                        <div class="flex flex-row gap-2 mt-1">
+                                            <span v-if="unit.parking" class="relative group inline-flex items-center gap-1 rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10 cursor-default">
+                                                <span class="absolute bottom-full mb-2 hidden group-hover:block whitespace-nowrap bg-gray-800 text-white text-xs rounded py-1 px-2 z-10 left-1/2 -translate-x-1/2">{{ unit.parking }}</span>
+                                                <KeyIcon class="w-3 h-3 text-gray-400" /> Parqueadero
+                                            </span>
+                                            <span v-if="unit.storage" class="relative group inline-flex items-center gap-1 rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10 cursor-default">
+                                                <span class="absolute bottom-full mb-2 hidden group-hover:block whitespace-nowrap bg-gray-800 text-white text-xs rounded py-1 px-2 z-10 left-1/2 -translate-x-1/2">{{ unit.storage }}</span>
+                                                <ArchiveBoxIcon class="w-3 h-3 text-gray-400" /> Depósito
+                                            </span>
+                                        </div>
                                     </td>
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                        {{ getTaxonomyLabel('property_type', unit.type) }}
+                                        {{ unit.type_label || getTaxonomyLabel('property_type', unit.type) }}
+                                    </td>
+                                    <td class="whitespace-nowrap px-3 py-4 text-sm">
+                                        <div v-if="unit.owner" class="flex flex-col">
+                                            <span class="font-medium text-gray-900">{{ unit.owner.name }}</span>
+                                            <div class="flex items-center gap-2 mt-1">
+                                                <a v-if="unit.owner.phone" :href="'tel:' + unit.owner.phone" class="relative group text-gray-400 hover:text-green-600 transition" @click.stop>
+                                                    <span class="absolute bottom-full mb-2 hidden group-hover:block whitespace-nowrap bg-gray-800 text-white text-xs rounded py-1 px-2 z-10 left-1/2 -translate-x-1/2">Llamar al {{ unit.owner.phone }}</span>
+                                                    <PhoneIcon class="w-4 h-4" />
+                                                </a>
+                                                <a v-if="unit.owner.phone" :href="'https://wa.me/' + unit.owner.phone.replace(/\D/g,'') + '?text=' + encodeURIComponent('Hola ' + unit.owner.name + ', te escribimos desde los canales de comunicación del conjunto ' + (($page.props.tenant as any)?.community?.name || '') + ' para brindarte la siguiente información:')" target="_blank" class="relative group text-gray-400 hover:text-green-500 transition" @click.stop>
+                                                    <span class="absolute bottom-full mb-2 hidden group-hover:block whitespace-nowrap bg-gray-800 text-white text-xs rounded py-1 px-2 z-10 left-1/2 -translate-x-1/2">Enviar WhatsApp a {{ unit.owner.name }}</span>
+                                                    <ChatBubbleOvalLeftIcon class="w-4 h-4" />
+                                                </a>
+                                                <a v-if="unit.owner.email" :href="'mailto:' + unit.owner.email" class="relative group text-gray-400 hover:text-blue-600 transition" @click.stop>
+                                                    <span class="absolute bottom-full mb-2 hidden group-hover:block whitespace-nowrap bg-gray-800 text-white text-xs rounded py-1 px-2 z-10 left-1/2 -translate-x-1/2">Enviar mensaje a {{ unit.owner.email }}</span>
+                                                    <EnvelopeIcon class="w-4 h-4" />
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <div v-else>
+                                            <span class="text-gray-400 italic text-xs">Sin propietario asignado</span>
+                                        </div>
                                     </td>
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                         <span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset"
@@ -180,7 +221,7 @@ const confirmDelete = () => {
                                     </td>
                                 </tr>
                                 <tr v-if="units.data.length === 0">
-                                    <td colspan="4" class="py-8 text-center text-sm text-gray-500">
+                                    <td colspan="5" class="py-8 text-center text-sm text-gray-500">
                                         No hay unidades registradas en esta comunidad.
                                     </td>
                                 </tr>
