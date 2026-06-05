@@ -11,7 +11,8 @@ import {
     ShoppingBagIcon,
     Bars3Icon,
     ClipboardIcon,
-    KeyIcon
+    KeyIcon,
+    TruckIcon
 } from '@heroicons/vue/24/outline';
 
 const iconMap: Record<string, any> = {
@@ -24,6 +25,8 @@ const iconMap: Record<string, any> = {
     'shopping-bag': ShoppingBagIcon,
     'clipboard': ClipboardIcon,
     'key': KeyIcon,
+    'truck': TruckIcon,
+    'TruckIcon': TruckIcon,
 };
 
 const page = usePage();
@@ -110,6 +113,23 @@ const isActiveDashboard = computed(() => isActive(dashboardRouteName.value));
                                     aria-hidden="true" 
                                 />
                                 {{ item.name }}
+                            </Link>
+
+                            <!-- DIRECT DOM INJECTION FOR ADMIN MOVES -->
+                            <Link
+                                v-if="group.title === 'Operativo' && role !== 'resident'"
+                                :href="getRouteUrl('tenant.admin.logistics.moves.index')"
+                                class="group flex items-center rounded-md px-2 py-2 text-sm font-medium transition-colors"
+                                :class="isActive('tenant.admin.logistics.moves.index') 
+                                    ? 'bg-primary text-white hover:bg-primary/90' 
+                                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-slate-800 dark:hover:text-white'"
+                            >
+                                <TruckIcon 
+                                    class="mr-3 h-5 w-5 flex-shrink-0"
+                                    :class="isActive('tenant.admin.logistics.moves.index') ? 'text-white' : 'text-gray-400 group-hover:text-gray-500 dark:group-hover:text-gray-300'"
+                                    aria-hidden="true" 
+                                />
+                                Mudanzas
                             </Link>
                         </div>
                     </div>

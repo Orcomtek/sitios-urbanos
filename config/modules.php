@@ -56,6 +56,20 @@ return [
             'roles' => ['resident'],
             'category' => 'operativo',
         ],
+        'resident_moves' => [
+            'name' => 'Mudanzas',
+            'icon' => 'truck',
+            'route' => 'tenant.resident.logistics.moves.index',
+            'roles' => ['resident'],
+            'category' => 'operativo',
+        ],
+        'admin_moves' => [
+            'name' => 'Mudanzas',
+            'icon' => 'TruckIcon',
+            'route' => 'tenant.admin.logistics.moves.index',
+            'roles' => ['tenant_admin', 'sub_admin'],
+            'category' => 'operativo',
+        ],
         'units_generator' => [
             'name' => 'Generador de Matriz',
             'icon' => 'table',
