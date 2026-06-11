@@ -87,7 +87,7 @@ return [
         'polls' => [
             'name' => 'Votaciones',
             'icon' => 'chart-bar',
-            'route' => '#', 
+            'route' => '#',
             'roles' => ['tenant_admin', 'sub_admin', 'resident'],
             'category' => 'gobernanza',
         ],
@@ -112,17 +112,18 @@ return [
             'roles' => ['tenant_admin', 'sub_admin', 'guard'],
             'category' => 'seguridad',
         ],
-        'finance' => [
-            'name' => 'Finanzas',
-            'icon' => 'currency-dollar',
-            'route' => '#', 
-            'roles' => ['tenant_admin', 'sub_admin', 'accountant', 'resident'],
+
+        'finance_settings' => [
+            'name' => 'Configuración Financiera',
+            'icon' => 'BanknotesIcon',
+            'route' => 'tenant.admin.financial.settings.edit',
+            'roles' => ['tenant_admin', 'sub_admin'],
             'category' => 'finanzas',
         ],
         'providers' => [
             'name' => 'Proveedores',
             'icon' => 'users',
-            'route' => 'tenant.admin.ecosystem.providers', 
+            'route' => 'tenant.admin.ecosystem.providers',
             'roles' => ['tenant_admin', 'sub_admin', 'resident'],
             'category' => 'ecosistema',
         ],

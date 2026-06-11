@@ -250,7 +250,7 @@ The system successfully handled state flags (`has_unread_admin`) and Laravel not
 
 ## Contingency 12: Notification Payload Dropout & Component Render Failure
 
-### Status ⏳ [Pending]
+### Status ⏳ [Resuelta]
 
 **Date:** 2026-06-03
 **Module:** Governance (PQRS) & Notifications UI

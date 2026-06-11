@@ -16,6 +16,7 @@
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^3.0",
         "laravel/wayfinder": "^0.1.14",
+        "spatie/browsershot": "^5.4",
         "tightenco/ziggy": "^2.0"
     },
     "require-dev": {

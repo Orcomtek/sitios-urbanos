@@ -12,7 +12,8 @@ import {
     Bars3Icon,
     ClipboardIcon,
     KeyIcon,
-    TruckIcon
+    TruckIcon,
+    BanknotesIcon
 } from '@heroicons/vue/24/outline';
 
 const iconMap: Record<string, any> = {
@@ -27,6 +28,7 @@ const iconMap: Record<string, any> = {
     'key': KeyIcon,
     'truck': TruckIcon,
     'TruckIcon': TruckIcon,
+    'BanknotesIcon': BanknotesIcon,
 };
 
 const page = usePage();
@@ -34,11 +36,14 @@ const communitySlug = computed(() => (page.props.tenant as any)?.community?.slug
 const navigationMenu = computed(() => (page.props as any).navigation_menu || []);
 
 const getRouteUrl = (routeName: string) => {
+    if (!routeName || routeName === '#') return '#';
     try {
-        if (!communitySlug.value || routeName === '#') return '#';
         // @ts-ignore
-        return route(routeName, { community_slug: communitySlug.value });
-    } catch {
+        const slug = route().params.community_slug || communitySlug.value;
+        // @ts-ignore
+        return route(routeName, { community_slug: slug });
+    } catch (error) {
+        console.error(`Ziggy failed to compile route: ${routeName}`, error);
         return '#';
     }
 };

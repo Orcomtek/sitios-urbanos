@@ -13,6 +13,7 @@ use App\Http\Controllers\Tenant\Admin\Core\UnitController;
 use App\Http\Controllers\Tenant\Admin\Core\UnitGeneratorController;
 use App\Http\Controllers\Tenant\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Tenant\Admin\Ecosystem\ProviderController as AdminProviderController;
+use App\Http\Controllers\Tenant\Admin\Financial\SettingController;
 use App\Http\Controllers\Tenant\Admin\Governance\TicketController as AdminTicketController;
 use App\Http\Controllers\Tenant\Admin\Security\RadarController;
 use App\Http\Controllers\Tenant\Admin\Settings\TeamController;
@@ -96,8 +97,8 @@ Route::domain('{community_slug}.'.$centralDomain)
                 });
 
                 Route::prefix('logistics')->name('logistics.')->group(function () {
-                    Route::get('/moves', [\App\Http\Controllers\Tenant\Admin\Operational\MoveRequestController::class, 'index'])->name('moves.index');
-                    Route::put('/moves/{moveRequest}/status', [\App\Http\Controllers\Tenant\Admin\Operational\MoveRequestController::class, 'update'])->name('moves.update');
+                    Route::get('/moves', [App\Http\Controllers\Tenant\Admin\Operational\MoveRequestController::class, 'index'])->name('moves.index');
+                    Route::put('/moves/{moveRequest}/status', [App\Http\Controllers\Tenant\Admin\Operational\MoveRequestController::class, 'update'])->name('moves.update');
                 });
 
                 Route::prefix('ecosystem')->name('ecosystem.')->group(function () {
@@ -122,6 +123,11 @@ Route::domain('{community_slug}.'.$centralDomain)
                     Route::post('/team/invite', [TeamController::class, 'invite'])->name('team.invite');
                     Route::put('/team/{user}', [TeamController::class, 'update'])->name('team.update');
                     Route::delete('/team/{user}', [TeamController::class, 'destroy'])->name('team.destroy');
+                });
+
+                Route::prefix('financial')->name('financial.')->group(function () {
+                    Route::get('/settings', [SettingController::class, 'edit'])->name('settings.edit');
+                    Route::put('/settings', [SettingController::class, 'update'])->name('settings.update');
                 });
             });
 

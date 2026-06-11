@@ -2007,18 +2007,108 @@ Logistics extension of the operational module (Block 38). A transactional engine
 *   **Asset Assignment (Preparedness):** Administrative capacity to assign logistics resources descriptively (e.g., "North Freight Elevator Authorized"). This is prepared at the database level (`JSON payload`) for future relational integration with the Assets module.
 *   **State Machine & Audit Trail:** Strict and immutable traceability of state changes and administrative authorizations.
 
-## BLOCK 39 — Core Financial Ledger
+markdown_content = """# ARCHITECTURAL SPECIFICATION: BLOCK 39 — Core Financial Ledger (Revised & Hardened)
+
+## 📌 Status
+⏳ **En Ejecución (Fase 39.1 en progreso)**
+
+## 📑 Descripción General
+El motor contable fundamental de **Sitios Urbanos**. Este bloque opera como la única fuente de verdad matemática e histórica de la copropiedad, de forma previa e independiente a las pasarelas de pago. Establece de forma inmutable quién debe qué, cuándo vence la obligación, y genera las trazas de auditoría forense para blindar legalmente tanto al edificio como a la plataforma.
+
+---
+
+## 💰 Matriz Estratégica de Monetización e Impacto Contable
+Para proteger el ROI y asegurar la escalabilidad del modelo Fintech de **Sitios Urbanos**, el Ledger se rige bajo una arquitectura de **Soberanía del Cliente y Captura de Valor Condicionada**. Las reglas de negocio quedan integradas en las estructuras de datos desde esta fase:
+
+### 1. Capa Base: SaaS B2B (Ingreso Recurrente Mensual - MRR)
+* **Mecánica:** Suscripción base que la copropiedad paga a **Sitios Urbanos** por el uso de la suite operativa (Tiers: Base, Pro, Elite).
+* **Gobernanza:** Permite la inyección de *Overrides* por Tenant (Bloque 48), posibilitando que edificios "Elite" negocien la exoneración de ciertas comisiones de pasarela a cambio de un MRR incrementado.
+
+### 2. Capa Transaccional: Motor de Conveniencia (ePayco Split Engine)
+* **Soberanía de Cartera:** La cartera del edificio pertenece legalmente a la copropiedad. Pagos registrados mediante Efectivo, Cheque o Transferencia Bancaria Directa manual asentados por el administrador facturan **$0 comisiones** para Sitios Urbanos.
+* **Captura de Valor (Take-Rate):** Si el residente opta por la ruta de fricción cero ("Pagar con ePayco" en el Cockpit), el Ledger activa las directrices para el Bloque 40. El sistema calcula de forma instantánea el costo adquirente + el **Take-Rate de Sitios Urbanos** por intermediación tecnológica, ejecutando el Split y dispersando el neto al edificio.
+
+### 3. Capa de Activos Propios: Zonas Comunes (Amenities)
+* **Regla de Negocio:** El uso de salones comunales, saunas o zonas de BBQ no es propiedad de la plataforma; por ende, Sitios Urbanos no cobra comisión sobre la reserva base si se paga por fuera de la pasarela.
+* **Transaccionalidad:** Si se recauda vía ePayco, se procesa bajo las reglas del Plan del Tenant (cobro de fee tecnológico completo o asimilado por el plan corporativo).
+
+### 4. Capa Externa: Comercio y Economía Circular (B2B2C)
+El Ledger clasifica estructuralmente los ingresos externos para interactuar con el Marketplace y el Directorio P2P:
+* **Marketplace (Comercio Formal con Carrito):** Tenderos, droguerías y supermercados. Pagan un *fee* de vitrina (mensualidad fija) por acceso a la demanda. Si procesan ventas por ePayco dentro de la app, Sitios Urbanos extrae su Take-Rate comercial. Pagos contra entrega o efectivo quedan exentos de la comisión por venta, pero mantienen el costo de la vitrina.
+* **Ecosistema P2P / Proveedores (Servicios):** Plomeros, electricistas y técnicos. Monetizado mediante membresías por listado verificado o cobro por *Lead Gen*. El pago digital del servicio se procesa con split de intermediación.
+* **Revenue Share con Copropiedad (Incentivo Maestro):** Para alinear los intereses de la administración, la plataforma puede ceder un porcentaje del Take-Rate del Marketplace (ej. 3% del 15% retenido) directamente al fondo de la copropiedad, incentivando la adopción interna del ecosistema.
+* **Clasificados (C2C):** Libre publicación entre vecinos para maximizar la retención y el uso diario de la app. Transacciones en pasillo facturan $0; transacciones digitales aplican split estándar.
+
+---
+
+## 🧱 Desglose por Sprints de Ejecución (Nomenclatura Estricta)
+
+## BLOCK 39.1 — Core Financial Ledger: Foundations & Enterprise Settings
 
 ### Status
-⏳ Pending
+🟢 Completed (June 11, 2026)
 
 ### Description
-The fundamental accounting engine. Operating prior to payment gateways, this block establishes the mathematical truth of the property: who owes what, due dates, and audit trails.
+Cimentación de la infraestructura contable y la base de datos inteligente para el ecosistema transaccional y fintech de Sitios Urbanos. Este bloque inicializa las reglas matemáticas globales de la copropiedad y los flujos externos de monetización (SaaS, Marketplace y Proveedores), operando de manera multi-tenant bajo aislamiento de subdominios y rutas estrictas.
 
 **Scope & Execution Details:**
-*   **Recurring Billing (Cron Jobs):** Automated engine that evaluates the coefficient of each unit and mass-generates invoices (HOA fees/Administration) on the 1st of every month.
-*   **Balance & Accounting Notes Management:** Interface for the administrator to load initial balances, apply credit notes (surpluses), or debit notes (e.g., fines).
-*   **Resident Financial Plane:** Deployment of the "Current Account Status" widget ($0 or Pending Balance) and the history view to download dynamically generated Invoices and Clearance Certificates (Paz y Salvos) in PDF format.
+* **Infrastructure Deployment:** Instalación e integración de `spatie/browsershot` y `puppeteer` en el lado del servidor para el renderizado asíncrono y *pixel-perfect* (Headless Chrome) de documentos Tailwind CSS a PDF (Facturas de venta y Paz y Salvos).
+* **Smart Billing Database Schema:** * `financial_settings`: Almacenamiento unificado de presupuesto base, tasa de interés moratorio validada, días de corte de facturación (`billing_day`) y vencimiento (`due_day`).
+    * `billing_concepts`: Catálogo extendido con tipificación estricta mediante enums (`recurring_hoa`, `extraordinary`, `fine`, `amenity_rental`, `marketplace_subscription`, `provider_membership`) y bandera indexada `is_commissionable` para el motor fintech del Bloque 40.
+* **Multi-Tenant Architecture Hardening:** Corrección en `SettingController.php` para resolver de forma explícita el contexto de la copropiedad mediante el parámetro de URL `{community_slug}`, blindando las peticiones concurrentes contra colapsos de lectura en nulo.
+* **Scalable JSON Bank Accounts Engine:** Refactorización completa del formulario frontend en Vue 3 para inicializar, mutar y persistir múltiples cuentas de recaudo bancario en un solo campo tipo `JSONB` de manera dinámica (Adición/Eliminación en caliente), replicando el diseño de alta velocidad del módulo de proveedores.
+* **Dual UX Feedback System:** Implementación de persistencia redundante de interacción. Inyección simultánea de micro-feedback local reactivo (`form.recentlySuccessful`) al pie del botón de acción y disparo síncrono del componente global superior derecho (*Toast Notification*) mediante sesiones *flash* desde el controlador de Laravel.
+
+### 📌 BLOCK 39.2 — Motor de Facturación Recurrente Automatizada (Cron Engine)
+**Estado: Pendiente**
+* **Cálculo por Coeficiente:** Worker de segundo plano programado para ejecutarse el día parametrizado (ej. el 1 de cada mes). Evalúa de forma matemática el presupuesto base asignado a la comunidad y lo distribuye de forma exacta multiplicándolo por la matriz de coeficientes de cada `Unit` (proveniente del Bloque 36).
+* **Emisión Masiva de Inmuebles:** Generación automática de registros en las tablas de `Invoices` e `InvoiceItems`, bloqueando mutaciones no autorizadas una vez emitidos.
+* **Validaciones Antiduplicación:** Implementación de candados de idempotencia basados en llaves compuestas `(community_id, unit_id, billing_period)` para evitar dobles cobros en ejecuciones concurrentes del comando.
+
+### 📌 BLOCK 39.3 — Gestión de Saldos, Notas Contables y Recaudos Manuales
+**Estado: Pendiente**
+* **Asentamiento Manual:** Formulario de alta velocidad para que el guarda o el administrador carguen transferencias bancarias directas, efectivo o cheques, actualizando el balance general al instante.
+* **Notas de Crédito y Débito:** Mecanismo contable para aplicar saldos a favor (crédito por excedentes o correcciones) o cobros esporádicos (débito por multas de convivencia o daños a propiedad horizontal).
+* **Trazabilidad de Auditoría:** Registro obligatorio del campo `processed_by` vinculando al administrador en sesión para cada ajuste financiero manual, previniendo fraudes internos.
+
+### 📌 BLOCK 39.4 — Plano Financiero del Residente (El Cockpit)
+**Estado: Pendiente**
+* **Widget de Estado de Cuenta:** Módulo visual en el panel del residente que expone en tiempo real el balance neto (Saldo en Contra, Cuenta al Día, o Saldo a Favor).
+* **Historial de Facturación:** Lista cronológica con opciones dinámicas de descarga.
+* **Generación de Certificados:** Botones de descarga asíncrona que invocan el motor de `Browsershot` para exportar Facturas de Venta detalladas y Certificados de Paz y Salvo con firmas digitales registradas por la administración.
+
+---
+
+## 📊 Especificación de Base de Datos (Estructuras de Datos Core)
+
+### Tabla: `financial_settings`
+
+```sql
+CREATE TABLE financial_settings (
+    id BIGSERIAL PRIMARY KEY,
+    community_id BIGINT UNIQUE NOT NULL REFERENCES communities(id) ON DELETE CASCADE,
+    base_budget DECIMAL(15, 2) NOT NULL, -- Presupuesto mensual/anual aprobado
+    late_fee_interest_rate DECIMAL(5, 2) DEFAULT 0.00, -- Tasa de interés moratorio mensual
+    billing_day INT DEFAULT 1, -- Día del mes donde corre el cron de emisión
+    due_day INT DEFAULT 10, -- Día límite de pago antes de mora
+    bank_account_details JSONB NULL, -- Cuentas para recaudo tradicional manual
+    created_at TIMESTAMP WITHOUT TIME ZONE,
+    updated_at TIMESTAMP WITHOUT TIME ZONE
+);
+
+### Tabla: billing_concepts
+
+CREATE TABLE billing_concepts (
+    id BIGSERIAL PRIMARY KEY,
+    community_id BIGINT NULL REFERENCES communities(id) ON DELETE CASCADE, -- NULL indica concepto global de SU
+    name VARCHAR(255) NOT NULL,
+    type VARCHAR(50) NOT NULL, -- 'recurring_hoa', 'extraordinary', 'fine', 'amenity_rental', 'marketplace_subscription', 'provider_membership'
+    is_commissionable BOOLEAN DEFAULT FALSE, -- Determina si SU procesa Take-Rate vía pasarela
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP WITHOUT TIME ZONE,
+    updated_at TIMESTAMP WITHOUT TIME ZONE
+);
+
 
 ## BLOCK 40 — Payment Gateway & Split Engine (ePayco)
 
