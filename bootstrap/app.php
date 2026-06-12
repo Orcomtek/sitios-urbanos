@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\CheckCommunityRole;
 use App\Http\Middleware\EnsureTenantHasFeature;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\TenantMiddleware;
@@ -13,6 +14,7 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Routing\Middleware\ThrottleRequests;
 use Illuminate\Routing\Middleware\ThrottleRequestsWithRedis;
@@ -59,10 +61,10 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->alias([
             'tenant.feature' => EnsureTenantHasFeature::class,
-            'role' => \App\Http\Middleware\CheckCommunityRole::class,
+            'role' => CheckCommunityRole::class,
         ]);
 
-        $middleware->redirectUsersTo(function (\Illuminate\Http\Request $request) {
+        $middleware->redirectUsersTo(function (Request $request) {
             $user = $request->user();
             $primaryCommunity = $user?->communities()->first();
 
@@ -71,6 +73,7 @@ return Application::configure(basePath: dirname(__DIR__))
                 if ($role === 'resident') {
                     return route('tenant.resident.dashboard', ['community_slug' => $primaryCommunity->slug]);
                 }
+
                 return route('tenant.admin.dashboard', ['community_slug' => $primaryCommunity->slug]);
             }
 

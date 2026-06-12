@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Global;
 
+use App\Enums\ResidentType;
 use App\Http\Controllers\Controller;
 use App\Models\Resident;
 use App\Models\User;
@@ -11,7 +12,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
-use App\Enums\ResidentType;
 
 class AcceptInvitationController extends Controller
 {
@@ -72,16 +72,14 @@ class AcceptInvitationController extends Controller
         ];
 
         if (! Auth::check()) {
-            $rules['password'] = $userExists 
-                ? 'required|string' 
+            $rules['password'] = $userExists
+                ? 'required|string'
                 : 'required|string|min:8|confirmed';
         } else {
             $rules['password'] = 'nullable|string';
         }
 
         $request->validate($rules);
-
-
 
         $user = User::where('email', $invitation->email)->first();
 
@@ -143,9 +141,9 @@ class AcceptInvitationController extends Controller
         ]);
 
         if (in_array($invitation->role, ['tenant_admin', 'sub_admin', 'accountant', 'auditor', 'guard'])) {
-            return \Inertia\Inertia::location(route('tenant.admin.dashboard', ['community_slug' => $invitation->community->slug]));
+            return Inertia::location(route('tenant.admin.dashboard', ['community_slug' => $invitation->community->slug]));
         }
 
-        return \Inertia\Inertia::location(route('tenant.resident.dashboard', ['community_slug' => $invitation->community->slug]));
+        return Inertia::location(route('tenant.resident.dashboard', ['community_slug' => $invitation->community->slug]));
     }
 }

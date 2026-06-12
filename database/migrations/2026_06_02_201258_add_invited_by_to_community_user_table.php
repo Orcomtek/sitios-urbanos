@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::table('community_user', function (Blueprint $table) {
             $table->unsignedBigInteger('invited_by_user_id')->nullable();
             $table->string('resident_role')->nullable(); // 'owner', 'tenant', 'family', etc.
-            
+
             $table->foreign('invited_by_user_id')->references('id')->on('users')->nullOnDelete();
         });
     }

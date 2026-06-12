@@ -4,6 +4,8 @@ import { Head, usePage } from '@inertiajs/vue3';
 
 const page = usePage();
 const tenant = (page.props.tenant as any);
+const is_admin = (page.props as any).is_admin;
+const matrix_status = (page.props as any).matrix_status;
 </script>
 
 <template>
@@ -12,6 +14,13 @@ const tenant = (page.props.tenant as any);
     <AppLayout>
         <div class="py-12">
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
+                <!-- Warning Banner for Coefficient Inconsistencies -->
+                <div v-if="is_admin && matrix_status?.has_warnings" class="mb-8 bg-amber-50 border-l-4 border-amber-400 p-4 shadow-sm sm:rounded-r-xl">
+                    <p class="text-sm text-amber-800">
+                        ⚠️ Advertencia Financiera: La matriz de coeficientes de la copropiedad presenta inconsistencias (Suma total: {{ matrix_status.total_coefficient }}). Verifique que todas las unidades tengan asignado su coeficiente correcto para evitar errores en la facturación automática.
+                    </p>
+                </div>
+
                 <!-- Quiet Luxury Welcome Card -->
                 <div class="overflow-hidden bg-white shadow-sm sm:rounded-xl border border-gray-100">
                     <div class="px-8 py-10">

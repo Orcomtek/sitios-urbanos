@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Tenant\Admin\Settings;
 
 use App\Http\Controllers\Controller;
+use App\Mail\CommunityInvitationMail;
 use App\Models\User;
 use App\Models\UserInvitation;
-use App\Mail\CommunityInvitationMail;
 use App\Services\TenantContext;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -24,20 +24,20 @@ class TeamController extends Controller
 
         $team = User::whereHas('communities', function ($q) use ($tenant, $staffRoles) {
             $q->where('community_id', $tenant->id)
-              ->whereIn('role', $staffRoles);
+                ->whereIn('role', $staffRoles);
         })
-        ->with(['communities' => function ($q) use ($tenant) {
-            $q->where('community_id', $tenant->id);
-        }])
-        ->get()
-        ->map(function ($user) {
-            return [
-                'id' => $user->id,
-                'name' => $user->name,
-                'email' => $user->email,
-                'role' => $user->communities->first()->pivot->role ?? 'unknown',
-            ];
-        });
+            ->with(['communities' => function ($q) use ($tenant) {
+                $q->where('community_id', $tenant->id);
+            }])
+            ->get()
+            ->map(function ($user) {
+                return [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'role' => $user->communities->first()->pivot->role ?? 'unknown',
+                ];
+            });
 
         // Also get pending staff invitations
         $pendingInvitations = UserInvitation::where('community_id', $tenant->id)
@@ -59,7 +59,7 @@ class TeamController extends Controller
         $validated = $request->validate([
             'email' => 'required|email',
             'name' => 'required|string|max:255',
-            'role' => 'required|string|in:' . implode(',', $staffRoles),
+            'role' => 'required|string|in:'.implode(',', $staffRoles),
         ]);
 
         $token = Str::random(64);
@@ -86,12 +86,12 @@ class TeamController extends Controller
         $staffRoles = ['tenant_admin', 'sub_admin', 'accountant', 'auditor', 'guard'];
 
         $validated = $request->validate([
-            'role' => 'required|string|in:' . implode(',', $staffRoles),
+            'role' => 'required|string|in:'.implode(',', $staffRoles),
         ]);
 
         $membership = $user->communities()->where('community_id', $tenant->id)->first();
 
-        if (!$membership) {
+        if (! $membership) {
             abort(404, 'Usuario no encontrado en esta comunidad.');
         }
 
@@ -117,8 +117,8 @@ class TeamController extends Controller
         $tenant = $this->context->require();
 
         $membership = $user->communities()->where('community_id', $tenant->id)->first();
-        
-        if (!$membership) {
+
+        if (! $membership) {
             abort(404, 'Usuario no encontrado en esta comunidad.');
         }
 

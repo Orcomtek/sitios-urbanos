@@ -20,6 +20,7 @@ class Unit extends Model
         'property_type',
         'status',
         'amenities',
+        'coefficient',
     ];
 
     // EL CASTEO DE LA NUEVA COLUMNA JSONB

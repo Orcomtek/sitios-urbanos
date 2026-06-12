@@ -3,9 +3,13 @@
 namespace App\Http\Controllers\Tenant\Admin\Governance;
 
 use App\Http\Controllers\Controller;
+use App\Models\Resident;
 use App\Models\Ticket;
+use App\Notifications\NewTicketReplyNotification;
+use App\Services\TenantContext;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -16,7 +20,7 @@ class TicketController extends Controller
         $tickets = Ticket::with(['resident', 'unit'])
             ->orderBy('created_at', 'desc')
             ->get()
-            ->map(function($ticket) {
+            ->map(function ($ticket) {
                 return [
                     'id' => $ticket->id,
                     'subject' => $ticket->subject,
@@ -43,12 +47,12 @@ class TicketController extends Controller
         $ticket->update(['has_unread_admin' => false]);
 
         $residentContext = null;
-        if (!$ticket->is_anonymous && $ticket->resident && $ticket->unit) {
-            $community = app(\App\Services\TenantContext::class)->require();
+        if (! $ticket->is_anonymous && $ticket->resident && $ticket->unit) {
+            $community = app(TenantContext::class)->require();
             $resident = $ticket->resident;
             $unit = $ticket->unit;
 
-            $pivot = \Illuminate\Support\Facades\DB::table('community_user')
+            $pivot = DB::table('community_user')
                 ->where('community_id', $community->id)
                 ->where('unit_id', $unit->id)
                 ->where('user_id', $resident->user_id)
@@ -63,10 +67,10 @@ class TicketController extends Controller
                     $role = 'owner';
                 } elseif (in_array($baseRole, ['tenant', 'inquilino'])) {
                     $role = 'tenant';
-                    
+
                     $sponsorId = $pivot->invited_by_user_id ?? null;
                     if ($sponsorId) {
-                        $sponsorResident = \App\Models\Resident::where('user_id', $sponsorId)
+                        $sponsorResident = Resident::where('user_id', $sponsorId)
                             ->where('unit_id', $unit->id)
                             ->first();
                         if ($sponsorResident) {
@@ -75,22 +79,22 @@ class TicketController extends Controller
                     }
                 } elseif (in_array($baseRole, ['family', 'dependent', 'familiar'])) {
                     // Default to family_owner if we can't figure it out, but strictly mapping it:
-                    $role = 'family_owner'; 
-                    
+                    $role = 'family_owner';
+
                     $sponsorId = $pivot->invited_by_user_id ?? null;
                     if ($sponsorId) {
-                        $sponsorPivot = \Illuminate\Support\Facades\DB::table('community_user')
+                        $sponsorPivot = DB::table('community_user')
                             ->where('community_id', $community->id)
                             ->where('unit_id', $unit->id)
                             ->where('user_id', $sponsorId)
                             ->first();
 
-                        $sponsorResident = \App\Models\Resident::where('user_id', $sponsorId)
+                        $sponsorResident = Resident::where('user_id', $sponsorId)
                             ->where('unit_id', $unit->id)
                             ->first();
 
                         $sponsorRole = $sponsorPivot->resident_role ?? null;
-                        if (!$sponsorRole) {
+                        if (! $sponsorRole) {
                             $sponsorRole = $sponsorResident ? $sponsorResident->resident_type->value : null;
                         }
 
@@ -99,7 +103,7 @@ class TicketController extends Controller
                         } elseif (in_array($sponsorRole, ['tenant', 'inquilino'])) {
                             $role = 'family_tenant';
                         }
-                        
+
                         if ($sponsorResident) {
                             $sponsorName = $sponsorResident->full_name;
                         }
@@ -148,7 +152,7 @@ class TicketController extends Controller
             'message' => 'required|string|max:5000',
         ]);
 
-        if (!in_array($ticket->status, ['open', 'in_progress'])) {
+        if (! in_array($ticket->status, ['open', 'in_progress'])) {
             abort(403, 'Ticket cerrado.');
         }
 
@@ -160,7 +164,7 @@ class TicketController extends Controller
         $ticket->update(['has_unread_resident' => true]);
 
         if ($ticket->resident && $ticket->resident->user) {
-            $ticket->resident->user->notify(new \App\Notifications\NewTicketReplyNotification($ticket));
+            $ticket->resident->user->notify(new NewTicketReplyNotification($ticket));
         }
 
         return back()->with('success', 'Respuesta enviada exitosamente.');

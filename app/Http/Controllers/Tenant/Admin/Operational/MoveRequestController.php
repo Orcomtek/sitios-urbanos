@@ -4,10 +4,10 @@ namespace App\Http\Controllers\Tenant\Admin\Operational;
 
 use App\Http\Controllers\Controller;
 use App\Models\MoveRequest;
+use App\Notifications\Tenant\Resident\MoveRequestResolvedNotification;
 use App\Services\TenantContext;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use App\Notifications\Tenant\Resident\MoveRequestResolvedNotification;
 
 class MoveRequestController extends Controller
 {

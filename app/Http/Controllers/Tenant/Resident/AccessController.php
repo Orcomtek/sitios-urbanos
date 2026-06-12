@@ -3,12 +3,11 @@
 namespace App\Http\Controllers\Tenant\Resident;
 
 use App\Actions\CoreOperations\RevokeAccessAction;
-use App\Enums\ResidentType;
 use App\Http\Controllers\Controller;
 use App\Mail\CommunityInvitationMail;
 use App\Models\Resident;
-use App\Models\UserInvitation;
 use App\Models\User;
+use App\Models\UserInvitation;
 use App\Services\TenantContext;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -39,7 +38,7 @@ class AccessController extends Controller
 
         $currentResidentRole = $currentUserPivot->resident_role ?? $resident->resident_type->value;
 
-        if (!$currentResidentRole || !in_array($currentResidentRole, ['owner', 'propietario', 'tenant', 'inquilino'])) {
+        if (! $currentResidentRole || ! in_array($currentResidentRole, ['owner', 'propietario', 'tenant', 'inquilino'])) {
             abort(403, 'No tienes privilegios para patrocinar accesos.');
         }
 
@@ -105,7 +104,7 @@ class AccessController extends Controller
 
         $currentResidentRole = $currentUserPivot->resident_role ?? $resident->resident_type->value;
 
-        if (!$currentResidentRole || !in_array($currentResidentRole, ['owner', 'propietario', 'tenant', 'inquilino'])) {
+        if (! $currentResidentRole || ! in_array($currentResidentRole, ['owner', 'propietario', 'tenant', 'inquilino'])) {
             abort(403, 'No tienes privilegios para patrocinar accesos.');
         }
 
@@ -122,7 +121,7 @@ class AccessController extends Controller
         ]);
 
         DB::transaction(function () use ($community, $user, $resident, $validated, $revokeAction) {
-            if (!empty($validated['replace_existing']) && $validated['replace_existing']) {
+            if (! empty($validated['replace_existing']) && $validated['replace_existing']) {
                 $legacyTenant = Resident::where('community_id', $community->id)
                     ->where('unit_id', $resident->unit_id)
                     ->where('is_active', true)
@@ -136,7 +135,6 @@ class AccessController extends Controller
                     }
                 }
             }
-
 
             $invitation = UserInvitation::updateOrCreate(
                 [
@@ -180,7 +178,7 @@ class AccessController extends Controller
 
         $currentResidentRole = $currentUserPivot->resident_role ?? $resident->resident_type->value;
 
-        if (!$currentResidentRole || !in_array($currentResidentRole, ['owner', 'propietario', 'tenant', 'inquilino'])) {
+        if (! $currentResidentRole || ! in_array($currentResidentRole, ['owner', 'propietario', 'tenant', 'inquilino'])) {
             abort(403, 'No tienes privilegios para patrocinar accesos.');
         }
 
@@ -191,7 +189,7 @@ class AccessController extends Controller
             ->where('invited_by_user_id', $user->id)
             ->exists();
 
-        if (!$isSponsored) {
+        if (! $isSponsored) {
             abort(403, 'No tienes permiso para revocar este acceso.');
         }
 

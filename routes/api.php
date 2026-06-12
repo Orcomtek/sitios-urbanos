@@ -1,11 +1,5 @@
 <?php
 
-use App\Http\Controllers\Api\Cockpit\ActivityTimelineController;
-use App\Http\Controllers\Api\Cockpit\AdminWorkQueueController;
-use App\Http\Controllers\Api\Cockpit\DashboardController;
-use App\Http\Controllers\Api\Cockpit\NotificationController;
-use App\Http\Controllers\Api\Cockpit\ResidentCockpitController;
-use App\Http\Controllers\Api\Cockpit\WorkQueueController;
 use App\Http\Controllers\Api\Ecosystem\ListingController;
 use App\Http\Controllers\Api\Ecosystem\ProviderController;
 use App\Http\Controllers\Api\Ecosystem\ProviderServiceRequestController;
@@ -38,8 +32,6 @@ Route::domain('{community_slug}.'.$centralDomain)
     ->middleware(['auth:sanctum', TenantMiddleware::class])
     ->group(function () {
         Route::get('/system/taxonomies/{type}', [SystemTaxonomyController::class, 'index'])->name('api.system.taxonomies.index');
-
-
 
         Route::get('/finance/invoices/{invoice}', [FinancialStateController::class, 'invoice'])->name('api.finance.invoice');
         Route::get('/finance/payments/{payment}', [FinancialStateController::class, 'payment'])->name('api.finance.payment');

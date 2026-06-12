@@ -23,7 +23,21 @@ class DashboardController extends Controller
             CommunityRole::Guard,
         ]);
 
-        return Inertia::render('Tenant/Admin/Dashboard');
+        $community = $this->context->require();
+        $totalCoefficient = \App\Models\Unit::where('community_id', $community->id)->sum('coefficient');
+        $hasZeroOrNullCoefficient = \App\Models\Unit::where('community_id', $community->id)
+            ->where(function($query) {
+                $query->whereNull('coefficient')->orWhere('coefficient', '<=', 0);
+            })->exists();
+
+        return Inertia::render('Tenant/Admin/Dashboard', [
+            'matrix_status' => [
+                'total_coefficient' => (float) $totalCoefficient,
+                'has_warnings' => ($totalCoefficient != 1.0 && $totalCoefficient != \App\Models\Unit::where('community_id', $community->id)->count()) || $hasZeroOrNullCoefficient,
+                'is_flat_fee' => $totalCoefficient == \App\Models\Unit::where('community_id', $community->id)->count()
+            ],
+            'is_admin' => $request->user()->roleInCommunity($community) === CommunityRole::TenantAdmin
+        ]);
     }
 
     public function workQueue(Request $request): Response

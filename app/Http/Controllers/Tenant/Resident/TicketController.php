@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Tenant\Resident;
 use App\Http\Controllers\Controller;
 use App\Models\Resident;
 use App\Models\Ticket;
+use App\Notifications\NewTicketReplyNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -15,7 +16,7 @@ class TicketController extends Controller
     {
         $resident = $this->getActiveResident();
 
-        if (!$resident) {
+        if (! $resident) {
             abort(403, 'No tienes un perfil de residente activo en esta comunidad.');
         }
 
@@ -26,6 +27,7 @@ class TicketController extends Controller
                 $item = $ticket->toArray();
                 $item['has_unread_admin'] = (bool) $ticket->has_unread_admin;
                 $item['has_unread_resident'] = (bool) $ticket->has_unread_resident;
+
                 return $item;
             });
 
@@ -38,7 +40,7 @@ class TicketController extends Controller
     {
         $resident = $this->getActiveResident();
 
-        if (!$resident) {
+        if (! $resident) {
             abort(403);
         }
 
@@ -60,7 +62,7 @@ class TicketController extends Controller
         if ($ticket->community) {
             $admins = $ticket->community->users()->wherePivotIn('role', ['tenant_admin', 'sub_admin'])->get();
             foreach ($admins as $admin) {
-                $admin->notify(new \App\Notifications\NewTicketReplyNotification($ticket));
+                $admin->notify(new NewTicketReplyNotification($ticket));
             }
         }
 
@@ -71,7 +73,7 @@ class TicketController extends Controller
     {
         $resident = $this->getActiveResident();
 
-        if (!$resident || $ticket->resident_id !== $resident->id) {
+        if (! $resident || $ticket->resident_id !== $resident->id) {
             abort(403);
         }
 
@@ -95,7 +97,7 @@ class TicketController extends Controller
     {
         $resident = $this->getActiveResident();
 
-        if (!$resident || $ticket->resident_id !== $resident->id) {
+        if (! $resident || $ticket->resident_id !== $resident->id) {
             abort(403);
         }
 
@@ -112,7 +114,7 @@ class TicketController extends Controller
     {
         $resident = $this->getActiveResident();
 
-        if (!$resident || $ticket->resident_id !== $resident->id) {
+        if (! $resident || $ticket->resident_id !== $resident->id) {
             abort(403);
         }
 
@@ -129,11 +131,11 @@ class TicketController extends Controller
     {
         $resident = $this->getActiveResident();
 
-        if (!$resident || $ticket->resident_id !== $resident->id) {
+        if (! $resident || $ticket->resident_id !== $resident->id) {
             abort(403);
         }
 
-        if (!in_array($ticket->status, ['open', 'in_progress'])) {
+        if (! in_array($ticket->status, ['open', 'in_progress'])) {
             abort(403, 'Ticket cerrado.');
         }
 
@@ -151,7 +153,7 @@ class TicketController extends Controller
         if ($ticket->community) {
             $admins = $ticket->community->users()->wherePivotIn('role', ['tenant_admin', 'sub_admin'])->get();
             foreach ($admins as $admin) {
-                $admin->notify(new \App\Notifications\NewTicketReplyNotification($ticket));
+                $admin->notify(new NewTicketReplyNotification($ticket));
             }
         }
 
@@ -162,7 +164,7 @@ class TicketController extends Controller
     {
         $resident = $this->getActiveResident();
 
-        if (!$resident || $ticket->resident_id !== $resident->id) {
+        if (! $resident || $ticket->resident_id !== $resident->id) {
             abort(403);
         }
 
@@ -181,13 +183,13 @@ class TicketController extends Controller
 
         $ticket->replies()->create([
             'user_id' => $request->user()->id,
-            'message' => "Ticket reabierto. Motivo: " . $validated['reason'],
+            'message' => 'Ticket reabierto. Motivo: '.$validated['reason'],
         ]);
 
         if ($ticket->community) {
             $admins = $ticket->community->users()->wherePivotIn('role', ['tenant_admin', 'sub_admin'])->get();
             foreach ($admins as $admin) {
-                $admin->notify(new \App\Notifications\NewTicketReplyNotification($ticket));
+                $admin->notify(new NewTicketReplyNotification($ticket));
             }
         }
 

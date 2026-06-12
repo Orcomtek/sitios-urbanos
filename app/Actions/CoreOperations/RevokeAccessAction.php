@@ -2,13 +2,13 @@
 
 namespace App\Actions\CoreOperations;
 
+use App\Actions\Security\LogSecurityEventAction;
 use App\Models\Community;
 use App\Models\Resident;
-use App\Models\User;
-use Illuminate\Support\Facades\DB;
-use App\Actions\Security\LogSecurityEventAction;
 use App\Models\Ticket;
 use App\Models\TicketReply;
+use App\Models\User;
+use Illuminate\Support\Facades\DB;
 
 class RevokeAccessAction
 {
@@ -33,19 +33,19 @@ class RevokeAccessAction
 
         if ($resident) {
             $resident->update(['is_active' => false]);
-            
+
             // Auto-close open tickets for this resident
             $openTickets = Ticket::where('resident_id', $resident->id)
                 ->whereIn('status', ['open', 'in_progress'])
                 ->get();
-                
+
             foreach ($openTickets as $ticket) {
                 $ticket->update(['status' => 'closed']);
-                
+
                 TicketReply::create([
                     'ticket_id' => $ticket->id,
                     'user_id' => auth()->id() ?? $actor?->id,
-                    'message' => '🤖 Sistema: Ticket cerrado automáticamente debido a la revocación de acceso del residente a la copropiedad.'
+                    'message' => '🤖 Sistema: Ticket cerrado automáticamente debido a la revocación de acceso del residente a la copropiedad.',
                 ]);
             }
         }

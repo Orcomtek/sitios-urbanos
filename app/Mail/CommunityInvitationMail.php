@@ -27,7 +27,7 @@ class CommunityInvitationMail extends Mailable
         $this->invitation = $invitation;
         $this->communityName = $invitation->community->name;
         // The URL MUST point to the global control plane, not the tenant subdomain
-        $this->acceptUrl = rtrim(config('app.url'), '/') . '/invitations/accept?token=' . $invitation->token;
+        $this->acceptUrl = rtrim(config('app.url'), '/').'/invitations/accept?token='.$invitation->token;
     }
 
     /**

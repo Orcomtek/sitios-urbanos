@@ -63,7 +63,7 @@ const submit = () => {
                             
                             <!-- Presupuesto Base -->
                             <div>
-                                <InputLabel for="base_budget" value="Presupuesto Base (COP)" />
+                                <InputLabel for="base_budget" value="Presupuesto Base Mensual (COP)" />
                                 <TextInput
                                     id="base_budget"
                                     type="number"

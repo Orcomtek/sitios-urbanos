@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Cockpit;
 use App\Http\Controllers\Controller;
 use App\Services\TenantContext;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class NotificationController extends Controller
@@ -29,16 +30,18 @@ class NotificationController extends Controller
         ]);
     }
 
-    public function read(Request $request, string $community_slug, string $id): \Illuminate\Http\RedirectResponse
+    public function read(Request $request, string $community_slug, string $id): RedirectResponse
     {
         $notification = $request->user()->notifications()->findOrFail($id);
         $notification->markAsRead();
+
         return back();
     }
 
-    public function readAll(Request $request, string $community_slug): \Illuminate\Http\RedirectResponse
+    public function readAll(Request $request, string $community_slug): RedirectResponse
     {
         $request->user()->unreadNotifications->markAsRead();
+
         return back();
     }
 }

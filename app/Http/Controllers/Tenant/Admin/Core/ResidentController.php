@@ -29,8 +29,8 @@ class ResidentController extends Controller
 
         $residents = $community->residents()
             ->with('unit')
-            ->when($status === 'active', fn($q) => $q->where('is_active', true))
-            ->when($status === 'inactive', fn($q) => $q->where('is_active', false))
+            ->when($status === 'active', fn ($q) => $q->where('is_active', true))
+            ->when($status === 'inactive', fn ($q) => $q->where('is_active', false))
             ->when($search, function ($query, $search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('full_name', 'ilike', '%'.$search.'%')

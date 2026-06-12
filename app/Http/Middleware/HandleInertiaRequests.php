@@ -7,6 +7,7 @@ use App\Services\ModuleRegistryService;
 use App\Services\TenantContext;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -57,7 +58,7 @@ class HandleInertiaRequests extends Middleware
         $navigationMenu = $registryService->getAuthorizedModules($activeCommunity, $activeRole);
 
         if ($activeRole === 'resident' && $user && $activeCommunity) {
-            $pivot = \Illuminate\Support\Facades\DB::table('community_user')
+            $pivot = DB::table('community_user')
                 ->where('user_id', $user->id)
                 ->where('community_id', $activeCommunity->id)
                 ->first();

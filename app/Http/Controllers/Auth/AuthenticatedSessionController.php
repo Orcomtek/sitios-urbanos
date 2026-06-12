@@ -27,7 +27,7 @@ class AuthenticatedSessionController extends Controller
     /**
      * Handle an incoming authentication request.
      */
-    public function store(LoginRequest $request): \Illuminate\Http\RedirectResponse|\Illuminate\Http\Response
+    public function store(LoginRequest $request): RedirectResponse|\Illuminate\Http\Response
     {
         $request->authenticate();
 
@@ -40,15 +40,15 @@ class AuthenticatedSessionController extends Controller
             $role = $primaryCommunity->pivot->role;
 
             if ($role === 'resident') {
-                return \Inertia\Inertia::location(route('tenant.resident.dashboard', ['community_slug' => $primaryCommunity->slug]));
+                return Inertia::location(route('tenant.resident.dashboard', ['community_slug' => $primaryCommunity->slug]));
             }
 
             if (in_array($role, ['tenant_admin', 'sub_admin', 'accountant', 'guard'])) {
-                return \Inertia\Inertia::location(route('tenant.admin.dashboard', ['community_slug' => $primaryCommunity->slug]));
+                return Inertia::location(route('tenant.admin.dashboard', ['community_slug' => $primaryCommunity->slug]));
             }
         }
 
-        return \Inertia\Inertia::location(route('communities.index'));
+        return Inertia::location(route('communities.index'));
     }
 
     /**

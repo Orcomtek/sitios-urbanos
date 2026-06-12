@@ -2,11 +2,12 @@
 
 namespace App\Notifications\Tenant\Resident;
 
+use App\Models\MoveRequest;
+use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use App\Models\MoveRequest;
 
 class MoveRequestResolvedNotification extends Notification implements ShouldQueue
 {
@@ -52,23 +53,23 @@ class MoveRequestResolvedNotification extends Notification implements ShouldQueu
             'heavy' => 'Grande (Trasteo Completo)',
             default => 'No Especificada',
         };
-        
+
         $mailMessage = (new MailMessage)
-            ->subject('Actualización de su Solicitud de Mudanza - ' . $this->moveRequest->unit->identifier)
-            ->greeting('Hola, ' . $notifiable->name)
-            ->line('Le informamos que su solicitud de mudanza/traslado para la unidad ' . $this->moveRequest->unit->identifier . ' ha sido revisada.')
-            ->line('**Tipo de Solicitud:** ' . $translatedType)
-            ->line('**Magnitud:** ' . $translatedScale)
-            ->line('Estado actual de la solicitud: **' . $statusText . '**');
+            ->subject('Actualización de su Solicitud de Mudanza - '.$this->moveRequest->unit->identifier)
+            ->greeting('Hola, '.$notifiable->name)
+            ->line('Le informamos que su solicitud de mudanza/traslado para la unidad '.$this->moveRequest->unit->identifier.' ha sido revisada.')
+            ->line('**Tipo de Solicitud:** '.$translatedType)
+            ->line('**Magnitud:** '.$translatedScale)
+            ->line('Estado actual de la solicitud: **'.$statusText.'**');
 
         if ($this->moveRequest->status === 'modified') {
-            $date = \Carbon\Carbon::parse($this->moveRequest->requested_date)->format('d/m/Y');
-            $startTime = \Carbon\Carbon::parse($this->moveRequest->start_time)->format('h:i A');
-            $endTime = \Carbon\Carbon::parse($this->moveRequest->end_time)->format('h:i A');
+            $date = Carbon::parse($this->moveRequest->requested_date)->format('d/m/Y');
+            $startTime = Carbon::parse($this->moveRequest->start_time)->format('h:i A');
+            $endTime = Carbon::parse($this->moveRequest->end_time)->format('h:i A');
 
             $mailMessage->line('La administración ha propuesto un nuevo horario para su mudanza:');
-            $mailMessage->line('**Fecha:** ' . $date);
-            $mailMessage->line('**Horario:** ' . $startTime . ' - ' . $endTime);
+            $mailMessage->line('**Fecha:** '.$date);
+            $mailMessage->line('**Horario:** '.$startTime.' - '.$endTime);
         }
 
         if ($this->moveRequest->admin_notes) {

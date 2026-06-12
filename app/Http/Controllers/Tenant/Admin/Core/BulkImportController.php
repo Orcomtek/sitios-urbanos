@@ -7,6 +7,7 @@ use App\Jobs\ProcessBulkImportJob;
 use App\Models\BulkImport;
 use App\Services\TenantContext;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class BulkImportController extends Controller
 {
@@ -15,7 +16,7 @@ class BulkImportController extends Controller
      */
     public function index()
     {
-        return \Inertia\Inertia::render('Tenant/Admin/Core/Imports/Index');
+        return Inertia::render('Tenant/Admin/Core/Imports/Index');
     }
 
     /**

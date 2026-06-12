@@ -2,10 +2,10 @@
 
 namespace App\Jobs;
 
-use App\Models\BulkImport;
-use App\Models\Unit;
-use App\Models\Resident;
 use App\Enums\ResidentType;
+use App\Models\BulkImport;
+use App\Models\Resident;
+use App\Models\Unit;
 use Exception;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
@@ -91,15 +91,15 @@ class ProcessBulkImportJob implements ShouldQueue
                                 $unit = Unit::where('community_id', $this->import->community_id)
                                     ->where('identifier', trim($row['unidad_identificador']))
                                     ->first();
-                                
-                                if (!$unit) {
-                                    throw new Exception("La unidad '" . trim($row['unidad_identificador']) . "' no existe en la matriz");
+
+                                if (! $unit) {
+                                    throw new Exception("La unidad '".trim($row['unidad_identificador'])."' no existe en la matriz");
                                 }
-                                
+
                                 if (empty($row['nombre'])) {
                                     throw new Exception('Falta el nombre del residente');
                                 }
-                                
+
                                 $residentTypeMap = [
                                     'propietario' => ResidentType::OWNER,
                                     'inquilino' => ResidentType::TENANT,
@@ -107,7 +107,7 @@ class ProcessBulkImportJob implements ShouldQueue
                                 ];
                                 $tipoStr = strtolower(trim($row['tipo_residente'] ?? 'propietario'));
                                 $residentType = $residentTypeMap[$tipoStr] ?? ResidentType::OWNER;
-                                
+
                                 Resident::updateOrCreate(
                                     [
                                         'community_id' => $this->import->community_id,
@@ -115,8 +115,8 @@ class ProcessBulkImportJob implements ShouldQueue
                                         'full_name' => trim($row['nombre']),
                                     ],
                                     [
-                                        'email' => !empty($row['email']) ? trim($row['email']) : null,
-                                        'phone' => !empty($row['telefono']) ? trim($row['telefono']) : null,
+                                        'email' => ! empty($row['email']) ? trim($row['email']) : null,
+                                        'phone' => ! empty($row['telefono']) ? trim($row['telefono']) : null,
                                         'resident_type' => $residentType,
                                     ]
                                 );
@@ -128,22 +128,22 @@ class ProcessBulkImportJob implements ShouldQueue
                                 if (empty($row['identificador'])) {
                                     throw new Exception('Falta el identificador');
                                 }
-                                
+
                                 $typeMap = [
                                     'apartamento' => 'apartment',
                                     'casa' => 'house',
                                     'local' => 'commercial',
                                 ];
-                                
+
                                 $statusMap = [
                                     'ocupada' => 'occupied',
                                     'disponible' => 'available',
                                     'mantenimiento' => 'maintenance',
                                 ];
-                                
+
                                 $csvType = strtolower(trim($row['tipo_propiedad'] ?? 'apartamento'));
                                 $csvStatus = strtolower(trim($row['estado'] ?? 'ocupada'));
-                                
+
                                 Unit::updateOrCreate(
                                     [
                                         'community_id' => $this->import->community_id,

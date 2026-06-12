@@ -8,9 +8,12 @@ use App\Actions\CoreOperations\UpdateUnitAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreUnitRequest;
 use App\Http\Requests\UpdateUnitRequest;
+use App\Models\SystemTaxonomy;
 use App\Models\Unit;
 use App\Services\TenantContext;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -26,15 +29,15 @@ class UnitController extends Controller
         $units = $community->units()
             ->select('units.*')
             ->addSelect([
-                'is_rented' => \Illuminate\Support\Facades\DB::table('community_user')
+                'is_rented' => DB::table('community_user')
                     ->selectRaw('1')
                     ->whereColumn('community_user.unit_id', 'units.id')
                     ->where('community_user.community_id', $community->id)
                     ->whereIn('community_user.resident_role', ['tenant', 'inquilino'])
-                    ->limit(1)
+                    ->limit(1),
             ])
-            ->with(['residents' => function($q) { 
-                $q->where('is_active', true)->with(['familyMembers', 'vehicles', 'pets']); 
+            ->with(['residents' => function ($q) {
+                $q->where('is_active', true)->with(['familyMembers', 'vehicles', 'pets']);
             }])
             ->withCount('residents')
             ->when($search, function ($query, $search) {
@@ -45,12 +48,12 @@ class UnitController extends Controller
             ->withQueryString();
 
         $units->getCollection()->transform(function ($unit) use ($community) {
-            $taxonomies = \Illuminate\Support\Facades\Cache::get("taxonomies_tenant_{$community->id}") 
-                ?? \App\Models\SystemTaxonomy::forCurrentTenantOrGlobal()->get(['type', 'label', 'value'])->groupBy('type')->toArray();
-            
+            $taxonomies = Cache::get("taxonomies_tenant_{$community->id}")
+                ?? SystemTaxonomy::forCurrentTenantOrGlobal()->get(['type', 'label', 'value'])->groupBy('type')->toArray();
+
             $propertyTypes = collect($taxonomies['property_type'] ?? [])->keyBy('value');
 
-            $sponsorPivots = \Illuminate\Support\Facades\DB::table('community_user')
+            $sponsorPivots = DB::table('community_user')
                 ->where('community_id', $community->id)
                 ->where('unit_id', $unit->id)
                 ->get()
@@ -66,7 +69,7 @@ class UnitController extends Controller
                     if ($sponsorId) {
                         $sponsorPivot = $sponsorPivots->get($sponsorId);
                         $sponsorRole = $sponsorPivot->resident_role ?? null;
-                        if (!$sponsorRole) {
+                        if (! $sponsorRole) {
                             $sponsorResident = $unit->residents->firstWhere('user_id', $sponsorId);
                             $sponsorRole = $sponsorResident ? $sponsorResident->resident_type->value : null;
                         }
@@ -91,7 +94,7 @@ class UnitController extends Controller
             ] : null;
 
             $unit->type_label = $propertyTypes->get($unit->property_type)['label'] ?? $unit->property_type ?? 'No definido';
-            
+
             $amenities = $unit->amenities ?? [];
             $unit->parking = $amenities['parking_description'] ?? (in_array('parking', $amenities) ? 'Parqueadero asignado' : null);
             $unit->storage = $amenities['storage_description'] ?? (in_array('storage', $amenities) ? 'Depósito asignado' : null);
@@ -114,13 +117,13 @@ class UnitController extends Controller
                 ->orderBy('full_name', 'asc');
         }]);
 
-        $unit->is_rented = \Illuminate\Support\Facades\DB::table('community_user')
+        $unit->is_rented = DB::table('community_user')
             ->where('community_id', $community->id)
             ->where('unit_id', $unit->id)
             ->whereIn('resident_role', ['tenant', 'inquilino'])
             ->exists();
 
-        $sponsorPivots = \Illuminate\Support\Facades\DB::table('community_user')
+        $sponsorPivots = DB::table('community_user')
             ->where('community_id', $community->id)
             ->where('unit_id', $unit->id)
             ->get()
@@ -136,7 +139,7 @@ class UnitController extends Controller
                 if ($sponsorId) {
                     $sponsorPivot = $sponsorPivots->get($sponsorId);
                     $sponsorRole = $sponsorPivot->resident_role ?? null;
-                    if (!$sponsorRole) {
+                    if (! $sponsorRole) {
                         $sponsorResident = $unit->residents->firstWhere('user_id', $sponsorId);
                         $sponsorRole = $sponsorResident ? $sponsorResident->resident_type->value : null;
                     }

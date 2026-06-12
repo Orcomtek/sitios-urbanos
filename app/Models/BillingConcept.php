@@ -9,6 +9,7 @@ class BillingConcept extends Model
 {
     protected $fillable = [
         'community_id',
+        'code',
         'name',
         'type',
         'is_commissionable',

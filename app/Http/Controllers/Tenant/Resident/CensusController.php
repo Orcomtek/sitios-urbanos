@@ -7,8 +7,10 @@ use App\Models\FamilyMember;
 use App\Models\Pet;
 use App\Models\Resident;
 use App\Models\Vehicle;
+use App\Services\TenantContext;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class CensusController extends Controller
@@ -17,7 +19,7 @@ class CensusController extends Controller
     {
         $resident = $this->getActiveResident();
 
-        if (!$resident) {
+        if (! $resident) {
             abort(403, 'No tienes un perfil de residente activo en esta comunidad.');
         }
 
@@ -38,7 +40,7 @@ class CensusController extends Controller
     {
         $resident = $this->getActiveResident();
 
-        if (!$resident) {
+        if (! $resident) {
             abort(403);
         }
 
@@ -61,7 +63,7 @@ class CensusController extends Controller
     {
         $resident = $this->getActiveResident();
 
-        if (!$resident || !in_array($familyMember->resident_id, $this->getHouseholdResidentIds($resident))) {
+        if (! $resident || ! in_array($familyMember->resident_id, $this->getHouseholdResidentIds($resident))) {
             abort(403);
         }
 
@@ -81,7 +83,7 @@ class CensusController extends Controller
     {
         $resident = $this->getActiveResident();
 
-        if (!$resident || !in_array($familyMember->resident_id, $this->getHouseholdResidentIds($resident))) {
+        if (! $resident || ! in_array($familyMember->resident_id, $this->getHouseholdResidentIds($resident))) {
             abort(403);
         }
 
@@ -94,7 +96,7 @@ class CensusController extends Controller
     {
         $resident = $this->getActiveResident();
 
-        if (!$resident) {
+        if (! $resident) {
             abort(403);
         }
 
@@ -117,7 +119,7 @@ class CensusController extends Controller
     {
         $resident = $this->getActiveResident();
 
-        if (!$resident || !in_array($vehicle->resident_id, $this->getHouseholdResidentIds($resident))) {
+        if (! $resident || ! in_array($vehicle->resident_id, $this->getHouseholdResidentIds($resident))) {
             abort(403);
         }
 
@@ -137,7 +139,7 @@ class CensusController extends Controller
     {
         $resident = $this->getActiveResident();
 
-        if (!$resident || !in_array($vehicle->resident_id, $this->getHouseholdResidentIds($resident))) {
+        if (! $resident || ! in_array($vehicle->resident_id, $this->getHouseholdResidentIds($resident))) {
             abort(403);
         }
 
@@ -150,7 +152,7 @@ class CensusController extends Controller
     {
         $resident = $this->getActiveResident();
 
-        if (!$resident) {
+        if (! $resident) {
             abort(403);
         }
 
@@ -172,7 +174,7 @@ class CensusController extends Controller
     {
         $resident = $this->getActiveResident();
 
-        if (!$resident || !in_array($pet->resident_id, $this->getHouseholdResidentIds($resident))) {
+        if (! $resident || ! in_array($pet->resident_id, $this->getHouseholdResidentIds($resident))) {
             abort(403);
         }
 
@@ -191,7 +193,7 @@ class CensusController extends Controller
     {
         $resident = $this->getActiveResident();
 
-        if (!$resident || !in_array($pet->resident_id, $this->getHouseholdResidentIds($resident))) {
+        if (! $resident || ! in_array($pet->resident_id, $this->getHouseholdResidentIds($resident))) {
             abort(403);
         }
 
@@ -202,7 +204,8 @@ class CensusController extends Controller
 
     private function getActiveResident()
     {
-        $community = app(\App\Services\TenantContext::class)->get();
+        $community = app(TenantContext::class)->get();
+
         return Resident::where('user_id', Auth::id())
             ->where('community_id', $community->id)
             ->active()
@@ -211,10 +214,10 @@ class CensusController extends Controller
 
     private function getHouseholdResidentIds(Resident $resident)
     {
-        $community = app(\App\Services\TenantContext::class)->get();
+        $community = app(TenantContext::class)->get();
         $user = Auth::user();
 
-        $pivot = \Illuminate\Support\Facades\DB::table('community_user')
+        $pivot = DB::table('community_user')
             ->where('community_id', $community->id)
             ->where('user_id', $user->id)
             ->where('unit_id', $resident->unit_id)
@@ -224,24 +227,24 @@ class CensusController extends Controller
         $householdUserIds = [$user->id];
 
         if (in_array($role, ['owner', 'propietario', 'tenant', 'inquilino'])) {
-            $sponsoredIds = \Illuminate\Support\Facades\DB::table('community_user')
+            $sponsoredIds = DB::table('community_user')
                 ->where('community_id', $community->id)
                 ->where('unit_id', $resident->unit_id)
                 ->where('invited_by_user_id', $user->id)
                 ->pluck('user_id')
                 ->toArray();
-            
+
             $householdUserIds = array_merge($householdUserIds, $sponsoredIds);
         } else {
             $sponsorId = $pivot->invited_by_user_id ?? null;
             if ($sponsorId) {
-                $sponsoredIds = \Illuminate\Support\Facades\DB::table('community_user')
+                $sponsoredIds = DB::table('community_user')
                     ->where('community_id', $community->id)
                     ->where('unit_id', $resident->unit_id)
                     ->where('invited_by_user_id', $sponsorId)
                     ->pluck('user_id')
                     ->toArray();
-                
+
                 $householdUserIds = array_merge([$sponsorId], $sponsoredIds);
             }
         }

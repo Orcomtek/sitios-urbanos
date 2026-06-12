@@ -4,6 +4,9 @@ import { computed, watch, ref } from 'vue';
 import Modal from '@/Components/Modal.vue';
 import { useToast } from '@/Composables/useToast';
 import axios from 'axios';
+import InputLabel from '@/Components/InputLabel.vue';
+import TextInput from '@/Components/TextInput.vue';
+import InputError from '@/Components/InputError.vue';
 
 const props = defineProps<{
     show: boolean;
@@ -24,6 +27,7 @@ const form = useForm({
     property_type: '',
     status: '',
     amenities: [] as string[],
+    coefficient: '1.0',
 });
 
 watch(() => props.show, async (newVal) => {
@@ -40,6 +44,7 @@ watch(() => props.show, async (newVal) => {
                 form.property_type = unit.property_type || '';
                 form.status = unit.status || '';
                 form.amenities = unit.amenities || [];
+                form.coefficient = unit.coefficient || '1.0';
             } catch (e) {
                 showToast('Error al cargar la unidad', 'error');
                 emit('close');
@@ -118,6 +123,24 @@ const close = () => {
                             </select>
                         </div>
                         <p v-if="form.errors.status" class="mt-2 text-sm text-red-600">{{ form.errors.status }}</p>
+                    </div>
+
+                    <div class="col-span-6 sm:col-span-4 mt-4">
+                        <InputLabel for="coefficient" value="Coeficiente de Copropiedad" />
+                        <TextInput
+                            id="coefficient"
+                            type="number"
+                            class="mt-1 block w-full"
+                            v-model="form.coefficient"
+                            required
+                            step="0.00001"
+                            min="0"
+                            max="100"
+                        />
+                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                            Use 1.0 para cuota plana, o el porcentaje decimal exacto (ej. 0.0534).
+                        </p>
+                        <InputError :message="form.errors.coefficient" class="mt-2" />
                     </div>
 
                     <div class="border-t border-gray-200 pt-6">

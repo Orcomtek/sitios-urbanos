@@ -38,6 +38,7 @@ class StoreUnitRequest extends FormRequest
             'status' => ['required', 'string', Rule::in(['occupied', 'available', 'maintenance'])],
             'amenities' => ['nullable', 'array'],
             'amenities.*' => ['string'],
+            'coefficient' => ['required', 'numeric', 'min:0', 'max:100'],
         ];
     }
 }

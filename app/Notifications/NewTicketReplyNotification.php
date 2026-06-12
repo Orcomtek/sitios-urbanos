@@ -2,12 +2,10 @@
 
 namespace App\Notifications;
 
+use App\Models\Ticket;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-
-use App\Models\Ticket;
 
 class NewTicketReplyNotification extends Notification
 {
@@ -52,7 +50,7 @@ class NewTicketReplyNotification extends Notification
         return [
             'ticket_id' => $this->ticket->id,
             'subject' => $this->ticket->subject,
-            'message' => 'Nueva respuesta en el ticket: ' . $this->ticket->subject,
+            'message' => 'Nueva respuesta en el ticket: '.$this->ticket->subject,
         ];
     }
 }

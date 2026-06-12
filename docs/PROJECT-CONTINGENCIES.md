@@ -267,5 +267,28 @@ The previous implementation (Contingency 11) successfully registered the unread 
 ### 🧠 Architectural Takeaway (RIGOR)
 **State vs. Payload Synchronization:** Supplying a boolean or count to a frontend component is insufficient if the component's internal logic relies on iterating through an object array. In TALL/Inertia architectures, backend payload mapping must strictly align with frontend prop expectations to prevent silent render failures.
 
+## CONTINGENCY-13: Unit Coefficient Field & Matrix Validation (Block 36 / 39 Bridge)
+
+### 📌 Status
+🚨 Pending Resolution (Critical Priority)
+
+### 📝 Problem Description
+During the design and validation of the Automated Billing Engine (Block 39.2), a structural gap was identified between the database schema and the User Interface (UI) in Block 36. The frontend form for "New Unit" / "Edit Unit" lacks the input field for the `coefficient` (Co-ownership Coefficient).
+
+Without this UI field, the tenant administrator cannot assign flat values (e.g., `1.0` for equal flat fees) or fractional values (e.g., `0.053` for strict HOA regulations). Consequently, the billing Cron Job will attempt to multiply the Base Budget by `null` or `0`, resulting in mass invoice generation with a $0 total.
+
+### 🎯 System Impact
+* **Block 39.2 (Cron Engine):** Critical failure in mathematical calculations (`Invoice Total = Base Budget * Unit Coefficient`).
+* **Tenant Financials:** High risk of accounting mismatch if the system does not enforce that the sum of all active unit coefficients within a community strictly equals `1.0` (100%) or the total unit count (for flat fee models).
+
+### 🛠️ Mitigation & Refactoring Plan
+
+**Phase 1: UI & Controller Patch (Block 36)**
+* **Frontend (`Unit/Create.vue` & `Edit.vue`):** Inject a `<TextInput type="number" step="0.00001">` labeled "Coeficiente de Copropiedad" beneath the status field.
+* **UX/UI:** Add a helper tooltip explaining: *"Use 1.0 for flat fee billing, or the exact decimal percentage (e.g., 0.05) per the HOA bylaws"*.
+* **Backend (`UnitController.php`):** Update the `store` and `update` methods to validate (`numeric|min:0`) and persist this field.
+
+**Phase 2: Business Logic & Financial Security (Matrix Validation)**
+* Implement a Community-level validation: The system must display a warning banner on the Admin Dashboard if the sum of all active unit coefficients deviates from `1.0` (or the total active units in flat models), preventing capital leakage prior to the execution of the Block 39.2 Cron Job.
 
 *Fin del Registro Activo.*
