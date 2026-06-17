@@ -136,6 +136,47 @@ const isActiveDashboard = computed(() => isActive(dashboardRouteName.value));
                                 />
                                 Mudanzas
                             </Link>
+
+                            <!-- DIRECT DOM INJECTION FOR LEDGER -->
+                            <Link
+                                v-if="group.title === 'Finanzas' && role !== 'resident'"
+                                :href="getRouteUrl('tenant.admin.financial.ledger.index')"
+                                class="group flex items-center rounded-md px-2 py-2 text-sm font-medium transition-colors"
+                                :class="isActive('tenant.admin.financial.ledger.index') 
+                                    ? 'bg-primary text-white hover:bg-primary/90' 
+                                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-slate-800 dark:hover:text-white'"
+                            >
+                                <CurrencyDollarIcon 
+                                    class="mr-3 h-5 w-5 flex-shrink-0"
+                                    :class="isActive('tenant.admin.financial.ledger.index') ? 'text-white' : 'text-gray-400 group-hover:text-gray-500 dark:group-hover:text-gray-300'"
+                                    aria-hidden="true" 
+                                />
+                                Cartera
+                            </Link>
+
+                        </div>
+                    </div>
+
+                    <!-- DIRECT DOM INJECTION FOR RESIDENT STATEMENT -->
+                    <div v-if="role === 'resident'">
+                        <h3 class="px-2 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2 mt-6">
+                            Finanzas
+                        </h3>
+                        <div class="space-y-1">
+                            <Link
+                                :href="getRouteUrl('tenant.resident.financial.statement.index')"
+                                class="group flex items-center rounded-md px-2 py-2 text-sm font-medium transition-colors"
+                                :class="isActive('tenant.resident.financial.statement.index') 
+                                    ? 'bg-primary text-white hover:bg-primary/90' 
+                                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-slate-800 dark:hover:text-white'"
+                            >
+                                <CurrencyDollarIcon 
+                                    class="mr-3 h-5 w-5 flex-shrink-0"
+                                    :class="isActive('tenant.resident.financial.statement.index') ? 'text-white' : 'text-gray-400 group-hover:text-gray-500 dark:group-hover:text-gray-300'"
+                                    aria-hidden="true" 
+                                />
+                                Mis Finanzas
+                            </Link>
                         </div>
                     </div>
                 </nav>

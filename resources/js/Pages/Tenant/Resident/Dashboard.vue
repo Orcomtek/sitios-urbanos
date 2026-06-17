@@ -108,69 +108,18 @@ const formatDate = (dateString) => {
                 <!-- Content State -->
                 <div v-else-if="data" class="space-y-6">
                     
-                    <!-- Finance Summary (Full width highlight) -->
-                    <div class="bg-gradient-to-r from-slate-50 to-emerald-50 border border-slate-100 rounded-lg shadow-sm">
-                        <div class="px-6 py-4 border-b border-slate-100">
-                            <h3 class="text-slate-900 text-lg font-medium">Resumen Financiero</h3>
+                    <!-- Financial Cockpit CTA -->
+                    <div class="bg-gradient-to-r from-slate-50 to-emerald-50 border border-slate-100 rounded-lg shadow-sm p-6 text-center sm:text-left sm:flex sm:items-center sm:justify-between">
+                        <div>
+                            <h3 class="text-slate-900 text-lg font-bold">Portal Financiero</h3>
+                            <p class="text-sm text-slate-700 mt-1">
+                                Revisa tu estado de cuenta, paga tus facturas y descarga tus certificados en el nuevo portal financiero.
+                            </p>
                         </div>
-                        <div class="px-6 py-4">
-                            <div class="flex flex-col sm:flex-row sm:items-center justify-between">
-                                <div>
-                                    <p class="text-sm text-slate-700 font-medium">Deuda Pendiente</p>
-                                    <p class="text-3xl font-bold text-slate-900">{{ formatCurrency(data.finance.pending_amount) }}</p>
-                                </div>
-                                <div class="mt-4 sm:mt-0 text-left sm:text-right">
-                                    <p class="text-sm text-slate-700 font-medium">Facturas Pendientes</p>
-                                    <p class="text-2xl font-semibold text-slate-800">{{ data.finance.pending_count }}</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Payment Feedback Message -->
-                    <div v-if="paymentMessage" class="bg-green-50 border-l-4 border-green-500 p-4 rounded-md shadow-sm">
-                        <p class="text-green-700 text-sm font-medium">{{ paymentMessage }}</p>
-                    </div>
-
-                    <!-- Pending Invoices List -->
-                    <div v-if="data.finance.recent_invoices && data.finance.recent_invoices.length > 0" class="bg-white border text-card-foreground rounded-lg shadow-sm border-gray-100">
-                        <div class="px-6 py-4 flex flex-col space-y-1.5 border-b border-gray-100 bg-gray-50/50">
-                            <h3 class="font-semibold leading-none tracking-tight">Tus Facturas</h3>
-                        </div>
-                        <div class="px-6 py-4">
-                            <ul class="space-y-4">
-                                <li v-for="invoice in data.finance.recent_invoices" :key="invoice.id" class="flex flex-col sm:flex-row sm:justify-between sm:items-center p-4 bg-gray-50 rounded-lg border border-gray-100">
-                                    <div class="mb-3 sm:mb-0">
-                                        <p class="font-semibold text-gray-900">{{ invoice.description || 'Factura de Administración' }}</p>
-                                        <p class="text-sm text-gray-500">
-                                            Vencimiento: {{ formatDate(invoice.due_date) }} 
-                                            <span v-if="invoice.unit" class="ml-2 font-medium">Unidad: {{ invoice.unit.unit_number }}</span>
-                                        </p>
-                                        <p class="text-lg font-bold text-gray-900 mt-1">{{ formatCurrency(invoice.amount) }}</p>
-                                    </div>
-                                    <div class="flex items-center space-x-3">
-                                        <span class="px-2 py-1 text-xs rounded-full font-medium" :class="{
-                                            'bg-yellow-100 text-yellow-800': invoice.status === 'pending',
-                                            'bg-green-100 text-green-800': invoice.status === 'paid'
-                                        }">
-                                            {{ invoice.status === 'pending' ? 'Pendiente' : (invoice.status === 'paid' ? 'Pagada' : invoice.status) }}
-                                        </span>
-                                        <button 
-                                            v-if="invoice.status === 'pending'"
-                                            @click="payInvoice(invoice.id)" 
-                                            :disabled="processingPayment === invoice.id"
-                                            class="inline-flex items-center px-4 py-2 bg-emerald-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-emerald-700 focus:bg-emerald-700 active:bg-emerald-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition ease-in-out duration-150 disabled:opacity-50 gap-2"
-                                        >
-                                            <svg v-if="processingPayment === invoice.id" class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                            </svg>
-                                            <span v-else>Pagar</span>
-                                            <span v-if="processingPayment === invoice.id">Procesando...</span>
-                                        </button>
-                                    </div>
-                                </li>
-                            </ul>
+                        <div class="mt-4 sm:mt-0 sm:ml-4">
+                            <Link :href="route('tenant.resident.financial.statement.index', { community_slug: communitySlug })" class="inline-flex items-center px-4 py-2 bg-emerald-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-emerald-700 focus:bg-emerald-700 active:bg-emerald-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition ease-in-out duration-150 whitespace-nowrap">
+                                Ir a mi Estado de Cuenta
+                            </Link>
                         </div>
                     </div>
 

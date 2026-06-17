@@ -13,6 +13,8 @@ use App\Http\Controllers\Tenant\Admin\Core\UnitController;
 use App\Http\Controllers\Tenant\Admin\Core\UnitGeneratorController;
 use App\Http\Controllers\Tenant\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Tenant\Admin\Ecosystem\ProviderController as AdminProviderController;
+use App\Http\Controllers\Tenant\Admin\Financial\BillingConceptController;
+use App\Http\Controllers\Tenant\Admin\Financial\LedgerController;
 use App\Http\Controllers\Tenant\Admin\Financial\SettingController;
 use App\Http\Controllers\Tenant\Admin\Governance\TicketController as AdminTicketController;
 use App\Http\Controllers\Tenant\Admin\Security\RadarController;
@@ -24,6 +26,7 @@ use App\Http\Controllers\Tenant\Resident\Core\OperationController;
 use App\Http\Controllers\Tenant\Resident\DashboardController as ResidentDashboardController;
 use App\Http\Controllers\Tenant\Resident\Ecosystem\EcosystemController;
 use App\Http\Controllers\Tenant\Resident\Ecosystem\ProviderController as ResidentProviderController;
+use App\Http\Controllers\Tenant\Resident\Financial\StatementController;
 use App\Http\Controllers\Tenant\Resident\Governance\PollController;
 use App\Http\Controllers\Tenant\Resident\MoveRequestController;
 use App\Http\Controllers\Tenant\Resident\TicketController;
@@ -126,8 +129,14 @@ Route::domain('{community_slug}.'.$centralDomain)
                 });
 
                 Route::prefix('financial')->name('financial.')->group(function () {
+                    Route::get('/ledger', [LedgerController::class, 'index'])->name('ledger.index');
+                    Route::post('/ledger/{unit}/payment', [LedgerController::class, 'storePayment'])->name('ledger.payment.store');
+                    Route::post('/ledger/{unit}/adjustment', [LedgerController::class, 'storeAdjustment'])->name('ledger.adjustment.store');
+
                     Route::get('/settings', [SettingController::class, 'edit'])->name('settings.edit');
                     Route::put('/settings', [SettingController::class, 'update'])->name('settings.update');
+                    Route::post('/settings/concepts', [BillingConceptController::class, 'store'])->name('settings.concepts.store');
+                    Route::delete('/settings/concepts/{concept}', [BillingConceptController::class, 'destroy'])->name('settings.concepts.destroy');
                 });
             });
 
@@ -181,6 +190,12 @@ Route::domain('{community_slug}.'.$centralDomain)
                 Route::get('/', [AccessController::class, 'index'])->name('index');
                 Route::post('/', [AccessController::class, 'store'])->name('store');
                 Route::delete('/{sponsoredUser}', [AccessController::class, 'revoke'])->name('revoke');
+            });
+
+            Route::prefix('financial')->name('financial.')->group(function () {
+                Route::get('/statement', [StatementController::class, 'index'])->name('statement.index');
+                Route::get('/statement/invoice/{invoice}/download', [StatementController::class, 'downloadInvoice'])->name('statement.invoice.download');
+                Route::get('/statement/paz-y-salvo/download', [StatementController::class, 'downloadPazYSalvo'])->name('statement.paz-y-salvo.download');
             });
         });
     });

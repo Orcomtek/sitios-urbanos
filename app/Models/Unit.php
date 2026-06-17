@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Models\Financial\FinancialAdjustment;
+use App\Models\Financial\Invoice;
 use App\Models\Traits\TenantScoped;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -45,5 +47,29 @@ class Unit extends Model
     public function residents(): HasMany
     {
         return $this->hasMany(Resident::class);
+    }
+
+    /**
+     * @return HasMany<Invoice, $this>
+     */
+    public function invoices(): HasMany
+    {
+        return $this->hasMany(Invoice::class);
+    }
+
+    /**
+     * @return HasMany<Payment, $this>
+     */
+    public function payments(): HasMany
+    {
+        return $this->hasMany(Payment::class);
+    }
+
+    /**
+     * @return HasMany<FinancialAdjustment, $this>
+     */
+    public function financialAdjustments(): HasMany
+    {
+        return $this->hasMany(FinancialAdjustment::class);
     }
 }

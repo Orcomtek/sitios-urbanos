@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Tenant\Admin\Financial;
 
 use App\Http\Controllers\Controller;
+use App\Models\BillingConcept;
 use App\Models\Community;
 use App\Models\FinancialSetting;
 use Illuminate\Http\Request;
@@ -24,8 +25,11 @@ class SettingController extends Controller
             ]
         );
 
+        $billingConcepts = BillingConcept::where('community_id', $community->id)->get();
+
         return Inertia::render('Tenant/Admin/Financial/Settings/Edit', [
             'settings' => $settings,
+            'billingConcepts' => $billingConcepts,
         ]);
     }
 

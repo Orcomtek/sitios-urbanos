@@ -42,12 +42,12 @@ class CreatePaymentAttemptAction
 
         $commission = 0;
         if ($commissionType === 'percentage') {
-            $commission = (int) round($invoice->amount * ($commissionValue / 100));
+            $commission = (int) round($invoice->total * ($commissionValue / 100));
         } else {
             $commission = (int) $commissionValue;
         }
 
-        $netAmount = $invoice->amount - $commission;
+        $netAmount = $invoice->total - $commission;
 
         if ($netAmount < 0) {
             $netAmount = 0; // Prevent negative net amounts if commission is unusually high
@@ -60,7 +60,7 @@ class CreatePaymentAttemptAction
             'unit_id' => $invoice->unit_id,
             'invoice_id' => $invoice->id,
             'method' => PaymentMethod::INTERNAL_EPAYCO,
-            'amount' => $invoice->amount,
+            'amount' => $invoice->total,
             'platform_commission' => $commission,
             'net_amount' => $netAmount,
             'idempotency_key' => $idempotencyKey,

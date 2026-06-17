@@ -2,8 +2,8 @@
 
 namespace App\Models\Financial;
 
-use App\Models\Core\Community;
-use App\Models\Core\Unit;
+use App\Models\Community;
+use App\Models\Unit;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -54,6 +54,11 @@ class Invoice extends Model
     public function items(): HasMany
     {
         return $this->hasMany(InvoiceItem::class);
+    }
+
+    public function payments(): HasMany
+    {
+        return $this->hasMany(\App\Models\Payment::class);
     }
 
     /**

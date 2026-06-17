@@ -2060,54 +2060,75 @@ Cimentación de la infraestructura contable y la base de datos inteligente para 
 * **Dual UX Feedback System:** Implementación de persistencia redundante de interacción. Inyección simultánea de micro-feedback local reactivo (`form.recentlySuccessful`) al pie del botón de acción y disparo síncrono del componente global superior derecho (*Toast Notification*) mediante sesiones *flash* desde el controlador de Laravel.
 
 ### 📌 BLOCK 39.2 — Motor de Facturación Recurrente Automatizada (Cron Engine)
-**Estado: Pendiente**
+**Estado: ✅ Resuelto**
 * **Cálculo por Coeficiente:** Worker de segundo plano programado para ejecutarse el día parametrizado (ej. el 1 de cada mes). Evalúa de forma matemática el presupuesto base asignado a la comunidad y lo distribuye de forma exacta multiplicándolo por la matriz de coeficientes de cada `Unit` (proveniente del Bloque 36).
 * **Emisión Masiva de Inmuebles:** Generación automática de registros en las tablas de `Invoices` e `InvoiceItems`, bloqueando mutaciones no autorizadas una vez emitidos.
 * **Validaciones Antiduplicación:** Implementación de candados de idempotencia basados en llaves compuestas `(community_id, unit_id, billing_period)` para evitar dobles cobros en ejecuciones concurrentes del comando.
 
-### 📌 BLOCK 39.3 — Gestión de Saldos, Notas Contables y Recaudos Manuales
-**Estado: Pendiente**
-* **Asentamiento Manual:** Formulario de alta velocidad para que el guarda o el administrador carguen transferencias bancarias directas, efectivo o cheques, actualizando el balance general al instante.
-* **Notas de Crédito y Débito:** Mecanismo contable para aplicar saldos a favor (crédito por excedentes o correcciones) o cobros esporádicos (débito por multas de convivencia o daños a propiedad horizontal).
-* **Trazabilidad de Auditoría:** Registro obligatorio del campo `processed_by` vinculando al administrador en sesión para cada ajuste financiero manual, previniendo fraudes internos.
 
-### 📌 BLOCK 39.4 — Plano Financiero del Residente (El Cockpit)
-**Estado: Pendiente**
-* **Widget de Estado de Cuenta:** Módulo visual en el panel del residente que expone en tiempo real el balance neto (Saldo en Contra, Cuenta al Día, o Saldo a Favor).
-* **Historial de Facturación:** Lista cronológica con opciones dinámicas de descarga.
-* **Generación de Certificados:** Botones de descarga asíncrona que invocan el motor de `Browsershot` para exportar Facturas de Venta detalladas y Certificados de Paz y Salvo con firmas digitales registradas por la administración.
+## 📌 MODULE 39: ADVANCED FINANCIAL ARCHITECTURE (PHASES 39.3 & 39.4)
+
+### Status
+✅ Resuelto
+✅ 16-06-2026
+
+### 39.3 — Balance Management, Accounting Notes, and Manual Settlements
+* **High-Velocity Manual Settlement:** An optimized administrative ledger interface enabling guards or community administrators to input direct bank transfers, cash payments, or physical checks, triggering immediate real-time balance sheet recalculations.
+* **Credit & Debit Accounting Notes:** A formal ledger adjustment mechanism to apply positive balances (credits for overpayments, adjustments, or waivers) or sporadic manual charges (debits for community fines, behavioral penalties, or physical damage to co-ownership common areas).
+* **Immutable Audit Trail:** Mandatory schema enforcement requiring a `processed_by` foreign key linking every single manual modification or settlement directly to the authenticated administrative user session, mitigating internal accounting fraud vectors.
+
+### 39.4 — Resident Financial Cockpit & Asynchronous Export Engine
+* **Real-Time Net Balance Widget:** A reactive consumer dashboard component exposing the immediate net financial status of a specific unit (Outstanding Debt, Account Fully Settled, or Positive Credit Balance).
+* **Chronological Ledger Grid:** A paginated, tabular historical layout tracking all invoices, manual adjustments, and verified payments tied to the unit.
+* **Asynchronous Certificate Generation:** On-demand document rendering utilizing a headless Chrome microservice (`spatie/browsershot`) to compile and export pixel-perfect, legally binding Invoice PDF Statements and Clear Account Certificates ("Certificados de Paz y Salvo") embedding pre-registered digital signatures.
 
 ---
 
-## 📊 Especificación de Base de Datos (Estructuras de Datos Core)
+## 📊 Database Schema Refinement (Ledger & Adjustment Extensions)
 
-### Tabla: `financial_settings`
-
-```sql
-CREATE TABLE financial_settings (
-    id BIGSERIAL PRIMARY KEY,
-    community_id BIGINT UNIQUE NOT NULL REFERENCES communities(id) ON DELETE CASCADE,
-    base_budget DECIMAL(15, 2) NOT NULL, -- Presupuesto mensual/anual aprobado
-    late_fee_interest_rate DECIMAL(5, 2) DEFAULT 0.00, -- Tasa de interés moratorio mensual
-    billing_day INT DEFAULT 1, -- Día del mes donde corre el cron de emisión
-    due_day INT DEFAULT 10, -- Día límite de pago antes de mora
-    bank_account_details JSONB NULL, -- Cuentas para recaudo tradicional manual
-    created_at TIMESTAMP WITHOUT TIME ZONE,
-    updated_at TIMESTAMP WITHOUT TIME ZONE
+### 1. Table: `payments`
+Tracks all incoming capital flows settled manually by administration or automatically via payment gateways.
+``` sql
+CREATE TABLE payments (
+    id UUID PRIMARY KEY,
+    community_id BIGINT NOT NULL REFERENCES communities(id) ON DELETE CASCADE,
+    unit_id BIGINT NOT NULL REFERENCES units(id) ON DELETE CASCADE,
+    invoice_id UUID NULL REFERENCES invoices(id) ON DELETE SET NULL,
+    amount DECIMAL(15, 2) NOT NULL,
+    payment_method VARCHAR(50) NOT NULL, -- 'cash', 'bank_transfer', 'check', 'gateway'
+    reference_number VARCHAR(255) NULL,   -- Transaction hash, voucher ID, or check number
+    processed_by BIGINT NOT NULL REFERENCES users(id), -- Mandatory Audit Core
+    created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    deleted_at TIMESTAMP WITHOUT TIME ZONE NULL
 );
+CREATE INDEX idx_payments_community_unit ON payments(community_id, unit_id);
+```
 
-### Tabla: billing_concepts
-
-CREATE TABLE billing_concepts (
-    id BIGSERIAL PRIMARY KEY,
-    community_id BIGINT NULL REFERENCES communities(id) ON DELETE CASCADE, -- NULL indica concepto global de SU
-    name VARCHAR(255) NOT NULL,
-    type VARCHAR(50) NOT NULL, -- 'recurring_hoa', 'extraordinary', 'fine', 'amenity_rental', 'marketplace_subscription', 'provider_membership'
-    is_commissionable BOOLEAN DEFAULT FALSE, -- Determina si SU procesa Take-Rate vía pasarela
-    is_active BOOLEAN DEFAULT TRUE,
-    created_at TIMESTAMP WITHOUT TIME ZONE,
-    updated_at TIMESTAMP WITHOUT TIME ZONE
+2. Table: financial_adjustments
+Handles non-standard accounting entries (Credit Notes for balances in favor, Debit Notes for administrative penalties).
+``` sql
+CREATE TABLE financial_adjustments (
+    id UUID PRIMARY KEY,
+    community_id BIGINT NOT NULL REFERENCES communities(id) ON DELETE CASCADE,
+    unit_id BIGINT NOT NULL REFERENCES units(id) ON DELETE CASCADE,
+    billing_concept_id BIGINT NOT NULL REFERENCES billing_concepts(id) ON DELETE CASCADE,
+    type VARCHAR(20) NOT NULL, -- 'credit', 'debit'
+    amount DECIMAL(15, 2) NOT NULL,
+    description VARCHAR(500) NOT NULL,
+    processed_by BIGINT NOT NULL REFERENCES users(id), -- Mandatory Audit Core
+    created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    deleted_at TIMESTAMP WITHOUT TIME ZONE NULL
 );
+CREATE INDEX idx_adjustments_composite ON financial_adjustments(community_id, unit_id, type);
+```
+
+## 🏗️ Mathematical Consistency & Verification Rules
+To determine the accurate financial state of any given unit inside the multi-tenant scope, the accounting engine must enforce the following dynamic balance aggregation at the repository layer:
+$$\text{Net Balance} = \sum(\text{Invoices Total}) + \sum(\text{Debit Notes}) - \sum(\text{Payments}) - \sum(\text{Credit Notes})$$
+Condition Net Balance > 0: Account In Arrears (Restricts generation of clearance certificates).
+Condition Net Balance <= 0: Account Is Clear / In Credit (Permits automatic generation of signed "Paz y Salvo" documents via Browsershot).
 
 
 ## BLOCK 40 — Payment Gateway & Split Engine (ePayco)
@@ -2226,16 +2247,17 @@ The global dashboard for Orcomtek. Now that the entire system operates, this blo
 *   **SaaS Tiers & Subscriptions:** Creation of billing plans (Base, Pro, Elite) that lock or enable specific modules (e.g., Marketplace or RAG) for each community.
 *   **Tenant Feature Overrides:** Commercial negotiation module to configure exceptions (e.g., custom gateway commission % or extra free SMS) per building. Emergency suspension button for SaaS non-payment.
 
-## BLOCK 49 — Master UI/UX, Omnichannel & Demo Data Pack
+## BLOCK 49 — Master UI/UX, White-Label Engine & Demo Data Pack
 
 ### Status
 ⏳ Pending
 
 ### Description
-The final polish. Transforms the MVP into an Enterprise product ready for corporate sales, high-impact demonstrations, and production deployment.
+The final polish. Transforms the MVP into an Enterprise product ready for corporate sales, dynamic tenant branding, high-impact demonstrations, and production deployment.
 
 **Scope & Execution Details:**
-*   **Total Visual Refinement:** Audit of "Quiet Luxury", Bento Grids, micro-interactions, and Empty States across all control planes.
-*   **Asynchronous Omnichannel Engine:** Final activation of Redis Workers to dispatch SMS (AWS SNS), mass emails, and Push Notifications under *Fair Use* rules.
-*   **Idempotent Seeders (Demo Pack):** Suite for generating fake data that creates complete communities (units, debts, residents, histories, and votes) in seconds for QA testing and flawless sales demos.
-*   **Production Hardening:** Strict configuration of CORS, API Rate Limiting, automated database backups, and concurrency tuning in Laravel Reverb.
+* **White-Label & Tenant Customization:** Development of the "Branding" settings interface. Allows each Tenant Admin to upload their community logo, define a primary HEX brand color (overriding the default SaaS palette locally), and configure dynamic legal text (NIT, Billing Resolutions) for PDF footers and Email templates.
+* **Total Visual Refinement:** Audit of "Quiet Luxury", Bento Grids, micro-interactions, and Empty States across all control planes.
+* **Asynchronous Omnichannel Engine:** Final activation of Redis Workers to dispatch SMS (AWS SNS), mass emails, and Push Notifications under *Fair Use* rules.
+* **Idempotent Seeders (Demo Pack):** Suite for generating fake data that creates complete communities (units, debts, residents, histories, and votes) in seconds for QA testing and flawless sales demos.
+* **Production Hardening:** Strict configuration of CORS, API Rate Limiting, automated database backups, and concurrency tuning in Laravel Reverb.
