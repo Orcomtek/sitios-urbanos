@@ -30,10 +30,10 @@ class StatementController extends Controller
                 $q->with('payments')->orderBy('created_at', 'desc');
             },
             'payments' => function ($q) {
-                $q->orderBy('created_at', 'desc');
+                $q->with('invoice:id,invoice_number,billing_period')->orderBy('created_at', 'desc');
             },
             'financialAdjustments' => function ($q) {
-                $q->orderBy('created_at', 'desc');
+                $q->with(['billingConcept:id,name', 'invoice:id,invoice_number,billing_period'])->orderBy('created_at', 'desc');
             },
         ])->findOrFail($unitId);
 
@@ -48,7 +48,20 @@ class StatementController extends Controller
             if ($paidAmount >= $invoice->total) {
                 $invoice->status = 'paid';
             }
+            $invoice->created_at_formatted = $invoice->created_at ? $invoice->created_at->timezone(config('app.timezone'))->format('d/m/Y') : null;
         }
+
+        $unit->payments->transform(function ($payment) {
+            $payment->created_at_formatted = $payment->created_at ? $payment->created_at->timezone(config('app.timezone'))->format('d/m/Y') : null;
+
+            return $payment;
+        });
+
+        $unit->financialAdjustments->transform(function ($adj) {
+            $adj->created_at_formatted = $adj->created_at ? $adj->created_at->timezone(config('app.timezone'))->format('d/m/Y') : null;
+
+            return $adj;
+        });
 
         $netBalance = $calculateBalanceAction->execute($unit);
         $unit->net_balance = $netBalance;
@@ -69,7 +82,7 @@ class StatementController extends Controller
 
         return response($pdfBinary, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'attachment; filename="Factura-' . $invoice->id . '.pdf"',
+            'Content-Disposition' => 'attachment; filename="Factura-'.$invoice->id.'.pdf"',
         ]);
     }
 
@@ -90,9 +103,10 @@ class StatementController extends Controller
 
         try {
             $pdfBinary = $pdfService->generatePazYSalvoPdf($unit);
+
             return response($pdfBinary, 200, [
                 'Content-Type' => 'application/pdf',
-                'Content-Disposition' => 'attachment; filename="PazYSalvo-' . ($unit->identifier ?? $unit->id) . '.pdf"',
+                'Content-Disposition' => 'attachment; filename="PazYSalvo-'.($unit->identifier ?? $unit->id).'.pdf"',
             ]);
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());

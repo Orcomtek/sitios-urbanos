@@ -68,4 +68,27 @@ class BrowsershotPdfService
             ->margins(10, 10, 10, 10)
             ->pdf();
     }
+
+    /**
+     * Generate a Statement of Account PDF.
+     *
+     * @return string The raw PDF binary string
+     */
+    public function generateStatementPdf(Unit $unit, float|int $netBalance): string
+    {
+        $unit->load('community');
+
+        $html = view('pdf.financial.statement', [
+            'unit' => $unit,
+            'netBalance' => $netBalance,
+            'date' => now(),
+        ])->render();
+
+        return Browsershot::html($html)
+            ->setNodeBinary(env('NODE_BINARY_PATH', '/usr/local/bin/node'))
+            ->setNpmBinary(env('NPM_BINARY_PATH', '/usr/local/bin/npm'))
+            ->format('Letter')
+            ->margins(10, 10, 10, 10)
+            ->pdf();
+    }
 }

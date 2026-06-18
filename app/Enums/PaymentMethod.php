@@ -9,4 +9,5 @@ enum PaymentMethod: string
     case CASH = 'cash';
     case CHECK = 'check';
     case POS_TERMINAL = 'pos_terminal';
+    case MANUAL_OFFICE = 'manual_office';
 }

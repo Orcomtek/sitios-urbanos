@@ -4,6 +4,7 @@ namespace App\Models\Financial;
 
 use App\Models\BillingConcept;
 use App\Models\Community;
+use App\Models\Invoice;
 use App\Models\Traits\TenantScoped;
 use App\Models\Unit;
 use App\Models\User;
@@ -37,5 +38,10 @@ class FinancialAdjustment extends Model
     public function processor(): BelongsTo
     {
         return $this->belongsTo(User::class, 'processed_by');
+    }
+
+    public function invoice(): BelongsTo
+    {
+        return $this->belongsTo(Invoice::class);
     }
 }

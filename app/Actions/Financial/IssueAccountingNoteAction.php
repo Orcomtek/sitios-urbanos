@@ -24,6 +24,7 @@ class IssueAccountingNoteAction
                 'type' => $data['type'], // 'credit' or 'debit'
                 'amount' => $data['amount'],
                 'billing_concept_id' => $data['billing_concept_id'],
+                'invoice_id' => $data['invoice_id'] ?? null,
                 'description' => $data['description'],
                 'processed_by' => $processorId,
             ]);

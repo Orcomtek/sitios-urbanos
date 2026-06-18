@@ -78,9 +78,9 @@ const adjustmentTypeMap: Record<string, string> = {
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
                             <tr v-for="invoice in props.unit.invoices" :key="invoice.id">
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">#{{ invoice.id.substring(0, 8) }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ invoice.invoice_number ? '#' + invoice.invoice_number : '#' + invoice.id.substring(0, 8) }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ invoice.billing_period || '-' }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ new Date(invoice.created_at).toLocaleDateString('es-CO') }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ invoice.created_at_formatted || new Date(invoice.created_at).toLocaleDateString('es-CO') }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm">
                                     <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full" :class="(invoice.status === 'paid' || props.unit.net_balance <= 0) ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'">
                                         {{ (invoice.status === 'paid' || props.unit.net_balance <= 0) ? 'Pagada' : 'Pendiente' }}
@@ -112,19 +112,23 @@ const adjustmentTypeMap: Record<string, string> = {
                         <thead class="bg-gray-50">
                             <tr>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Referencia / Factura</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
-                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Monto</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">PERIODO</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">FACTURA</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">FECHA</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ESTADO</th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">MONTO</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
                             <tr v-for="payment in props.unit.payments" :key="payment.id">
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">#{{ payment.id.toString().substring(0, 8) }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    {{ payment.invoice_id ? 'Factura #' + payment.invoice_id.toString().substring(0, 8) : '-' }}
+                                    {{ payment.invoice ? payment.invoice.billing_period : '-' }}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ new Date(payment.created_at).toLocaleDateString('es-CO') }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    {{ payment.invoice ? '#' + (payment.invoice.invoice_number ?? payment.invoice.id.toString().substring(0,8)) : 'Abono General' }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ payment.created_at_formatted || new Date(payment.created_at).toLocaleDateString('es-CO') }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm">
                                     <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
                                         {{ statusMap[payment.status] || payment.status }}
@@ -146,20 +150,24 @@ const adjustmentTypeMap: Record<string, string> = {
                         <thead class="bg-gray-50">
                             <tr>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Periodo / Factura</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Descripción</th>
-                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Monto</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">PERIODO</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">FACTURA</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">FECHA</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">TIPO</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">DESCRIPCIÓN</th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">MONTO</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
                             <tr v-for="adj in props.unit.financial_adjustments" :key="adj.id">
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">#{{ adj.id.toString().substring(0, 8) }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    {{ adj.billing_period || (adj.invoice_id ? 'Factura #' + adj.invoice_id.toString().substring(0, 8) : '-') }}
+                                    {{ adj.invoice ? adj.invoice.billing_period : '-' }}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ new Date(adj.created_at).toLocaleDateString('es-CO') }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    {{ adj.invoice ? '#' + (adj.invoice.invoice_number ?? adj.invoice.id.toString().substring(0,8)) : 'Abono General' }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ adj.created_at_formatted || new Date(adj.created_at).toLocaleDateString('es-CO') }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm">
                                     <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full" :class="adj.type === 'credit' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'">
                                         {{ adjustmentTypeMap[adj.type] || adj.type }}

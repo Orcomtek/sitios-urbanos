@@ -132,6 +132,7 @@ Route::domain('{community_slug}.'.$centralDomain)
                     Route::get('/ledger', [LedgerController::class, 'index'])->name('ledger.index');
                     Route::post('/ledger/{unit}/payment', [LedgerController::class, 'storePayment'])->name('ledger.payment.store');
                     Route::post('/ledger/{unit}/adjustment', [LedgerController::class, 'storeAdjustment'])->name('ledger.adjustment.store');
+                    Route::get('/ledger/{unit}/statement/download', [LedgerController::class, 'downloadStatement'])->name('ledger.statement.download');
 
                     Route::get('/settings', [SettingController::class, 'edit'])->name('settings.edit');
                     Route::put('/settings', [SettingController::class, 'update'])->name('settings.update');

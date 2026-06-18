@@ -18,6 +18,7 @@ class StoreAccountingNoteRequest extends FormRequest
             'type' => ['required', 'in:credit,debit'],
             'billing_concept_id' => ['required', 'exists:billing_concepts,id'],
             'description' => ['required', 'string', 'max:500'],
+            'invoice_id' => ['nullable', 'exists:invoices,id'],
         ];
     }
 }
