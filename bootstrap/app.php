@@ -31,6 +31,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
         then: function () {
             require __DIR__.'/../routes/tenant.php';
+            require __DIR__.'/../routes/webhooks.php';
         }
     )
     ->withMiddleware(function (Middleware $middleware): void {

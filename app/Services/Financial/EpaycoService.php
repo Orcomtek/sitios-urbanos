@@ -9,8 +9,8 @@ class EpaycoService
      */
     public function generateSignature(array $data): string
     {
-        $p_cust_id_cliente = config('services.epayco.p_cust_id_cliente');
-        $p_key = config('services.epayco.p_key');
+        $p_cust_id_cliente = config('epayco.p_cust_id_cliente');
+        $p_key = config('epayco.p_key');
 
         $x_ref_payco = $data['x_ref_payco'] ?? '';
         $x_transaction_id = $data['x_transaction_id'] ?? '';
