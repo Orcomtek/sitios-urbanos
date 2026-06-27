@@ -19,10 +19,10 @@ class TenantRoleTest extends TestCase
         $communityAdmin = Community::factory()->create();
         $communityResident = Community::factory()->create();
 
-        $user->communities()->attach($communityAdmin->id, ['role' => CommunityRole::Admin]);
+        $user->communities()->attach($communityAdmin->id, ['role' => CommunityRole::TenantAdmin]);
         $user->communities()->attach($communityResident->id, ['role' => CommunityRole::Resident]);
 
-        $this->assertEquals(CommunityRole::Admin, $user->roleInCommunity($communityAdmin));
+        $this->assertEquals(CommunityRole::TenantAdmin, $user->roleInCommunity($communityAdmin));
         $this->assertEquals(CommunityRole::Resident, $user->roleInCommunity($communityResident));
     }
 
@@ -35,9 +35,9 @@ class TenantRoleTest extends TestCase
 
         $this->assertTrue($user->hasRoleInCommunity($community, CommunityRole::Guard));
         $this->assertTrue($user->hasRoleInCommunity($community, 'guard'));
-        $this->assertFalse($user->hasRoleInCommunity($community, CommunityRole::Admin));
-        $this->assertFalse($user->hasRoleInCommunity($community, 'admin', 'resident'));
-        $this->assertTrue($user->hasRoleInCommunity($community, 'admin', 'guard'));
+        $this->assertFalse($user->hasRoleInCommunity($community, CommunityRole::TenantAdmin));
+        $this->assertFalse($user->hasRoleInCommunity($community, 'tenant_admin', 'resident'));
+        $this->assertTrue($user->hasRoleInCommunity($community, 'tenant_admin', 'guard'));
     }
 
     public function test_role_is_returned_null_if_user_not_in_community()

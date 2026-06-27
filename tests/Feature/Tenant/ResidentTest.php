@@ -10,7 +10,7 @@ use App\Models\User;
 it('can list residents in tenant context', function () {
     $user = User::factory()->create();
     $community = Community::factory()->create();
-    $user->communities()->attach($community, ['role' => 'admin', 'unit_id' => null]);
+    $user->communities()->attach($community, ['role' => 'tenant_admin', 'unit_id' => null]);
     $unit = Unit::factory()->create(['community_id' => $community->id]);
     // Create residents with their own units so they don't violate the DB partial index
     Resident::factory()->count(3)->create(['community_id' => $community->id]);
@@ -28,7 +28,7 @@ it('cannot see residents from another community', function () {
     $user = User::factory()->create();
     $community1 = Community::factory()->create();
     $community2 = Community::factory()->create();
-    $user->communities()->attach($community1, ['role' => 'admin', 'unit_id' => null]);
+    $user->communities()->attach($community1, ['role' => 'tenant_admin', 'unit_id' => null]);
 
     $unit2 = Unit::factory()->create(['community_id' => $community2->id]);
     Resident::factory()->create(['community_id' => $community2->id, 'unit_id' => $unit2->id]);
@@ -46,7 +46,7 @@ it('cannot assign resident to a unit from another community', function () {
     $user = User::factory()->create();
     $community1 = Community::factory()->create();
     $community2 = Community::factory()->create();
-    $user->communities()->attach($community1, ['role' => 'admin', 'unit_id' => null]);
+    $user->communities()->attach($community1, ['role' => 'tenant_admin', 'unit_id' => null]);
 
     $unit2 = Unit::factory()->create(['community_id' => $community2->id]);
 
@@ -64,7 +64,7 @@ it('cannot assign resident to a unit from another community', function () {
 it('can create resident', function () {
     $user = User::factory()->create();
     $community = Community::factory()->create();
-    $user->communities()->attach($community, ['role' => 'admin', 'unit_id' => null]);
+    $user->communities()->attach($community, ['role' => 'tenant_admin', 'unit_id' => null]);
     $unit = Unit::factory()->create(['community_id' => $community->id]);
 
     $response = $this->actingAs($user)->post(route('tenant.admin.core.residents.store', ['community_slug' => $community->slug]), [
@@ -86,7 +86,7 @@ it('can create resident', function () {
 it('route bindings protect cross-tenant resident updates', function () {
     $user = User::factory()->create();
     $community1 = Community::factory()->create();
-    $user->communities()->attach($community1, ['role' => 'admin', 'unit_id' => null]);
+    $user->communities()->attach($community1, ['role' => 'tenant_admin', 'unit_id' => null]);
 
     $community2 = Community::factory()->create();
     $unit2 = Unit::factory()->create(['community_id' => $community2->id]);

@@ -14,7 +14,7 @@ it('requires authentication to view units', function () {
 it('lists units for the active community', function () {
     $community = Community::factory()->create();
     $user = User::factory()->create();
-    $community->users()->attach($user, ['role' => 'admin']);
+    $community->users()->attach($user, ['role' => 'tenant_admin']);
 
     $unit = Unit::factory()->create(['community_id' => $community->id]);
     $otherUnit = Unit::factory()->create(); // Belongs to a different community boundary
@@ -29,14 +29,14 @@ it('lists units for the active community', function () {
 it('can store a new unit with strict tenant binding', function () {
     $community = Community::factory()->create();
     $user = User::factory()->create();
-    $community->users()->attach($user, ['role' => 'admin']);
+    $community->users()->attach($user, ['role' => 'tenant_admin']);
 
     $payload = [
         'identifier' => 'Torre A Apto 101',
         'property_type' => 'apartment',
         'status' => 'available',
-        'has_parking' => false,
-        'has_storage' => false,
+        'amenities' => [],
+        'coefficient' => 1.0,
     ];
 
     $this->actingAs($user)
@@ -53,7 +53,7 @@ it('can store a new unit with strict tenant binding', function () {
 it('strictly validates identifier uniqueness per tenant', function () {
     $community = Community::factory()->create();
     $user = User::factory()->create();
-    $community->users()->attach($user, ['role' => 'admin']);
+    $community->users()->attach($user, ['role' => 'tenant_admin']);
 
     // Seed existing
     Unit::factory()->create(['community_id' => $community->id, 'identifier' => '101']);
@@ -62,8 +62,8 @@ it('strictly validates identifier uniqueness per tenant', function () {
         'identifier' => '101', // Duplicate in same community
         'property_type' => 'apartment',
         'status' => 'available',
-        'has_parking' => false,
-        'has_storage' => false,
+        'amenities' => [],
+        'coefficient' => 1.0,
     ];
 
     $this->actingAs($user)
@@ -72,7 +72,7 @@ it('strictly validates identifier uniqueness per tenant', function () {
 
     // Allow duplicate in different community
     $communityB = Community::factory()->create();
-    $communityB->users()->attach($user, ['role' => 'admin']);
+    $communityB->users()->attach($user, ['role' => 'tenant_admin']);
 
     $this->actingAs($user)
         ->post(route('tenant.admin.core.units.store', ['community_slug' => $communityB->slug]), $payload)
@@ -82,7 +82,7 @@ it('strictly validates identifier uniqueness per tenant', function () {
 it('protects against updating units outside the tenant context', function () {
     $community = Community::factory()->create();
     $user = User::factory()->create();
-    $community->users()->attach($user, ['role' => 'admin']);
+    $community->users()->attach($user, ['role' => 'tenant_admin']);
 
     $otherUnit = Unit::factory()->create(); // different community
 
@@ -90,8 +90,8 @@ it('protects against updating units outside the tenant context', function () {
         'identifier' => 'Hacked',
         'property_type' => 'apartment',
         'status' => 'available',
-        'has_parking' => false,
-        'has_storage' => false,
+        'amenities' => [],
+        'coefficient' => 1.0,
     ];
 
     $this->actingAs($user)
@@ -105,7 +105,7 @@ it('protects against updating units outside the tenant context', function () {
 it('can update a unit within the active community', function () {
     $community = Community::factory()->create();
     $user = User::factory()->create();
-    $community->users()->attach($user, ['role' => 'admin']);
+    $community->users()->attach($user, ['role' => 'tenant_admin']);
 
     $unit = Unit::factory()->create(['community_id' => $community->id]);
 
@@ -113,8 +113,8 @@ it('can update a unit within the active community', function () {
         'identifier' => 'Torre B Apto 202',
         'property_type' => 'apartment',
         'status' => 'occupied',
-        'has_parking' => false,
-        'has_storage' => false,
+        'amenities' => [],
+        'coefficient' => 1.0,
     ];
 
     $this->actingAs($user)
@@ -133,7 +133,7 @@ it('can update a unit within the active community', function () {
 it('can delete a unit securely', function () {
     $community = Community::factory()->create();
     $user = User::factory()->create();
-    $community->users()->attach($user, ['role' => 'admin']);
+    $community->users()->attach($user, ['role' => 'tenant_admin']);
 
     $unit = Unit::factory()->create(['community_id' => $community->id]);
 

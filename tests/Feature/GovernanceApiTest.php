@@ -16,7 +16,7 @@ it('allows admin to create an announcement but denies residents', function () {
     app(TenantContext::class)->set($community);
 
     $admin = User::factory()->create();
-    $community->users()->attach($admin, ['role' => CommunityRole::Admin->value]);
+    $community->users()->attach($admin, ['role' => CommunityRole::TenantAdmin->value]);
 
     $residentUser = User::factory()->create();
     $community->users()->attach($residentUser, ['role' => CommunityRole::Resident->value]);
@@ -42,7 +42,7 @@ it('prevents cross-tenant document creation and retrieval', function () {
     $community2 = Community::factory()->create();
 
     $admin1 = User::factory()->create();
-    $community1->users()->attach($admin1, ['role' => CommunityRole::Admin->value]);
+    $community1->users()->attach($admin1, ['role' => CommunityRole::TenantAdmin->value]);
 
     app(TenantContext::class)->set($community1);
 
@@ -58,7 +58,7 @@ it('prevents cross-tenant document creation and retrieval', function () {
 
     // Fetch documents in community2 with a valid user
     $admin2 = User::factory()->create();
-    $community2->users()->attach($admin2, ['role' => CommunityRole::Admin->value]);
+    $community2->users()->attach($admin2, ['role' => CommunityRole::TenantAdmin->value]);
     app(TenantContext::class)->set($community2);
 
     $url2 = route('api.governance.documents.index', ['community_slug' => $community2->slug]);
@@ -72,7 +72,7 @@ it('allows residents to vote but enforces one vote per unit', function () {
     app(TenantContext::class)->set($community);
 
     $admin = User::factory()->create();
-    $community->users()->attach($admin, ['role' => CommunityRole::Admin->value]);
+    $community->users()->attach($admin, ['role' => CommunityRole::TenantAdmin->value]);
 
     $unit = Unit::factory()->create(['community_id' => $community->id]);
 

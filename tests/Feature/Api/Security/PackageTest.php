@@ -15,7 +15,7 @@ beforeEach(function () {
     $this->centralDomain = config('app.central_domain', 'sitios-urbanos.test');
     $this->baseUrl = "http://{$this->community->slug}.{$this->centralDomain}";
     $this->admin = User::factory()->create();
-    $this->admin->communities()->attach($this->community, ['role' => CommunityRole::Admin]);
+    $this->admin->communities()->attach($this->community, ['role' => CommunityRole::TenantAdmin]);
 
     $this->unit1 = Unit::factory()->create(['community_id' => $this->community->id]);
     $this->unit2 = Unit::factory()->create(['community_id' => $this->community->id]);
@@ -183,7 +183,7 @@ it('prevents acting on an already processed package', function () {
 it('isolates packages between tenants', function () {
     $otherCommunity = Community::factory()->create();
     $otherAdmin = User::factory()->create();
-    $otherAdmin->communities()->attach($otherCommunity, ['role' => CommunityRole::Admin]);
+    $otherAdmin->communities()->attach($otherCommunity, ['role' => CommunityRole::TenantAdmin]);
     $otherUnit = Unit::factory()->create(['community_id' => $otherCommunity->id]);
 
     $package = Package::factory()->create([

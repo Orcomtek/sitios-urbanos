@@ -149,7 +149,7 @@ it('prevents residents from updating others listings', function () {
 
 it('allows admins to moderate listings', function () {
     $adminUser = User::factory()->create();
-    $adminUser->communities()->attach($this->community->id, ['role' => CommunityRole::Admin->value]);
+    $adminUser->communities()->attach($this->community->id, ['role' => CommunityRole::TenantAdmin->value]);
 
     $listing = Listing::factory()->create([
         'community_id' => $this->community->id,

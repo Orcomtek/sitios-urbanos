@@ -34,7 +34,7 @@ class ActivityTimelineTest extends TestCase
         $this->otherCommunity = Community::factory()->create(['slug' => 'other-community']);
 
         $this->admin = User::factory()->create();
-        $this->community->users()->attach($this->admin, ['role' => CommunityRole::Admin->value]);
+        $this->community->users()->attach($this->admin, ['role' => CommunityRole::TenantAdmin->value]);
 
         $this->resident = User::factory()->create();
         $this->community->users()->attach($this->resident, ['role' => CommunityRole::Resident->value]);

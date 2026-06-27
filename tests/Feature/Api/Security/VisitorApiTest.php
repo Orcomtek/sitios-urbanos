@@ -22,7 +22,7 @@ beforeEach(function () {
     ]);
 
     $this->adminUser = User::factory()->create();
-    $this->community->users()->attach($this->adminUser, ['role' => 'admin']);
+    $this->community->users()->attach($this->adminUser, ['role' => 'tenant_admin']);
 
     $this->guardUser = User::factory()->create();
     $this->community->users()->attach($this->guardUser, ['role' => 'guard']);

@@ -11,10 +11,10 @@ beforeEach(function () {
     $this->communityB = Community::factory()->create(['slug' => 'community-b']);
 
     $this->userA = User::factory()->create();
-    $this->communityA->users()->attach($this->userA, ['role' => 'admin']);
+    $this->communityA->users()->attach($this->userA, ['role' => 'tenant_admin']);
 
     $this->userB = User::factory()->create();
-    $this->communityB->users()->attach($this->userB, ['role' => 'admin']);
+    $this->communityB->users()->attach($this->userB, ['role' => 'tenant_admin']);
 
     $this->unitA = Unit::factory()->create([
         'community_id' => $this->communityA->id,
@@ -47,8 +47,7 @@ it('resists payload manipulation and assigns the correct tenant automatically on
         'identifier' => '999X',
         'property_type' => 'apartment',
         'status' => 'occupied',
-        'has_parking' => false,
-        'has_storage' => false,
+        'amenities' => [],
     ]);
 
     expect($unit->community_id)->toBe($this->communityA->id);

@@ -10,7 +10,7 @@ use App\Models\User;
 it('enforces single active tenant per unit physically via validation', function () {
     $user = User::factory()->create();
     $community = Community::factory()->create();
-    $user->communities()->attach($community, ['role' => 'admin']);
+    $user->communities()->attach($community, ['role' => 'tenant_admin']);
 
     $unit = Unit::factory()->create(['community_id' => $community->id]);
 
@@ -62,7 +62,7 @@ it('enforces single active tenant per unit physically via validation', function 
 it('enforces single active tenant during updates', function () {
     $user = User::factory()->create();
     $community = Community::factory()->create();
-    $user->communities()->attach($community, ['role' => 'admin']);
+    $user->communities()->attach($community, ['role' => 'tenant_admin']);
 
     $unit = Unit::factory()->create(['community_id' => $community->id]);
 

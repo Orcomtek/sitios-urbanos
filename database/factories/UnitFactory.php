@@ -23,8 +23,7 @@ class UnitFactory extends Factory
             'identifier' => 'Apto '.$this->faker->unique()->numberBetween(100, 9999),
             'property_type' => $this->faker->randomElement(['apartment', 'house', 'commercial', 'office', 'warehouse']),
             'status' => $this->faker->randomElement(['occupied', 'available', 'maintenance']),
-            'has_parking' => false,
-            'has_storage' => false,
+            'amenities' => null,
         ];
     }
 }

@@ -29,7 +29,7 @@ class ResidentCockpitWebTest extends TestCase
         $this->domain = 'test-resident.'.config('app.central_domain');
 
         $this->adminUser = User::factory()->create();
-        $this->adminUser->communities()->attach($this->community->id, ['role' => CommunityRole::Admin->value]);
+        $this->adminUser->communities()->attach($this->community->id, ['role' => CommunityRole::TenantAdmin->value]);
 
         $this->residentUser = User::factory()->create();
         $this->residentUser->communities()->attach($this->community->id, ['role' => CommunityRole::Resident->value]);

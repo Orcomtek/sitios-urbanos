@@ -32,7 +32,7 @@ class ResidentOperationsTest extends TestCase
         $this->community->users()->attach($this->residentUser, ['role' => 'resident']);
 
         $this->adminUser = User::factory()->create();
-        $this->community->users()->attach($this->adminUser, ['role' => 'admin']);
+        $this->community->users()->attach($this->adminUser, ['role' => 'tenant_admin']);
 
         $this->guardUser = User::factory()->create();
         $this->community->users()->attach($this->guardUser, ['role' => 'guard']);

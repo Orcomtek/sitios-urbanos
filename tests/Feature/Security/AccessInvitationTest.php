@@ -14,7 +14,7 @@ beforeEach(function () {
     $this->unit = Unit::factory()->create(['community_id' => $this->community->id]);
 
     $this->admin = User::factory()->create();
-    $this->admin->communities()->attach($this->community->id, ['role' => 'admin']);
+    $this->admin->communities()->attach($this->community->id, ['role' => 'tenant_admin']);
 
     $this->guard = User::factory()->create();
     $this->guard->communities()->attach($this->community->id, ['role' => 'guard']);
@@ -137,7 +137,7 @@ it('allows revoking an invitation safely', function () {
 it('enforces tenant isolation', function () {
     $otherCommunity = Community::factory()->create(['slug' => 'other-community']);
     $otherAdmin = User::factory()->create();
-    $otherAdmin->communities()->attach($otherCommunity->id, ['role' => 'admin']);
+    $otherAdmin->communities()->attach($otherCommunity->id, ['role' => 'tenant_admin']);
 
     $invitation = AccessInvitation::create([
         'community_id' => $this->community->id,

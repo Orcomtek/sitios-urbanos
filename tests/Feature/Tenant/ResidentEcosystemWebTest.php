@@ -32,7 +32,7 @@ it('allows residents to access the ecosystem cockpit', function () {
 it('forbids admins from accessing the ecosystem cockpit', function () {
     $community = Community::factory()->create();
     $user = User::factory()->create();
-    $user->communities()->attach($community, ['role' => CommunityRole::Admin]);
+    $user->communities()->attach($community, ['role' => CommunityRole::TenantAdmin]);
 
     $centralDomain = config('app.central_domain');
 

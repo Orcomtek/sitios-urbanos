@@ -115,7 +115,7 @@ it('allows residents to see ONLY their own requests', function () {
 
 it('allows administrators to view any request in the community', function () {
     $admin = User::factory()->create();
-    $admin->communities()->attach($this->community, ['role' => CommunityRole::Admin->value]);
+    $admin->communities()->attach($this->community, ['role' => CommunityRole::TenantAdmin->value]);
 
     $request = ProviderServiceRequest::factory()->create([
         'community_id' => $this->community->id,

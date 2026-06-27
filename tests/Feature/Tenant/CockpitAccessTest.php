@@ -32,7 +32,7 @@ class CockpitAccessTest extends TestCase
     public function test_admin_can_access_all_cockpit_routes(): void
     {
         $admin = UserFactory::new()->create();
-        $this->community->users()->attach($admin, ['role' => 'admin']);
+        $this->community->users()->attach($admin, ['role' => 'tenant_admin']);
 
         $response = $this->actingAs($admin)->get('http://'.$this->tenantHeaders['Host'].'/admin/dashboard');
         $response->assertOk();

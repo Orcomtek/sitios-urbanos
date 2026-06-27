@@ -38,7 +38,7 @@ class ResidentCockpitApiTest extends TestCase
         $this->domain = 'test-resident.'.config('app.central_domain');
 
         $this->adminUser = User::factory()->create();
-        $this->adminUser->communities()->attach($this->community->id, ['role' => CommunityRole::Admin->value]);
+        $this->adminUser->communities()->attach($this->community->id, ['role' => CommunityRole::TenantAdmin->value]);
 
         $this->guardUser = User::factory()->create();
         $this->guardUser->communities()->attach($this->community->id, ['role' => CommunityRole::Guard->value]);

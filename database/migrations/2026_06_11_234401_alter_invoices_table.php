@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('invoices', function (Blueprint $table) {
             // Drop old columns and foreign keys
-            $table->dropForeign('invoices_resident_id_fkey');
+            $table->dropForeign(['resident_id']);
             $table->dropIndex(['community_id', 'status']);
             $table->dropIndex(['community_id', 'unit_id']);
             $table->dropColumn(['resident_id', 'type', 'amount', 'issued_at', 'description']);

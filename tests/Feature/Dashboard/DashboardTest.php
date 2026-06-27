@@ -99,7 +99,7 @@ class DashboardTest extends TestCase
 
     public function test_admin_sees_all_widgets_including_finance()
     {
-        $admin = $this->createUserWithRole(CommunityRole::Admin);
+        $admin = $this->createUserWithRole(CommunityRole::TenantAdmin);
 
         app(TenantContext::class)->set($this->community);
 

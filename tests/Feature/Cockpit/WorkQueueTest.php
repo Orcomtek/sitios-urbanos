@@ -64,16 +64,16 @@ class WorkQueueTest extends TestCase
         $response->assertJsonPath('data.role', CommunityRole::Guard->value);
 
         // 2. Admin access
-        $admin = $this->createUserWithRole(CommunityRole::Admin);
+        $admin = $this->createUserWithRole(CommunityRole::TenantAdmin);
 
         $response = $this->actingAs($admin)->getJson($this->getTenantUrl());
         $response->assertOk();
-        $response->assertJsonPath('data.role', CommunityRole::Admin->value);
+        $response->assertJsonPath('data.role', CommunityRole::TenantAdmin->value);
     }
 
     public function test_work_queue_returns_actionable_items_only_and_respects_tenant_isolation()
     {
-        $admin = $this->createUserWithRole(CommunityRole::Admin);
+        $admin = $this->createUserWithRole(CommunityRole::TenantAdmin);
 
         app(TenantContext::class)->set($this->community);
 

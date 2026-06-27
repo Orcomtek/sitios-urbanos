@@ -38,7 +38,7 @@ it('allows residents to list their own pqrs', function () {
 it('allows admins to list all pqrs in the community', function () {
     $community = Community::factory()->create();
     $user = User::factory()->create();
-    $community->users()->attach($user, ['role' => CommunityRole::Admin->value]);
+    $community->users()->attach($user, ['role' => CommunityRole::TenantAdmin->value]);
 
     app(TenantContext::class)->set($community);
 
@@ -64,7 +64,7 @@ it('creates a pqrs and notifies admins', function () {
     $community->users()->attach($user, ['role' => CommunityRole::Resident->value]);
 
     $adminUser = User::factory()->create();
-    $community->users()->attach($adminUser, ['role' => CommunityRole::Admin->value]);
+    $community->users()->attach($adminUser, ['role' => CommunityRole::TenantAdmin->value]);
 
     app(TenantContext::class)->set($community);
 
@@ -89,7 +89,7 @@ it('creates a pqrs and notifies admins', function () {
 it('hides resident information from the api response when anonymous and user is admin', function () {
     $community = Community::factory()->create();
     $adminUser = User::factory()->create();
-    $community->users()->attach($adminUser, ['role' => CommunityRole::Admin->value]);
+    $community->users()->attach($adminUser, ['role' => CommunityRole::TenantAdmin->value]);
 
     $resident = Resident::factory()->create(['community_id' => $community->id]);
 
@@ -119,7 +119,7 @@ it('allows admin to respond to a pqrs and notifies the resident via linked user'
     $community->users()->attach($residentUser, ['role' => CommunityRole::Resident->value]);
 
     $adminUser = User::factory()->create();
-    $community->users()->attach($adminUser, ['role' => CommunityRole::Admin->value]);
+    $community->users()->attach($adminUser, ['role' => CommunityRole::TenantAdmin->value]);
 
     app(TenantContext::class)->set($community);
 

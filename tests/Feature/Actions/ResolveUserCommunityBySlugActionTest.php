@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 it('resolves a community when the user belongs to it and it is active', function () {
     $user = User::factory()->create();
     $community = Community::factory()->create(['status' => 'active']);
-    $user->communities()->attach($community, ['role' => 'admin']);
+    $user->communities()->attach($community, ['role' => 'tenant_admin']);
 
     $action = app(ResolveUserCommunityBySlugAction::class);
     $resolved = $action->execute($user, $community->slug);
@@ -39,7 +39,7 @@ it('throws ModelNotFoundException when the user is not attached to the community
 it('throws ModelNotFoundException when the user is attached but the community is inactive', function () {
     $user = User::factory()->create();
     $community = Community::factory()->create(['status' => 'inactive']); // assuming status is string based on migration
-    $user->communities()->attach($community, ['role' => 'admin']);
+    $user->communities()->attach($community, ['role' => 'tenant_admin']);
 
     $action = app(ResolveUserCommunityBySlugAction::class);
 

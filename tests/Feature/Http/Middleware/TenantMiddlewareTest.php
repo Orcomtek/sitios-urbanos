@@ -28,7 +28,7 @@ beforeEach(function () {
 it('allows access and resolves context for an active community where the user belongs', function () {
     $user = User::factory()->create();
     $community = Community::factory()->create(['status' => 'active']);
-    $user->communities()->attach($community, ['role' => 'admin']);
+    $user->communities()->attach($community, ['role' => 'tenant_admin']);
 
     $response = $this->actingAs($user)->get(route('tenant.test', ['community_slug' => $community->slug]));
 

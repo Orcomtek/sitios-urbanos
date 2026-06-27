@@ -16,7 +16,7 @@ beforeEach(function () {
 
     // Admin
     $this->admin = User::factory()->create();
-    $this->admin->communities()->attach($this->community->id, ['role' => CommunityRole::Admin->value]);
+    $this->admin->communities()->attach($this->community->id, ['role' => CommunityRole::TenantAdmin->value]);
 
     // Resident
     $this->resident = User::factory()->create();
@@ -28,7 +28,7 @@ beforeEach(function () {
 
     // Other user
     $this->otherAdmin = User::factory()->create();
-    $this->otherAdmin->communities()->attach($this->otherCommunity->id, ['role' => CommunityRole::Admin->value]);
+    $this->otherAdmin->communities()->attach($this->otherCommunity->id, ['role' => CommunityRole::TenantAdmin->value]);
 
     $this->adminUrl = 'http://test-community.app.sitios-urbanos.test/api/ecosystem/providers';
     $this->otherAdminUrl = 'http://other-community.app.sitios-urbanos.test/api/ecosystem/providers';

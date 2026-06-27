@@ -43,7 +43,7 @@ class EmergencyEventTest extends TestCase
         ]);
 
         $this->admin = User::factory()->create();
-        $this->community->users()->attach($this->admin, ['role' => CommunityRole::Admin->value]);
+        $this->community->users()->attach($this->admin, ['role' => CommunityRole::TenantAdmin->value]);
 
         $this->guard = User::factory()->create();
         $this->community->users()->attach($this->guard, ['role' => CommunityRole::Guard->value]);

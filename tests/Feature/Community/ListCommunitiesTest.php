@@ -19,7 +19,7 @@ it('displays only the communities assigned to the authenticated user', function 
 
     $user->communities()->attach([
         $community1->id => ['role' => 'resident'],
-        $community2->id => ['role' => 'admin'],
+        $community2->id => ['role' => 'tenant_admin'],
     ]);
 
     $response = $this->actingAs($user)->get('/comunidades');
