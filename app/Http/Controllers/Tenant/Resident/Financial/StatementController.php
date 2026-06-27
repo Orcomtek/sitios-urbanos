@@ -27,7 +27,7 @@ class StatementController extends Controller
 
         $unit = Unit::with([
             'invoices' => function ($q) {
-                $q->with('payments')->orderBy('created_at', 'desc');
+                $q->with(['payments' => fn ($p) => $p->where('status', 'confirmed')])->orderBy('created_at', 'desc');
             },
             'payments' => function ($q) {
                 $q->with('invoice:id,invoice_number,billing_period')->orderBy('created_at', 'desc');
@@ -42,12 +42,22 @@ class StatementController extends Controller
             abort(404);
         }
 
-        // Dynamically update display status
+        // Calculate pending_amount per invoice using the authoritative formula
         foreach ($unit->invoices as $invoice) {
-            $paidAmount = $invoice->payments ? $invoice->payments->sum('amount') : 0;
-            if ($paidAmount >= $invoice->total) {
+            $confirmedPayments = $invoice->payments ? $invoice->payments->sum('amount') : 0;
+
+            $invoiceAdjustments = $unit->financialAdjustments->where('invoice_id', $invoice->id);
+            $creditAdjustments = $invoiceAdjustments->where('type', 'credit')->sum('amount');
+            $debitAdjustments = $invoiceAdjustments->where('type', 'debit')->sum('amount');
+
+            $pendingAmount = max(0, $invoice->total - $confirmedPayments - $creditAdjustments + $debitAdjustments);
+
+            $invoice->pending_amount = $pendingAmount;
+
+            if ($pendingAmount <= 0) {
                 $invoice->status = 'paid';
             }
+
             $invoice->created_at_formatted = $invoice->created_at ? $invoice->created_at->timezone(config('app.timezone'))->format('d/m/Y') : null;
         }
 
@@ -68,6 +78,10 @@ class StatementController extends Controller
 
         return Inertia::render('Tenant/Resident/Financial/Statement/Index', [
             'unit' => $unit,
+            'epaycoConfig' => [
+                'public_key' => config('epayco.public_key'),
+                'testing' => config('epayco.testing'),
+            ],
         ]);
     }
 

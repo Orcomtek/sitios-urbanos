@@ -2131,18 +2131,26 @@ Condition Net Balance > 0: Account In Arrears (Restricts generation of clearance
 Condition Net Balance <= 0: Account Is Clear / In Credit (Permits automatic generation of signed "Paz y Salvo" documents via Browsershot).
 
 
-## BLOCK 40 — Payment Gateway & Split Engine (ePayco)
+## BLOCK 40 — Payment Gateway & Native Split Engine (ePayco)
 
 ### Status
 ⏳ Pending
 
 ### Description
-The connection of the Ledger with real money and the primary monetization engine of the platform. It implements real-time financial orchestration using the aggregator model.
+The connection of the Ledger with real money and the primary monetization engine of the platform. It implements real-time financial orchestration using the ePayco Aggregator and Native Split (Cuentas Aliadas) model to ensure strict tax and legal compliance. 
 
-**Scope & Execution Details:**
-*   **Quick Pay Button:** Integration of the ePayco checkout directly into the resident's Cockpit.
-*   **Real-Time Split Engine:** Mathematical logic to intercept the payment, calculate gateway costs, extract the Sitios Urbanos "Take-Rate" (Commission), and disburse the net funds to the community's bank account.
-*   **Automated Reconciliation:** Secure webhooks listening to ePayco to instantly mark Block 39 invoices as "Paid," eliminating human intervention.
+**Scope & Execution Details (Sub-versions):**
+
+*   **BLOCK 40.1: Foundation S2S & Payment Model Mapping.** 
+    Backend foundation. Configuration of ePayco master keys via `.env`, mapping of the existing V2 `payments` table (payloads, signature verifications, idempotency keys), and creation of the core cryptographic service (`EpaycoService`).
+*   **BLOCK 40.2: Checkout CRO & Frontend Integration.** 
+    Integration of the ePayco Onepage/Standard checkout widget directly into the resident's Cockpit (Modal). Implementation of visual trust triggers (PCI DSS, encryption) to maximize conversion rates.
+*   **BLOCK 40.3: Webhook Engine & Automated Reconciliation.** 
+    Creation of the S2S asynchronous route. Listens to ePayco webhooks, validates cryptographic signatures, and automatically mutates the Ledger and Block 39 invoices to "Paid" without human intervention.
+*   **BLOCK 40.4: Native Split Orchestrator.** 
+    The mathematical logic intercepted during the payment creation. Calculates gateway costs, extracts the Sitios Urbanos "Take-Rate" (Commission), and passes the array of sub-accounts (Aliados) to ePayco to disburse net funds strictly at the gateway level.
+*   **BLOCK 40.5: Tenant Onboarding & Gateway Activation.** 
+    The Admin Control Panel interface (Community Level). A dedicated view where the Community Administrator inputs their legal banking data and explicitly authorizes the ePayco "Aliado" connection, ensuring the Split receiver account is active before allowing resident payments.
 
 ## BLOCK 41 — Dunning & Soft-Collection Strategy
 

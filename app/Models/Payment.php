@@ -21,8 +21,10 @@ class Payment extends Model
         return [
             'method' => PaymentMethod::class,
             'status' => PaymentStatus::class,
-            'gateway_payload' => 'array',
             'signature_verified' => 'boolean',
+            'gateway_payload' => 'array',
+            'platform_commission' => 'decimal:2',
+            'net_amount' => 'decimal:2',
             'paid_at' => 'datetime',
         ];
     }
