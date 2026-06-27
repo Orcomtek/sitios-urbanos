@@ -95,6 +95,20 @@ class EpaycoWebhookController extends Controller
             'gateway_status' => $incomingState,
         ]);
 
+        // Audit split metadata on confirmed payments
+        if ($mappedStatus === PaymentStatus::CONFIRMED) {
+            Log::info('[ePayco Webhook] Split audit trail', [
+                'payment_id' => $payment->id,
+                'platform_commission' => $payment->platform_commission,
+                'net_amount' => $payment->net_amount,
+                'community_id' => $payment->community_id,
+                'split_payload' => collect($payload)->only([
+                    'x_split_payment', 'x_split_type',
+                    'x_split_primary_receiver', 'x_split_primary_receiver_fee',
+                ])->toArray(),
+            ]);
+        }
+
         return response()->json(['status' => 'ok'], 200);
     }
 }

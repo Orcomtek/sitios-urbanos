@@ -5,17 +5,31 @@ namespace App\Actions\Finance;
 use App\Enums\InvoiceStatus;
 use App\Enums\PaymentMethod;
 use App\Enums\PaymentStatus;
+use App\Exceptions\SplitConfigurationException;
+use App\Models\FinancialSetting;
 use App\Models\Invoice;
 use App\Models\Payment;
+use App\Services\Financial\SplitEngineService;
 use App\Services\TenantContext;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
 
 class CreatePaymentAttemptAction
 {
-    public function __construct(private TenantContext $tenantContext) {}
+    public function __construct(
+        private TenantContext $tenantContext,
+        private SplitEngineService $splitEngine,
+    ) {}
 
-    public function execute(Invoice $invoice): Payment
+    /**
+     * Create a payment intent for an invoice, computing the split distribution.
+     *
+     * @return array{payment: Payment, split: array<string, mixed>}
+     *
+     * @throws InvalidArgumentException
+     * @throws SplitConfigurationException
+     */
+    public function execute(Invoice $invoice): array
     {
         $communityId = $this->tenantContext->require()->id;
 
@@ -33,38 +47,32 @@ class CreatePaymentAttemptAction
             ->first();
 
         if ($existingPayment) {
-            return $existingPayment;
+            $amount = (int) round((float) $invoice->total);
+            $settings = FinancialSetting::where('community_id', $communityId)->first();
+            $split = $this->splitEngine->calculate($amount, $settings, $communityId);
+
+            return ['payment' => $existingPayment, 'split' => $split];
         }
 
-        // Configuration-driven commission logic
-        $commissionType = config('finance.commission.type', 'fixed');
-        $commissionValue = config('finance.commission.value', 1500);
+        $amount = (int) round((float) $invoice->total);
 
-        $commission = 0;
-        if ($commissionType === 'percentage') {
-            $commission = (int) round($invoice->total * ($commissionValue / 100));
-        } else {
-            $commission = (int) $commissionValue;
-        }
-
-        $netAmount = $invoice->total - $commission;
-
-        if ($netAmount < 0) {
-            $netAmount = 0; // Prevent negative net amounts if commission is unusually high
-        }
+        $settings = FinancialSetting::where('community_id', $communityId)->first();
+        $split = $this->splitEngine->calculate($amount, $settings, $communityId);
 
         $idempotencyKey = 'intent_'.Str::uuid()->toString();
 
-        return Payment::create([
+        $payment = Payment::create([
             'community_id' => $communityId,
             'unit_id' => $invoice->unit_id,
             'invoice_id' => $invoice->id,
             'method' => PaymentMethod::INTERNAL_EPAYCO,
-            'amount' => $invoice->total,
-            'platform_commission' => $commission,
-            'net_amount' => $netAmount,
+            'amount' => $amount,
+            'platform_commission' => (int) $split['platform_commission'],
+            'net_amount' => (int) $split['net_amount'],
             'idempotency_key' => $idempotencyKey,
             'status' => PaymentStatus::PENDING,
         ]);
+
+        return ['payment' => $payment, 'split' => $split];
     }
 }

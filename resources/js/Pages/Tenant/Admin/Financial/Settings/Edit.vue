@@ -36,6 +36,9 @@ const form = useForm({
     billing_day: String(props.settings.billing_day || 1),
     due_day: String(props.settings.due_day || 10),
     bank_account_details: getInitialAccounts(),
+    epayco_allied_account_id: props.settings.epayco_allied_account_id || '',
+    commission_type: props.settings.commission_type || 'fixed',
+    commission_value: String(props.settings.commission_value ?? 1500),
 });
 
 const addAccount = () => form.bank_account_details.push({ bank_name: '', account_type: '', account_number: '' });
@@ -254,6 +257,62 @@ const executeConceptDeletion = () => {
                                 </div>
 
                             </div>
+                        </div>
+                    </div>
+
+                    <!-- Configuración de Pagos ePayco -->
+                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg border border-slate-200">
+                        <div class="p-6 border-b border-slate-200 bg-slate-50">
+                            <h3 class="text-lg font-medium text-slate-900">Configuración de Pagos ePayco</h3>
+                            <p class="mt-1 text-sm text-slate-500">Configura la cuenta aliada y comisión de plataforma para pagos en línea.</p>
+                        </div>
+                        <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                            <!-- ID Cuenta Aliada -->
+                            <div class="md:col-span-2">
+                                <InputLabel for="epayco_allied_account_id" value="ID Cuenta Aliada ePayco" />
+                                <TextInput
+                                    id="epayco_allied_account_id"
+                                    type="text"
+                                    class="mt-1 block w-full focus:ring-emerald-500 focus:border-emerald-500"
+                                    v-model="form.epayco_allied_account_id"
+                                    placeholder="Ej: 12345"
+                                />
+                                <p class="mt-1 text-xs text-slate-400">Identificador de la cuenta aliada (Cuentas Aliadas) proporcionado por ePayco.</p>
+                                <InputError class="mt-2" :message="form.errors.epayco_allied_account_id" />
+                            </div>
+
+                            <!-- Tipo de Comisión -->
+                            <div>
+                                <InputLabel for="commission_type" value="Tipo de Comisión" />
+                                <select
+                                    id="commission_type"
+                                    v-model="form.commission_type"
+                                    class="mt-1 block w-full border-gray-300 focus:border-emerald-500 focus:ring-emerald-500 rounded-md shadow-sm"
+                                >
+                                    <option value="fixed">Fija (COP)</option>
+                                    <option value="percentage">Porcentaje (%)</option>
+                                </select>
+                                <InputError class="mt-2" :message="form.errors.commission_type" />
+                            </div>
+
+                            <!-- Valor de Comisión -->
+                            <div>
+                                <InputLabel for="commission_value" :value="form.commission_type === 'percentage' ? 'Valor de Comisión (centésimas de %)' : 'Valor de Comisión (COP)'" />
+                                <TextInput
+                                    id="commission_value"
+                                    type="number"
+                                    class="mt-1 block w-full focus:ring-emerald-500 focus:border-emerald-500"
+                                    v-model="form.commission_value"
+                                    required
+                                    min="0"
+                                />
+                                <p class="mt-1 text-xs text-slate-400">
+                                    {{ form.commission_type === 'percentage' ? 'Ej: 350 = 3.50% de comisión por transacción.' : 'Ej: 1500 = $1.500 COP fijos por transacción.' }}
+                                </p>
+                                <InputError class="mt-2" :message="form.errors.commission_value" />
+                            </div>
+
                         </div>
                     </div>
 

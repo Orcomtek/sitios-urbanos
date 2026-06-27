@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Community extends Model
 {
@@ -68,6 +69,16 @@ class Community extends Model
         return [
             'saas_settings' => 'array',
         ];
+    }
+
+    /**
+     * The financial settings for this community.
+     *
+     * @return HasOne<FinancialSetting, $this>
+     */
+    public function financialSetting(): HasOne
+    {
+        return $this->hasOne(FinancialSetting::class);
     }
 
     /**

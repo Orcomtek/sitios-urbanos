@@ -46,6 +46,9 @@ class SettingController extends Controller
             'bank_account_details.*.bank_name' => ['nullable', 'string', 'max:255'],
             'bank_account_details.*.account_type' => ['nullable', 'string', 'max:255'],
             'bank_account_details.*.account_number' => ['nullable', 'string', 'max:255'],
+            'epayco_allied_account_id' => ['nullable', 'string', 'max:255'],
+            'commission_type' => ['required', 'string', 'in:fixed,percentage'],
+            'commission_value' => ['required', 'integer', 'min:0'],
         ]);
 
         FinancialSetting::updateOrCreate(

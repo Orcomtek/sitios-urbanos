@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Finance;
 
 use App\Actions\Finance\CreatePaymentAttemptAction;
+use App\Exceptions\SplitConfigurationException;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Finance\PaymentIntentResource;
 use App\Models\Invoice;
@@ -28,9 +29,14 @@ class InvoicePaymentController extends Controller
         }
 
         try {
-            $payment = $action->execute($invoiceModel);
+            $result = $action->execute($invoiceModel);
 
-            return new PaymentIntentResource($payment);
+            return (new PaymentIntentResource($result['payment']))
+                ->additional(['split' => $result['split']]);
+        } catch (SplitConfigurationException $e) {
+            return response()->json([
+                'message' => 'La comunidad no tiene configurada una cuenta aliada de ePayco. Contacte al administrador.',
+            ], 422);
         } catch (\InvalidArgumentException $e) {
             return response()->json(['message' => $e->getMessage()], 422);
         }
