@@ -2,13 +2,12 @@
 
 use App\Actions\Finance\ProcessEpaycoWebhookAction;
 use App\Enums\InvoiceStatus;
-use App\Enums\InvoiceType;
 use App\Enums\PaymentMethod;
 use App\Enums\PaymentStatus;
 use App\Events\Finance\PaymentConfirmed;
 use App\Events\Finance\PaymentFailed;
 use App\Models\Community;
-use App\Models\Invoice;
+use App\Models\Financial\Invoice;
 use App\Models\Payment;
 use App\Models\Unit;
 use Illuminate\Support\Facades\Event;
@@ -22,10 +21,12 @@ it('dispatches PaymentConfirmed event on successful webhook payload', function (
         'community_id' => $community->id,
         'unit_id' => $unit->id,
         'status' => InvoiceStatus::PENDING,
-        'amount' => 50000,
-        'type' => InvoiceType::ADMIN_FEE,
-        'issued_at' => now(),
+        'total' => 50000,
+        'subtotal' => 50000,
+        'invoice_number' => 'INV-EVT-001',
+        'issue_date' => now(),
         'due_date' => now()->addDays(5),
+        'billing_period' => now()->format('Y-m'),
     ]);
 
     $payment = Payment::factory()->create([
@@ -81,10 +82,12 @@ it('dispatches PaymentFailed event on rejected webhook payload', function () {
         'community_id' => $community->id,
         'unit_id' => $unit->id,
         'status' => InvoiceStatus::PENDING,
-        'amount' => 50000,
-        'type' => InvoiceType::ADMIN_FEE,
-        'issued_at' => now(),
+        'total' => 50000,
+        'subtotal' => 50000,
+        'invoice_number' => 'INV-EVT-002',
+        'issue_date' => now(),
         'due_date' => now()->addDays(5),
+        'billing_period' => now()->format('Y-m'),
     ]);
 
     $payment = Payment::factory()->create([

@@ -6,7 +6,7 @@ use App\Actions\Finance\CreatePaymentAttemptAction;
 use App\Exceptions\SplitConfigurationException;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Finance\PaymentIntentResource;
-use App\Models\Invoice;
+use App\Models\Financial\Invoice;
 use App\Services\TenantContext;
 
 class InvoicePaymentController extends Controller

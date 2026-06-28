@@ -5,7 +5,7 @@ use App\Enums\LedgerEntryType;
 use App\Enums\PaymentMethod;
 use App\Enums\PaymentStatus;
 use App\Models\Community;
-use App\Models\Invoice;
+use App\Models\Financial\Invoice;
 use App\Models\Payment;
 use App\Models\Unit;
 
@@ -17,10 +17,13 @@ beforeEach(function () {
     $this->invoice = Invoice::factory()->create([
         'community_id' => $this->community->id,
         'unit_id' => $this->unit->id,
-        'amount' => 100000,
+        'total' => 100000,
+        'subtotal' => 100000,
         'status' => InvoiceStatus::PENDING,
-        'issued_at' => now(),
+        'invoice_number' => 'INV-WH-001',
+        'issue_date' => now(),
         'due_date' => now()->addDays(15),
+        'billing_period' => now()->format('Y-m'),
     ]);
 
     $this->payment = Payment::create([

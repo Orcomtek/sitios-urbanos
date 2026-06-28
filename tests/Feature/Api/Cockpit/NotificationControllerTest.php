@@ -6,8 +6,10 @@ use App\Models\Resident;
 use App\Models\Unit;
 use App\Models\User;
 use App\Notifications\Security\EmergencyEventTriggeredNotification;
+use App\Services\TenantContext;
 
 beforeEach(function () {
+    app()->forgetInstance(TenantContext::class);
     $this->community = Community::factory()->create();
     $this->user = User::factory()->create();
 
@@ -34,7 +36,7 @@ it('lists only notifications for the current tenant', function () {
     $this->user->notify(new EmergencyEventTriggeredNotification($emergency1));
     $this->user->notify(new EmergencyEventTriggeredNotification($emergency2));
 
-    $response = $this->actingAs($this->user)->getJson(route('api.cockpit.notifications.index', ['community_slug' => $this->community->slug]));
+    $response = $this->actingAs($this->user)->getJson(route('tenant.cockpit.notifications.index', ['community_slug' => $this->community->slug]));
 
     $response->assertOk()
         ->assertJsonCount(1, 'data')
@@ -55,16 +57,16 @@ it('can mark a notification as read and prevents reading cross-tenant notificati
     $notification2 = $this->user->notifications()->where('data->community_id', $otherCommunity->id)->first();
 
     // Valid mark as read
-    $response = $this->actingAs($this->user)->patchJson(route('api.cockpit.notifications.read', [
+    $response = $this->actingAs($this->user)->patchJson(route('tenant.cockpit.notifications.read', [
         'community_slug' => $this->community->slug,
         'id' => $notification1->id,
     ]));
 
-    $response->assertOk();
+    $response->assertRedirect();
     expect($notification1->fresh()->read_at)->not->toBeNull();
 
     // Invalid mark as read (cross-tenant)
-    $response2 = $this->actingAs($this->user)->patchJson(route('api.cockpit.notifications.read', [
+    $response2 = $this->actingAs($this->user)->patchJson(route('tenant.cockpit.notifications.read', [
         'community_slug' => $this->community->slug,
         'id' => $notification2->id,
     ]));
@@ -83,8 +85,8 @@ it('can mark all notifications as read for current tenant only', function () {
     $this->user->notify(new EmergencyEventTriggeredNotification($emergency1));
     $this->user->notify(new EmergencyEventTriggeredNotification($emergency2));
 
-    $response = $this->actingAs($this->user)->patchJson(route('api.cockpit.notifications.read-all', ['community_slug' => $this->community->slug]));
-    $response->assertOk();
+    $response = $this->actingAs($this->user)->patchJson(route('tenant.cockpit.notifications.read-all', ['community_slug' => $this->community->slug]));
+    $response->assertRedirect();
 
     $notification1 = $this->user->notifications()->where('data->community_id', $this->community->id)->first();
     $notification2 = $this->user->notifications()->where('data->community_id', $otherCommunity->id)->first();

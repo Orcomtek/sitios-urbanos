@@ -40,21 +40,21 @@ it('allows access and resolves context for an active community where the user be
     expect($context->get()->id)->toBe($community->id);
 });
 
-it('returns 404 when user tries to access an existing community they do not belong to', function () {
+it('redirects to login when user tries to access an existing community they do not belong to', function () {
     $user = User::factory()->create();
     $community = Community::factory()->create(['status' => 'active']);
 
     $response = $this->actingAs($user)->get(route('tenant.test', ['community_slug' => $community->slug]));
 
-    $response->assertNotFound();
+    $response->assertRedirect(route('login'));
 });
 
-it('returns 404 when the community slug does not exist', function () {
+it('redirects to login when the community slug does not exist', function () {
     $user = User::factory()->create();
 
     $response = $this->actingAs($user)->get(route('tenant.test', ['community_slug' => 'non-existent-slug']));
 
-    $response->assertNotFound();
+    $response->assertRedirect(route('login'));
 });
 
 it('throws LogicException resulting in 500 when route is missing community_slug parameter', function () {

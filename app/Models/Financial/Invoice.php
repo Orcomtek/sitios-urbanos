@@ -2,11 +2,16 @@
 
 namespace App\Models\Financial;
 
+use App\Enums\InvoiceStatus;
 use App\Models\Community;
+use App\Models\Payment;
+use App\Models\Traits\TenantScoped;
 use App\Models\Unit;
 use App\Models\User;
+use Database\Factories\InvoiceFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -14,7 +19,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Invoice extends Model
 {
-    use HasUuids, SoftDeletes;
+    use HasFactory, HasUuids, SoftDeletes, TenantScoped;
+
+    protected static function newFactory(): InvoiceFactory
+    {
+        return InvoiceFactory::new();
+    }
 
     protected $fillable = [
         'community_id',
@@ -34,6 +44,7 @@ class Invoice extends Model
         'due_date' => 'date',
         'subtotal' => 'decimal:2',
         'total' => 'decimal:2',
+        'status' => InvoiceStatus::class,
     ];
 
     public function community(): BelongsTo
@@ -58,7 +69,7 @@ class Invoice extends Model
 
     public function payments(): HasMany
     {
-        return $this->hasMany(\App\Models\Payment::class);
+        return $this->hasMany(Payment::class);
     }
 
     /**

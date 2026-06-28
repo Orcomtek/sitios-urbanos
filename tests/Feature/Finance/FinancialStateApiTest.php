@@ -2,11 +2,10 @@
 
 use App\Enums\CommunityRole;
 use App\Enums\InvoiceStatus;
-use App\Enums\InvoiceType;
 use App\Enums\PaymentMethod;
 use App\Enums\PaymentStatus;
 use App\Models\Community;
-use App\Models\Invoice;
+use App\Models\Financial\Invoice;
 use App\Models\Payment;
 use App\Models\Resident;
 use App\Models\Unit;
@@ -26,10 +25,12 @@ it('can fetch invoice state via tenant API', function () {
         'community_id' => $community->id,
         'unit_id' => $unit->id,
         'status' => InvoiceStatus::PENDING,
-        'amount' => 50000,
-        'type' => InvoiceType::ADMIN_FEE,
-        'issued_at' => now(),
+        'total' => 50000,
+        'subtotal' => 50000,
+        'invoice_number' => 'INV-FSA-001',
+        'issue_date' => now(),
         'due_date' => now()->addDays(5),
+        'billing_period' => now()->format('Y-m'),
     ]);
 
     $url = route('api.finance.invoice', [
@@ -45,7 +46,7 @@ it('can fetch invoice state via tenant API', function () {
             'data' => [
                 'id' => $invoice->id,
                 'status' => InvoiceStatus::PENDING->value,
-                'amount' => 50000,
+                'total' => '50000.00',
                 'due_date' => now()->addDays(5)->toDateString(),
             ],
         ]);
@@ -62,10 +63,12 @@ it('can fetch payment state via tenant API', function () {
     $invoice = Invoice::factory()->create([
         'community_id' => $community->id,
         'unit_id' => $unit->id,
-        'amount' => 50000,
-        'type' => InvoiceType::ADMIN_FEE,
-        'issued_at' => now(),
+        'total' => 50000,
+        'subtotal' => 50000,
+        'invoice_number' => 'INV-FSA-002',
+        'issue_date' => now(),
         'due_date' => now()->addDays(5),
+        'billing_period' => now()->format('Y-m'),
     ]);
 
     $payment = Payment::factory()->create([

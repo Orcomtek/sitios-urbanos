@@ -4,7 +4,7 @@ namespace Tests\Feature\Cockpit;
 
 use App\Enums\CommunityRole;
 use App\Models\Community;
-use App\Models\Invoice;
+use App\Models\Financial\Invoice;
 use App\Models\Package;
 use App\Models\Resident;
 use App\Models\Unit;
@@ -73,7 +73,7 @@ class ResidentCockpitApiTest extends TestCase
 
     public function test_resident_can_access_cockpit()
     {
-        $response = $this->makeRequest($this->residentUser, 'GET', '/api/cockpit/resident');
+        $response = $this->makeRequest($this->residentUser, 'GET', '/_tenant/cockpit/resident');
 
         $response->assertStatus(200);
         $response->assertJsonStructure([
@@ -90,14 +90,14 @@ class ResidentCockpitApiTest extends TestCase
 
     public function test_admin_is_forbidden_from_resident_cockpit()
     {
-        $response = $this->makeRequest($this->adminUser, 'GET', '/api/cockpit/resident');
-        $response->assertStatus(403);
+        $response = $this->makeRequest($this->adminUser, 'GET', '/_tenant/cockpit/resident');
+        $response->assertForbidden();
     }
 
     public function test_guard_is_forbidden_from_resident_cockpit()
     {
-        $response = $this->makeRequest($this->guardUser, 'GET', '/api/cockpit/resident');
-        $response->assertStatus(403);
+        $response = $this->makeRequest($this->guardUser, 'GET', '/_tenant/cockpit/resident');
+        $response->assertForbidden();
     }
 
     public function test_cockpit_includes_only_active_unit_data()
@@ -107,11 +107,12 @@ class ResidentCockpitApiTest extends TestCase
             'community_id' => $this->community->id,
             'unit_id' => $this->unit1->id,
             'status' => 'pending',
-            'amount' => 50000,
-            'type' => 'admin_fee',
-            'description' => 'Test',
-            'issued_at' => now(),
+            'total' => 50000,
+            'subtotal' => 50000,
+            'invoice_number' => 'INV-RC-001',
+            'issue_date' => now(),
             'due_date' => now()->addDays(5),
+            'billing_period' => now()->format('Y-m'),
         ]);
 
         // 2. Give unit 2 a package
@@ -127,14 +128,15 @@ class ResidentCockpitApiTest extends TestCase
             'community_id' => $this->community->id,
             'unit_id' => $unit3->id,
             'status' => 'pending',
-            'amount' => 100000,
-            'type' => 'admin_fee',
-            'description' => 'Test Other',
-            'issued_at' => now(),
+            'total' => 100000,
+            'subtotal' => 100000,
+            'invoice_number' => 'INV-RC-002',
+            'issue_date' => now(),
             'due_date' => now()->addDays(5),
+            'billing_period' => now()->format('Y-m'),
         ]);
 
-        $response = $this->makeRequest($this->residentUser, 'GET', '/api/cockpit/resident');
+        $response = $this->makeRequest($this->residentUser, 'GET', '/_tenant/cockpit/resident');
         $response->assertStatus(200);
 
         // Assert it sees invoice for unit 1, package for unit 2, but NOT invoice for unit 3
@@ -156,10 +158,9 @@ class ResidentCockpitApiTest extends TestCase
         $user2->communities()->attach($community2->id, ['role' => CommunityRole::Resident->value]);
 
         // Even if user2 tries to access community 1, should be 403 or 404 because not part of it
-        $url = "http://{$this->domain}/api/cockpit/resident";
-        $res = $this->actingAs($user2)->json('GET', $url);
-
-        // Actually TenantMiddleware returns 404 if user is not attached to this tenant subdomain.
-        $res->assertStatus(404);
+        $url = "http://{$this->domain}/_tenant/cockpit/resident";
+        // TenantMiddleware redirects if user is not part of the community
+        $res = $this->actingAs($user2)->get($url);
+        $res->assertRedirect();
     }
 }

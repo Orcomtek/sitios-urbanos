@@ -2,11 +2,11 @@
 
 use App\Enums\CommunityRole;
 use App\Enums\InvoiceStatus;
-use App\Enums\InvoiceType;
 use App\Enums\PaymentMethod;
 use App\Enums\PaymentStatus;
 use App\Models\Community;
-use App\Models\Invoice;
+use App\Models\Financial\Invoice;
+use App\Models\FinancialSetting;
 use App\Models\Payment;
 use App\Models\Resident;
 use App\Models\Unit;
@@ -19,6 +19,7 @@ it('allows residents to initiate payment for a pending invoice', function () {
     $user = User::factory()->create();
     $community = Community::factory()->create(['status' => 'active']);
     $community->users()->attach($user->id, ['role' => CommunityRole::Resident->value]);
+    FinancialSetting::create(['community_id' => $community->id, 'epayco_allied_account_id' => 'test-allied', 'commission_type' => 'fixed', 'commission_value' => 1500]);
 
     $unit = Unit::factory()->create(['community_id' => $community->id]);
     Resident::factory()->create(['user_id' => $user->id, 'unit_id' => $unit->id, 'community_id' => $community->id]);
@@ -27,10 +28,12 @@ it('allows residents to initiate payment for a pending invoice', function () {
         'community_id' => $community->id,
         'unit_id' => $unit->id,
         'status' => InvoiceStatus::PENDING,
-        'amount' => 50000,
-        'type' => InvoiceType::ADMIN_FEE,
-        'issued_at' => now(),
+        'total' => 50000,
+        'subtotal' => 50000,
+        'invoice_number' => 'INV-IP-001',
+        'issue_date' => now(),
         'due_date' => now()->addDays(5),
+        'billing_period' => now()->format('Y-m'),
     ]);
 
     $url = route('api.finance.invoices.pay', [
@@ -54,6 +57,7 @@ it('reuses existing pending payment attempt for the same invoice', function () {
     $user = User::factory()->create();
     $community = Community::factory()->create(['status' => 'active']);
     $community->users()->attach($user->id, ['role' => CommunityRole::Resident->value]);
+    FinancialSetting::create(['community_id' => $community->id, 'epayco_allied_account_id' => 'test-allied', 'commission_type' => 'fixed', 'commission_value' => 1500]);
 
     $unit = Unit::factory()->create(['community_id' => $community->id]);
     Resident::factory()->create(['user_id' => $user->id, 'unit_id' => $unit->id, 'community_id' => $community->id]);
@@ -62,10 +66,12 @@ it('reuses existing pending payment attempt for the same invoice', function () {
         'community_id' => $community->id,
         'unit_id' => $unit->id,
         'status' => InvoiceStatus::PENDING,
-        'amount' => 50000,
-        'type' => InvoiceType::ADMIN_FEE,
-        'issued_at' => now(),
+        'total' => 50000,
+        'subtotal' => 50000,
+        'invoice_number' => 'INV-IP-002',
+        'issue_date' => now(),
         'due_date' => now()->addDays(5),
+        'billing_period' => now()->format('Y-m'),
     ]);
 
     $existingPayment = Payment::factory()->create([
@@ -106,10 +112,12 @@ it('rejects initiation if invoice is already paid', function () {
         'community_id' => $community->id,
         'unit_id' => $unit->id,
         'status' => InvoiceStatus::PAID,
-        'amount' => 50000,
-        'type' => InvoiceType::ADMIN_FEE,
-        'issued_at' => now(),
+        'total' => 50000,
+        'subtotal' => 50000,
+        'invoice_number' => 'INV-IP-003',
+        'issue_date' => now(),
         'due_date' => now()->addDays(5),
+        'billing_period' => now()->format('Y-m'),
     ]);
 
     $url = route('api.finance.invoices.pay', [
@@ -138,10 +146,12 @@ it('rejects unauthorized access outside tenant boundary', function () {
         'community_id' => $otherCommunity->id,
         'unit_id' => $unit->id,
         'status' => InvoiceStatus::PENDING,
-        'amount' => 50000,
-        'type' => InvoiceType::ADMIN_FEE,
-        'issued_at' => now(),
+        'total' => 50000,
+        'subtotal' => 50000,
+        'invoice_number' => 'INV-IP-004',
+        'issue_date' => now(),
         'due_date' => now()->addDays(5),
+        'billing_period' => now()->format('Y-m'),
     ]);
 
     $url = route('api.finance.invoices.pay', [

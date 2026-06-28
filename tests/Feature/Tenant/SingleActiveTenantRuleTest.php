@@ -7,7 +7,7 @@ use App\Models\Resident;
 use App\Models\Unit;
 use App\Models\User;
 
-it('enforces single active tenant per unit physically via validation', function () {
+it('auto-deactivates existing tenant when a new active tenant is created for same unit', function () {
     $user = User::factory()->create();
     $community = Community::factory()->create();
     $user->communities()->attach($community, ['role' => 'tenant_admin']);
@@ -15,7 +15,7 @@ it('enforces single active tenant per unit physically via validation', function 
     $unit = Unit::factory()->create(['community_id' => $community->id]);
 
     // Create a first active tenant
-    Resident::factory()->create([
+    $firstTenant = Resident::factory()->create([
         'community_id' => $community->id,
         'unit_id' => $unit->id,
         'full_name' => 'First Active Tenant',
@@ -24,7 +24,7 @@ it('enforces single active tenant per unit physically via validation', function 
         'pays_administration' => true,
     ]);
 
-    // Attempt to store a second active tenant for the same unit
+    // Store a second active tenant for the same unit — service auto-deactivates the first
     $response = $this->actingAs($user)->post(route('tenant.admin.core.residents.store', ['community_slug' => $community->slug]), [
         'unit_id' => $unit->id,
         'full_name' => 'Second Active Tenant',
@@ -33,21 +33,67 @@ it('enforces single active tenant per unit physically via validation', function 
         'pays_administration' => false,
     ]);
 
-    // Should receive a validation error for 'is_active'
-    $response->assertSessionHasErrors(['is_active']);
+    $response->assertSessionHasNoErrors();
+    $response->assertRedirect();
 
-    // Attempt to store a second tenant but as inactive should PASS
+    // First tenant should be auto-deactivated
+    $firstTenant->refresh();
+    expect($firstTenant->is_active)->toBeFalse();
+
+    // Second tenant should be active
+    $secondTenant = Resident::where('full_name', 'Second Active Tenant')->first();
+    expect($secondTenant)->not->toBeNull()
+        ->and($secondTenant->is_active)->toBeTrue();
+});
+
+it('creates owner without deactivating existing active tenant', function () {
+    $user = User::factory()->create();
+    $community = Community::factory()->create();
+    $user->communities()->attach($community, ['role' => 'tenant_admin']);
+
+    $unit = Unit::factory()->create(['community_id' => $community->id]);
+
+    // Create a first active tenant
+    $firstTenant = Resident::factory()->create([
+        'community_id' => $community->id,
+        'unit_id' => $unit->id,
+        'full_name' => 'First Active Tenant',
+        'resident_type' => 'tenant',
+        'is_active' => true,
+        'pays_administration' => true,
+    ]);
+
+    // Store an owner — should NOT deactivate existing tenant
     $response = $this->actingAs($user)->post(route('tenant.admin.core.residents.store', ['community_slug' => $community->slug]), [
         'unit_id' => $unit->id,
-        'full_name' => 'Inactive Tenant',
-        'resident_type' => 'tenant',
-        'is_active' => false,
+        'full_name' => 'New Owner',
+        'resident_type' => 'owner',
+        'is_active' => true,
         'pays_administration' => false,
     ]);
 
     $response->assertSessionHasNoErrors();
 
-    // Attempt to store an active owner should PASS
+    // First tenant should still be active (owners don't deactivate tenants)
+    $firstTenant->refresh();
+    expect($firstTenant->is_active)->toBeTrue();
+});
+
+it('allows active owner creation alongside active tenant', function () {
+    $user = User::factory()->create();
+    $community = Community::factory()->create();
+    $user->communities()->attach($community, ['role' => 'tenant_admin']);
+
+    $unit = Unit::factory()->create(['community_id' => $community->id]);
+
+    Resident::factory()->create([
+        'community_id' => $community->id,
+        'unit_id' => $unit->id,
+        'full_name' => 'Active Tenant',
+        'resident_type' => 'tenant',
+        'is_active' => true,
+    ]);
+
     $response = $this->actingAs($user)->post(route('tenant.admin.core.residents.store', ['community_slug' => $community->slug]), [
         'unit_id' => $unit->id,
         'full_name' => 'Active Owner',
@@ -59,25 +105,23 @@ it('enforces single active tenant per unit physically via validation', function 
     $response->assertSessionHasNoErrors();
 });
 
-it('enforces single active tenant during updates', function () {
+it('auto-deactivates existing tenant when updating another tenant to active in same unit', function () {
     $user = User::factory()->create();
     $community = Community::factory()->create();
     $user->communities()->attach($community, ['role' => 'tenant_admin']);
 
     $unit = Unit::factory()->create(['community_id' => $community->id]);
 
-    // Create a first active tenant
-    Resident::factory()->create([
+    $firstTenant = Resident::factory()->create([
         'community_id' => $community->id,
         'unit_id' => $unit->id,
-        'full_name' => 'First Active Tenant', // using direct DB create to skip requests
+        'full_name' => 'First Active Tenant',
         'resident_type' => 'tenant',
         'is_active' => true,
         'pays_administration' => true,
     ]);
 
-    // Create a second inactive tenant
-    $resident2 = Resident::factory()->create([
+    $secondTenant = Resident::factory()->create([
         'community_id' => $community->id,
         'unit_id' => $unit->id,
         'full_name' => 'Second Inactive Tenant',
@@ -86,8 +130,8 @@ it('enforces single active tenant during updates', function () {
         'pays_administration' => false,
     ]);
 
-    // Attempt to update second tenant to active
-    $response = $this->actingAs($user)->put(route('tenant.admin.core.residents.update', ['community_slug' => $community->slug, 'resident' => $resident2->id]), [
+    // Activate the second tenant — should auto-deactivate the first
+    $response = $this->actingAs($user)->put(route('tenant.admin.core.residents.update', ['community_slug' => $community->slug, 'resident' => $secondTenant->id]), [
         'unit_id' => $unit->id,
         'full_name' => 'Trying to activate',
         'resident_type' => 'tenant',
@@ -95,19 +139,11 @@ it('enforces single active tenant during updates', function () {
         'pays_administration' => false,
     ]);
 
-    // Error
-    $response->assertSessionHasErrors(['is_active']);
-
-    // Attempt to update second tenant to active but for a NEW unit without active tenants should PASS
-    $unit2 = Unit::factory()->create(['community_id' => $community->id]);
-
-    $response = $this->actingAs($user)->put(route('tenant.admin.core.residents.update', ['community_slug' => $community->slug, 'resident' => $resident2->id]), [
-        'unit_id' => $unit2->id,
-        'full_name' => 'Moving and activating',
-        'resident_type' => 'tenant',
-        'is_active' => true,
-        'pays_administration' => false,
-    ]);
-
     $response->assertSessionHasNoErrors();
+
+    $firstTenant->refresh();
+    expect($firstTenant->is_active)->toBeFalse();
+
+    $secondTenant->refresh();
+    expect($secondTenant->is_active)->toBeTrue();
 });

@@ -2,11 +2,10 @@
 
 use App\Enums\CommunityRole;
 use App\Enums\InvoiceStatus;
-use App\Enums\InvoiceType;
 use App\Enums\PaymentMethod;
 use App\Enums\PaymentStatus;
 use App\Models\Community;
-use App\Models\Invoice;
+use App\Models\Financial\Invoice;
 use App\Models\Payment;
 use App\Models\Resident;
 use App\Models\Unit;
@@ -30,10 +29,10 @@ it('lists invoices for a unit', function () {
     Invoice::factory()->count(3)->create([
         'community_id' => $community->id,
         'unit_id' => $unit->id,
-        'amount' => 1000,
+        'total' => 1000,
+        'subtotal' => 1000,
         'status' => InvoiceStatus::PENDING,
-        'type' => InvoiceType::ADMIN_FEE,
-        'issued_at' => now(),
+        'issue_date' => now(),
         'due_date' => now()->addDays(5),
     ]);
 

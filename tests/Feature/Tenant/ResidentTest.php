@@ -13,7 +13,7 @@ it('can list residents in tenant context', function () {
     $user->communities()->attach($community, ['role' => 'tenant_admin', 'unit_id' => null]);
     $unit = Unit::factory()->create(['community_id' => $community->id]);
     // Create residents with their own units so they don't violate the DB partial index
-    Resident::factory()->count(3)->create(['community_id' => $community->id]);
+    Resident::factory()->count(3)->create(['community_id' => $community->id, 'is_active' => true]);
 
     $response = $this->actingAs($user)->get(route('tenant.admin.core.residents.index', ['community_slug' => $community->slug]));
 

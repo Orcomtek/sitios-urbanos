@@ -33,7 +33,7 @@ class WorkQueueTest extends TestCase
 
     private function getTenantUrl(string $path = ''): string
     {
-        return "http://{$this->community->slug}.{$this->centralDomain}/api/cockpit/work-queue";
+        return "http://{$this->community->slug}.{$this->centralDomain}/_tenant/cockpit/work-queue";
     }
 
     private function createUserWithRole(CommunityRole $role): User

@@ -6,7 +6,7 @@ use App\Enums\CommunityRole;
 use App\Enums\InvoiceStatus;
 use App\Models\Community;
 use App\Models\EmergencyEvent;
-use App\Models\Invoice;
+use App\Models\Financial\Invoice;
 use App\Models\Package;
 use App\Models\Unit;
 use App\Models\User;
@@ -34,7 +34,7 @@ class DashboardTest extends TestCase
 
     private function getTenantUrl(string $path = ''): string
     {
-        return "http://{$this->community->slug}.{$this->centralDomain}/api/cockpit/dashboard";
+        return "http://{$this->community->slug}.{$this->centralDomain}/_tenant/cockpit/dashboard";
     }
 
     private function createUserWithRole(CommunityRole $role): User
@@ -70,8 +70,10 @@ class DashboardTest extends TestCase
 
         // Data from another community to ensure tenant scoping
         $otherCommunity = Community::factory()->create();
+        app(TenantContext::class)->set($otherCommunity);
         $otherUnit = Unit::factory()->create(['community_id' => $otherCommunity->id]);
         EmergencyEvent::factory()->create(['community_id' => $otherCommunity->id, 'unit_id' => $otherUnit->id, 'status' => 'active']);
+        app(TenantContext::class)->set($this->community);
 
         $response = $this->actingAs($guard)->getJson($this->getTenantUrl());
 
@@ -108,10 +110,12 @@ class DashboardTest extends TestCase
             'community_id' => $this->community->id,
             'unit_id' => $unit->id,
             'status' => InvoiceStatus::PENDING,
-            'amount' => 50000,
-            'issued_at' => now(),
+            'total' => 50000,
+            'subtotal' => 50000,
+            'invoice_number' => 'INV-DASH-001',
+            'issue_date' => now(),
             'due_date' => now()->addDays(5),
-            'type' => 'admin_fee',
+            'billing_period' => now()->format('Y-m'),
         ]);
 
         $response = $this->actingAs($admin)->getJson($this->getTenantUrl());

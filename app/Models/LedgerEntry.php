@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\LedgerEntryType;
+use App\Models\Financial\Invoice;
 use App\Models\Traits\TenantScoped;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

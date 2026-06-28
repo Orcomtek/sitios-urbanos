@@ -11,6 +11,7 @@ use App\Models\LedgerEntry;
 use App\Models\Payment;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use InvalidArgumentException;
 
 class ProcessEpaycoWebhookAction
@@ -31,9 +32,13 @@ class ProcessEpaycoWebhookAction
 
         // 2. Identify existing Payment (using idempotency_key or id depending on how it was sent)
         // We assume x_id_invoice holds the payment `idempotency_key` or `id`.
-        $payment = Payment::where('id', $internalReference)
-            ->orWhere('idempotency_key', $internalReference)
-            ->first();
+        // Only query by UUID `id` column if the reference is a valid UUID (PostgreSQL enforces this).
+        $payment = Payment::where(function ($query) use ($internalReference) {
+            if (Str::isUuid($internalReference)) {
+                $query->where('id', $internalReference);
+            }
+            $query->orWhere('idempotency_key', $internalReference);
+        })->first();
 
         if (! $payment) {
             throw new InvalidArgumentException("Payment not found for internal reference: $internalReference");
@@ -94,7 +99,7 @@ class ProcessEpaycoWebhookAction
                     'payment_id' => $payment->id,
                     'invoice_id' => $invoice->id,
                     'type' => LedgerEntryType::PAYMENT,
-                    'amount' => -abs($payment->amount),
+                    'amount' => -(int) abs($payment->amount),
                     'description' => 'Aggregator payment confirmed: '.$payment->id,
                 ]);
 
@@ -104,7 +109,7 @@ class ProcessEpaycoWebhookAction
                         'unit_id' => $payment->unit_id,
                         'payment_id' => $payment->id,
                         'type' => LedgerEntryType::PLATFORM_COMMISSION,
-                        'amount' => $payment->platform_commission,
+                        'amount' => (int) $payment->platform_commission,
                         'description' => 'Platform commission derived safely from aggregator transaction: '.$payment->id,
                     ]);
                 }

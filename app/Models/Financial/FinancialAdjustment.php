@@ -4,7 +4,6 @@ namespace App\Models\Financial;
 
 use App\Models\BillingConcept;
 use App\Models\Community;
-use App\Models\Invoice;
 use App\Models\Traits\TenantScoped;
 use App\Models\Unit;
 use App\Models\User;

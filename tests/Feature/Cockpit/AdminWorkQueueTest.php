@@ -4,9 +4,9 @@ namespace Tests\Feature\Cockpit;
 
 use App\Enums\CommunityRole;
 use App\Models\Community;
+use App\Models\Financial\Invoice;
 use App\Models\Governance\Announcement;
 use App\Models\Governance\Poll;
-use App\Models\Invoice;
 use App\Models\Listing;
 use App\Models\Pqrs;
 use App\Models\Resident;
@@ -35,7 +35,7 @@ class AdminWorkQueueTest extends TestCase
 
     private function getTenantUrl(string $path = ''): string
     {
-        return "http://{$this->community->slug}.{$this->centralDomain}/api/cockpit/admin-work-queue";
+        return "http://{$this->community->slug}.{$this->centralDomain}/_tenant/cockpit/admin-work-queue";
     }
 
     private function createUserWithRole(CommunityRole $role): User
@@ -98,21 +98,23 @@ class AdminWorkQueueTest extends TestCase
             'community_id' => $this->community->id,
             'unit_id' => $unit->id,
             'status' => 'pending',
-            'amount' => 1000,
-            'type' => 'admin_fee',
-            'description' => 'Test',
-            'issued_at' => now(),
+            'total' => 1000,
+            'subtotal' => 1000,
+            'invoice_number' => 'INV-TEST-001',
+            'issue_date' => now(),
             'due_date' => now()->addDays(5),
+            'billing_period' => now()->format('Y-m'),
         ]);
         Invoice::factory()->create([
             'community_id' => $this->community->id,
             'unit_id' => $unit->id,
             'status' => 'paid',
-            'amount' => 1000,
-            'type' => 'admin_fee',
-            'description' => 'Test',
-            'issued_at' => now(),
+            'total' => 1000,
+            'subtotal' => 1000,
+            'invoice_number' => 'INV-TEST-002',
+            'issue_date' => now(),
             'due_date' => now()->addDays(5),
+            'billing_period' => now()->subMonth()->format('Y-m'),
         ]);
 
         // 4. Announcements

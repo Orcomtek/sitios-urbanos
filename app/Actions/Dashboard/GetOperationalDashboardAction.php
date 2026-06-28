@@ -7,8 +7,8 @@ use App\Enums\InvoiceStatus;
 use App\Enums\PaymentStatus;
 use App\Enums\PqrsStatus;
 use App\Models\EmergencyEvent;
+use App\Models\Financial\Invoice;
 use App\Models\Governance\Poll;
-use App\Models\Invoice;
 use App\Models\Package;
 use App\Models\Payment;
 use App\Models\Pqrs;
@@ -112,7 +112,7 @@ class GetOperationalDashboardAction
 
         return [
             'pending_invoices_count' => $pendingInvoices->count(),
-            'pending_amount' => (int) $pendingInvoices->sum('amount'),
+            'pending_amount' => (int) $pendingInvoices->sum('total'),
             'recent_confirmed_payments_count' => Payment::where('status', PaymentStatus::CONFIRMED)
                 ->where('created_at', '>=', now()->subDays(30))
                 ->count(),

@@ -32,7 +32,12 @@ class NotificationController extends Controller
 
     public function read(Request $request, string $community_slug, string $id): RedirectResponse
     {
-        $notification = $request->user()->notifications()->findOrFail($id);
+        $community = $this->context->require();
+
+        $notification = $request->user()->notifications()
+            ->where('data->community_id', $community->id)
+            ->findOrFail($id);
+
         $notification->markAsRead();
 
         return back();
@@ -40,7 +45,12 @@ class NotificationController extends Controller
 
     public function readAll(Request $request, string $community_slug): RedirectResponse
     {
-        $request->user()->unreadNotifications->markAsRead();
+        $community = $this->context->require();
+
+        $request->user()->unreadNotifications()
+            ->where('data->community_id', $community->id)
+            ->get()
+            ->markAsRead();
 
         return back();
     }

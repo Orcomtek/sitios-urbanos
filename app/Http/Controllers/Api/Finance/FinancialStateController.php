@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api\Finance;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Finance\InvoiceResource;
 use App\Http\Resources\Finance\PaymentResource;
-use App\Models\Invoice;
+use App\Models\Financial\Invoice;
 use App\Models\Payment;
 use App\Models\Unit;
 use App\Services\TenantContext;

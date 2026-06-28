@@ -26,7 +26,7 @@ class StoreAccessInvitationRequest extends FormRequest
         }
 
         // Admins can create for any unit in the community.
-        if ($user->hasRoleInCommunity($tenantContext, 'admin')) {
+        if ($user->hasRoleInCommunity($tenantContext, 'tenant_admin')) {
             return true;
         }
 

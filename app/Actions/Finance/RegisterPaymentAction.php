@@ -6,7 +6,7 @@ use App\Enums\InvoiceStatus;
 use App\Enums\LedgerEntryType;
 use App\Enums\PaymentMethod;
 use App\Enums\PaymentStatus;
-use App\Models\Invoice;
+use App\Models\Financial\Invoice;
 use App\Models\LedgerEntry;
 use App\Models\Payment;
 use App\Services\TenantContext;

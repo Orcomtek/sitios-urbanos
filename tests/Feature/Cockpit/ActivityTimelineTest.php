@@ -63,7 +63,7 @@ class ActivityTimelineTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->admin)
-            ->getJson('http://'.$this->community->slug.'.'.$this->centralDomain.'/api/cockpit/activity');
+            ->getJson('http://'.$this->community->slug.'.'.$this->centralDomain.'/_tenant/cockpit/activity');
 
         $response->assertStatus(200)
             ->assertJsonCount(1, 'data')
@@ -113,7 +113,7 @@ class ActivityTimelineTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->resident)
-            ->getJson('http://'.$this->community->slug.'.'.$this->centralDomain.'/api/cockpit/activity');
+            ->getJson('http://'.$this->community->slug.'.'.$this->centralDomain.'/_tenant/cockpit/activity');
 
         $response->assertStatus(200)
             ->assertJsonCount(1, 'data')

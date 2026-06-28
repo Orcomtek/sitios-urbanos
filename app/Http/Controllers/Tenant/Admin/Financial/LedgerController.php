@@ -9,7 +9,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Financial\StoreAccountingNoteRequest;
 use App\Http\Requests\Financial\StoreManualPaymentRequest;
 use App\Models\BillingConcept;
-use App\Models\Invoice;
+use App\Models\Financial\Invoice;
 use App\Models\Unit;
 use App\Services\Financial\BrowsershotPdfService;
 use App\Services\TenantContext;
@@ -49,7 +49,7 @@ class LedgerController extends Controller
                         'billing_period' => $invoice->billing_period,
                         'invoice_number' => $invoice->invoice_number,
                         'total' => $invoice->total,
-                        'amount' => $invoice->amount,
+                        'amount' => $invoice->total,
                         'status' => $invoice->status,
                     ];
                 }),

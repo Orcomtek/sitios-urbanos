@@ -3,7 +3,6 @@
 use App\Actions\Finance\CreateInvoiceAction;
 use App\Actions\Finance\RegisterPaymentAction;
 use App\Enums\InvoiceStatus;
-use App\Enums\InvoiceType;
 use App\Enums\LedgerEntryType;
 use App\Enums\PaymentMethod;
 use App\Enums\PaymentStatus;
@@ -30,17 +29,18 @@ it('creates an invoice and ledger entry charge', function () {
 
     $invoice = $action->execute([
         'unit_id' => $this->unit->id,
-        'resident_id' => $this->resident->id,
-        'type' => InvoiceType::ADMIN_FEE,
-        'amount' => 150000,
-        'issued_at' => now(),
+        'user_id' => $this->resident->user_id,
+        'invoice_number' => 'INV-000001',
+        'issue_date' => now(),
         'due_date' => now()->addDays(5),
-        'description' => 'Admin Fee March',
+        'subtotal' => 150000,
+        'total' => 150000,
+        'billing_period' => now()->format('Y-m'),
     ]);
 
     expect($invoice->id)->not->toBeNull()
         ->and($invoice->status)->toBe(InvoiceStatus::PENDING)
-        ->and($invoice->amount)->toBe(150000);
+        ->and((int) $invoice->total)->toBe(150000);
 
     $ledger = LedgerEntry::where('invoice_id', $invoice->id)->first();
 
@@ -54,11 +54,13 @@ it('registers a payment successfully updating invoice and creating ledger applie
 
     $invoice = $createInvoice->execute([
         'unit_id' => $this->unit->id,
-        'resident_id' => $this->resident->id,
-        'type' => InvoiceType::ADMIN_FEE,
-        'amount' => 150000,
-        'issued_at' => now(),
+        'user_id' => $this->resident->user_id,
+        'invoice_number' => 'INV-000002',
+        'issue_date' => now(),
         'due_date' => now()->addDays(5),
+        'subtotal' => 150000,
+        'total' => 150000,
+        'billing_period' => now()->format('Y-m'),
     ]);
 
     $action = new RegisterPaymentAction($this->tenantContext);
@@ -111,10 +113,12 @@ it('prevents ledger updates or deletes', function () {
 
     $invoice = $createInvoice->execute([
         'unit_id' => $this->unit->id,
-        'type' => InvoiceType::ADMIN_FEE,
-        'amount' => 10000,
-        'issued_at' => now(),
+        'invoice_number' => 'INV-000003',
+        'issue_date' => now(),
         'due_date' => now(),
+        'subtotal' => 10000,
+        'total' => 10000,
+        'billing_period' => now()->format('Y-m'),
     ]);
 
     $ledger = LedgerEntry::where('invoice_id', $invoice->id)->first();

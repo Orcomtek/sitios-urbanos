@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Services\TenantContext;
 
 beforeEach(function () {
+    $this->withoutVite();
     $this->communityA = Community::factory()->create(['slug' => 'community-a']);
     $this->communityB = Community::factory()->create(['slug' => 'community-b']);
 

@@ -182,10 +182,14 @@ it('prevents guards from accessing listings', function () {
 it('ensures listings are tenant scoped', function () {
     $otherCommunity = Community::factory()->create();
 
+    // Clear tenant context to create a listing in another tenant without override
+    app(TenantContext::class)->set($otherCommunity);
     $listing = Listing::factory()->create([
         'community_id' => $otherCommunity->id,
         'status' => ListingStatus::Active,
     ]);
+    // Restore context
+    app(TenantContext::class)->set($this->community);
 
     $response = $this->actingAs($this->user)
         ->getJson(route('api.ecosystem.listings.index', ['community_slug' => $this->community->slug]));

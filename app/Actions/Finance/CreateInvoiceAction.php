@@ -4,7 +4,7 @@ namespace App\Actions\Finance;
 
 use App\Enums\InvoiceStatus;
 use App\Enums\LedgerEntryType;
-use App\Models\Invoice;
+use App\Models\Financial\Invoice;
 use App\Models\LedgerEntry;
 use App\Services\TenantContext;
 use Illuminate\Support\Facades\DB;
@@ -21,12 +21,13 @@ class CreateInvoiceAction
             $invoice = Invoice::create([
                 'community_id' => $communityId,
                 'unit_id' => $data['unit_id'],
-                'resident_id' => $data['resident_id'] ?? null,
-                'type' => $data['type'],
-                'amount' => $data['amount'],
-                'issued_at' => $data['issued_at'],
+                'user_id' => $data['user_id'] ?? null,
+                'invoice_number' => $data['invoice_number'],
+                'issue_date' => $data['issue_date'],
                 'due_date' => $data['due_date'],
-                'description' => $data['description'] ?? null,
+                'subtotal' => $data['subtotal'],
+                'total' => $data['total'],
+                'billing_period' => $data['billing_period'],
                 'status' => InvoiceStatus::PENDING,
             ]);
 
@@ -35,7 +36,7 @@ class CreateInvoiceAction
                 'unit_id' => $data['unit_id'],
                 'invoice_id' => $invoice->id,
                 'type' => LedgerEntryType::CHARGE,
-                'amount' => $data['amount'],
+                'amount' => $data['total'],
                 'description' => 'Charge for invoice: '.$invoice->id,
             ]);
 

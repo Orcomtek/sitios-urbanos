@@ -2,7 +2,8 @@
 
 namespace Database\Factories;
 
-use App\Models\Invoice;
+use App\Enums\InvoiceStatus;
+use App\Models\Financial\Invoice;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -10,6 +11,8 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class InvoiceFactory extends Factory
 {
+    protected $model = Invoice::class;
+
     /**
      * Define the model's default state.
      *
@@ -18,7 +21,13 @@ class InvoiceFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'invoice_number' => 'INV-'.fake()->unique()->numerify('######'),
+            'issue_date' => now(),
+            'due_date' => now()->addDays(30),
+            'subtotal' => fake()->numberBetween(10000, 500000),
+            'total' => fn (array $attributes) => $attributes['subtotal'],
+            'status' => InvoiceStatus::PENDING,
+            'billing_period' => now()->subMonths(fake()->unique()->numberBetween(0, 60))->format('Y-m'),
         ];
     }
 }

@@ -4,9 +4,9 @@ namespace App\Actions\Cockpit;
 
 use App\Enums\CommunityRole;
 use App\Enums\ListingStatus;
+use App\Models\Financial\Invoice;
 use App\Models\Governance\Announcement;
 use App\Models\Governance\Poll;
-use App\Models\Invoice;
 use App\Models\Listing;
 use App\Models\Pqrs;
 
@@ -65,7 +65,7 @@ class GetAdminWorkQueueAction
                 'id' => $invoice->id,
                 'type' => 'invoice_pending',
                 'unit' => $invoice->unit ? ['id' => $invoice->unit->id, 'unit_number' => $invoice->unit->identifier] : null,
-                'label' => 'Invoice: '.$invoice->description,
+                'label' => 'Invoice: '.$invoice->invoice_number,
                 'action' => 'review',
                 'created_at' => $invoice->created_at->toIso8601String(),
             ]);

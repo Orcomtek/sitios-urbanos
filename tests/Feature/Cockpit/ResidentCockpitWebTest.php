@@ -4,6 +4,8 @@ namespace Tests\Feature\Cockpit;
 
 use App\Enums\CommunityRole;
 use App\Models\Community;
+use App\Models\Resident;
+use App\Models\Unit;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -33,6 +35,14 @@ class ResidentCockpitWebTest extends TestCase
 
         $this->residentUser = User::factory()->create();
         $this->residentUser->communities()->attach($this->community->id, ['role' => CommunityRole::Resident->value]);
+
+        $unit = Unit::factory()->create(['community_id' => $this->community->id]);
+        Resident::factory()->create([
+            'community_id' => $this->community->id,
+            'unit_id' => $unit->id,
+            'user_id' => $this->residentUser->id,
+            'is_active' => true,
+        ]);
     }
 
     protected function makeRequest(User $user, string $method, string $path, array $data = [])
@@ -53,7 +63,7 @@ class ResidentCockpitWebTest extends TestCase
     public function test_admin_forbidden_from_resident_page()
     {
         $response = $this->makeRequest($this->adminUser, 'GET', '/resident/dashboard');
-        $response->assertStatus(403);
+        $response->assertForbidden();
     }
 
     public function test_resident_can_view_pqrs_page()
@@ -61,12 +71,12 @@ class ResidentCockpitWebTest extends TestCase
         $response = $this->makeRequest($this->residentUser, 'GET', '/resident/governance/pqrs');
 
         $response->assertStatus(200);
-        $response->assertInertia(fn ($page) => $page->component('Tenant/Resident/Governance/Pqrs'));
+        $response->assertInertia(fn ($page) => $page->component('Tenant/Resident/Tickets/Index'));
     }
 
     public function test_admin_forbidden_from_resident_pqrs_page()
     {
         $response = $this->makeRequest($this->adminUser, 'GET', '/resident/governance/pqrs');
-        $response->assertStatus(403);
+        $response->assertForbidden();
     }
 }

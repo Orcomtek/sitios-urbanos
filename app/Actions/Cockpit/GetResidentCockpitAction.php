@@ -4,7 +4,7 @@ namespace App\Actions\Cockpit;
 
 use App\Enums\CommunityRole;
 use App\Models\AccessInvitation;
-use App\Models\Invoice;
+use App\Models\Financial\Invoice;
 use App\Models\Package;
 use App\Models\Pqrs;
 use App\Models\Resident;
@@ -38,14 +38,14 @@ class GetResidentCockpitAction
 
         $finance = [
             'pending_count' => $pendingInvoices->count(),
-            'pending_amount' => $pendingInvoices->sum('amount'),
+            'pending_amount' => $pendingInvoices->sum('total'),
             'recent_invoices' => $pendingInvoices->take($limit)->map(fn ($invoice) => [
                 'id' => $invoice->id,
-                'description' => $invoice->description,
-                'amount' => $invoice->amount,
+                'invoice_number' => $invoice->invoice_number,
+                'total' => $invoice->total,
                 'due_date' => $invoice->due_date?->toIso8601String(),
                 'status' => $invoice->status,
-                'unit' => $invoice->unit ? ['id' => $invoice->unit->id, 'unit_number' => $invoice->unit->unit_number] : null,
+                'unit' => $invoice->unit ? ['id' => $invoice->unit->id, 'unit_number' => $invoice->unit->identifier] : null,
             ])->toArray(),
         ];
 
@@ -61,7 +61,7 @@ class GetResidentCockpitAction
                 'recipient_name' => $package->recipient_name,
                 'status' => $package->status,
                 'received_at' => $package->created_at->toIso8601String(),
-                'unit' => $package->unit ? ['id' => $package->unit->id, 'unit_number' => $package->unit->unit_number] : null,
+                'unit' => $package->unit ? ['id' => $package->unit->id, 'unit_number' => $package->unit->identifier] : null,
             ])->toArray();
 
         // 3. Invitations Widget
@@ -77,7 +77,7 @@ class GetResidentCockpitAction
                 'code' => $invitation->code,
                 'status' => $invitation->status,
                 'expires_at' => $invitation->expires_at->toIso8601String(),
-                'unit' => $invitation->unit ? ['id' => $invitation->unit->id, 'unit_number' => $invitation->unit->unit_number] : null,
+                'unit' => $invitation->unit ? ['id' => $invitation->unit->id, 'unit_number' => $invitation->unit->identifier] : null,
             ])->toArray();
 
         // 4. PQRS Widget
@@ -105,7 +105,7 @@ class GetResidentCockpitAction
                 'name' => $visitor->name,
                 'status' => $visitor->status,
                 'created_at' => $visitor->created_at->toIso8601String(),
-                'unit' => $visitor->unit ? ['id' => $visitor->unit->id, 'unit_number' => $visitor->unit->unit_number] : null,
+                'unit' => $visitor->unit ? ['id' => $visitor->unit->id, 'unit_number' => $visitor->unit->identifier] : null,
             ])->toArray();
 
         return [

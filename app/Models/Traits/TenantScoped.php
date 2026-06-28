@@ -15,15 +15,13 @@ trait TenantScoped
         static::addGlobalScope(new TenantScope);
 
         static::creating(function ($model) {
-            // Automatically assign community_id if an active tenant context exists
-            // and it hasn't been manually set (e.g. by a seeder or explicit code).
-            if (! $model->community_id) {
-                $context = app(TenantContext::class);
-                $community = $context->get();
+            // Always assign community_id from the active tenant context
+            // to prevent payload manipulation attacks.
+            $context = app(TenantContext::class);
+            $community = $context->get();
 
-                if ($community !== null) {
-                    $model->community_id = $community->id;
-                }
+            if ($community !== null) {
+                $model->community_id = $community->id;
             }
         });
     }
