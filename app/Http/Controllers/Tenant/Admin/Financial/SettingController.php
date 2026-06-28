@@ -30,6 +30,7 @@ class SettingController extends Controller
         return Inertia::render('Tenant/Admin/Financial/Settings/Edit', [
             'settings' => $settings,
             'billingConcepts' => $billingConcepts,
+            'dunning_policies' => $settings->getDunningPolicies(),
         ]);
     }
 
@@ -47,8 +48,19 @@ class SettingController extends Controller
             'bank_account_details.*.account_type' => ['nullable', 'string', 'max:255'],
             'bank_account_details.*.account_number' => ['nullable', 'string', 'max:255'],
             'epayco_allied_account_id' => ['nullable', 'string', 'max:255'],
-            'commission_type' => ['required', 'string', 'in:fixed,percentage'],
-            'commission_value' => ['required', 'integer', 'min:0'],
+            // commission_type and commission_value are intentionally excluded.
+            // These are SaaS take-rate fields managed exclusively by Sitios Urbanos
+            // and must never be modifiable by tenant admins.
+
+            // Dunning policies — validated as a nested array, persisted as JSONB.
+            'dunning_policies' => ['nullable', 'array'],
+            'dunning_policies.enabled' => ['required_with:dunning_policies', 'boolean'],
+            'dunning_policies.grace_period_days' => ['required_with:dunning_policies', 'integer', 'min:0', 'max:90'],
+            'dunning_policies.restrictions' => ['nullable', 'array'],
+            'dunning_policies.restrictions.restrict_ecosystem' => ['boolean'],
+            'dunning_policies.restrictions.restrict_pqrs' => ['boolean'],
+            'dunning_policies.restrictions.restrict_moving_permits' => ['boolean'],
+            'dunning_policies.restrictions.restrict_amenities' => ['boolean'],
         ]);
 
         FinancialSetting::updateOrCreate(

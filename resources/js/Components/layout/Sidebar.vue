@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { 
     HomeIcon, 
     UsersIcon, 
@@ -15,6 +15,8 @@ import {
     TruckIcon,
     BanknotesIcon
 } from '@heroicons/vue/24/outline';
+import RestrictedModuleOverlay from '@/Components/ui/RestrictedModuleOverlay.vue';
+import RestrictionModal from '@/Components/ui/RestrictionModal.vue';
 
 const iconMap: Record<string, any> = {
     'home': HomeIcon,
@@ -58,6 +60,13 @@ const isActive = (routeName: string) => {
     }
 };
 const role = computed(() => (page.props.tenant as any)?.role);
+const dunning = computed(() => (page.props as any).dunning ?? { is_restricted: false, restricted_modules: [] });
+const restrictedModules = computed(() => dunning.value.restricted_modules as string[]);
+
+const showRestrictionModal = ref(false);
+
+const isModuleRestricted = (moduleKey: string) =>
+    role.value === 'resident' && restrictedModules.value.includes(moduleKey);
 const dashboardRouteName = computed(() => {
     if (role.value === 'resident') {
         return 'tenant.resident.dashboard';
@@ -102,23 +111,28 @@ const isActiveDashboard = computed(() => isActive(dashboardRouteName.value));
                             {{ group.title }}
                         </h3>
                         <div class="space-y-1">
-                            <Link
-                                v-for="item in group.items"
-                                :key="item.key"
-                                :href="getRouteUrl(item.route)"
-                                class="group flex items-center rounded-md px-2 py-2 text-sm font-medium transition-colors"
-                                :class="isActive(item.route) 
-                                    ? 'bg-primary text-white hover:bg-primary/90' 
-                                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-slate-800 dark:hover:text-white'"
-                            >
-                                <component 
-                                    :is="iconMap[item.icon] || Bars3Icon" 
-                                    class="mr-3 h-5 w-5 flex-shrink-0"
-                                    :class="isActive(item.route) ? 'text-white' : 'text-gray-400 group-hover:text-gray-500 dark:group-hover:text-gray-300'"
-                                    aria-hidden="true" 
-                                />
-                                {{ item.name }}
-                            </Link>
+                            <template v-for="item in group.items" :key="item.key">
+                                <RestrictedModuleOverlay
+                                    :is-restricted="isModuleRestricted(item.key)"
+                                    @click-restricted="showRestrictionModal = true"
+                                >
+                                    <Link
+                                        :href="getRouteUrl(item.route)"
+                                        class="group flex items-center rounded-md px-2 py-2 text-sm font-medium transition-colors"
+                                        :class="isActive(item.route) 
+                                            ? 'bg-primary text-white hover:bg-primary/90' 
+                                            : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-slate-800 dark:hover:text-white'"
+                                    >
+                                        <component 
+                                            :is="iconMap[item.icon] || Bars3Icon" 
+                                            class="mr-3 h-5 w-5 flex-shrink-0"
+                                            :class="isActive(item.route) ? 'text-white' : 'text-gray-400 group-hover:text-gray-500 dark:group-hover:text-gray-300'"
+                                            aria-hidden="true" 
+                                        />
+                                        {{ item.name }}
+                                    </Link>
+                                </RestrictedModuleOverlay>
+                            </template>
 
                             <!-- DIRECT DOM INJECTION FOR ADMIN MOVES -->
                             <Link
@@ -163,6 +177,7 @@ const isActiveDashboard = computed(() => isActive(dashboardRouteName.value));
                             Finanzas
                         </h3>
                         <div class="space-y-1">
+                            <!-- Financial statement is NEVER restricted — it is the payment destination -->
                             <Link
                                 :href="getRouteUrl('tenant.resident.financial.statement.index')"
                                 class="group flex items-center rounded-md px-2 py-2 text-sm font-medium transition-colors"
@@ -179,8 +194,17 @@ const isActiveDashboard = computed(() => isActive(dashboardRouteName.value));
                             </Link>
                         </div>
                     </div>
+
                 </nav>
             </div>
         </div>
     </div>
+
+    <!-- Restriction Modal (Loss Aversion CRO) -->
+    <RestrictionModal
+        :show="showRestrictionModal"
+        :total-overdue="dunning.total_overdue"
+        :oldest-due-date="dunning.oldest_due_date"
+        @close="showRestrictionModal = false"
+    />
 </template>

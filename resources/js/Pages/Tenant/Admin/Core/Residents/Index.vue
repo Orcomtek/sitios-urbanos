@@ -33,6 +33,7 @@ const props = defineProps<{
         id: number;
         identifier: string;
     }>;
+    restricted_unit_ids?: number[];
 }>();
 
 const page = usePage();
@@ -172,7 +173,17 @@ const getTaxonomyLabel = (type: string, value: string) => {
                             <tbody class="divide-y divide-gray-200">
                                 <tr v-for="resident in residents.data" :key="resident.id">
                                     <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0">
-                                        {{ resident.full_name }}
+                                        <div class="flex items-center gap-2">
+                                            {{ resident.full_name }}
+                                            <span
+                                                v-if="props.restricted_unit_ids?.includes(resident.unit?.id)"
+                                                class="inline-flex items-center gap-1 rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/20"
+                                                title="Esta unidad tiene obligaciones vencidas"
+                                            >
+                                                <svg class="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 8 8"><circle cx="4" cy="4" r="3"/></svg>
+                                                Restringido
+                                            </span>
+                                        </div>
                                         <div v-if="resident.email" class="text-xs font-normal text-gray-500">{{ resident.email }}</div>
                                     </td>
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">

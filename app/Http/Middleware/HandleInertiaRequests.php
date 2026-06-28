@@ -2,7 +2,10 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\FinancialSetting;
+use App\Models\Resident;
 use App\Models\SystemTaxonomy;
+use App\Services\Financial\DunningService;
 use App\Services\ModuleRegistryService;
 use App\Services\TenantContext;
 use Illuminate\Http\Request;
@@ -88,6 +91,30 @@ class HandleInertiaRequests extends Middleware
                 ->toArray();
         });
 
+        // Build dunning context for resident users.
+        $dunning = [
+            'is_restricted' => false,
+            'restricted_modules' => [],
+            'total_overdue' => 0.0,
+            'oldest_due_date' => null,
+        ];
+
+        if ($activeRole === 'resident' && $user && $activeCommunity) {
+            $resident = Resident::where('community_id', $activeCommunity->id)
+                ->where('user_id', $user->id)
+                ->with('unit')
+                ->first();
+
+            if ($resident && $resident->unit) {
+                $setting = FinancialSetting::where('community_id', $activeCommunity->id)->first();
+
+                if ($setting && $setting->hasDunningEnabled()) {
+                    $dunningService = app(DunningService::class);
+                    $dunning = $dunningService->getRestrictionContext($resident->unit, $setting);
+                }
+            }
+        }
+
         return [
             ...parent::share($request),
             'auth' => [
@@ -102,6 +129,7 @@ class HandleInertiaRequests extends Middleware
             ],
             'navigation_menu' => $navigationMenu,
             'taxonomies' => $taxonomies,
+            'dunning' => $dunning,
         ];
     }
 }

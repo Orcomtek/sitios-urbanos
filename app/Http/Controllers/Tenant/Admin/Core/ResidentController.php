@@ -8,8 +8,11 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreResidentRequest;
 use App\Http\Requests\UpdateResidentRequest;
 use App\Mail\CommunityInvitationMail;
+use App\Models\FinancialSetting;
 use App\Models\Resident;
+use App\Models\Unit;
 use App\Models\UserInvitation;
+use App\Services\Financial\DunningService;
 use App\Services\ResidentOnboardingService;
 use App\Services\TenantContext;
 use Illuminate\Http\RedirectResponse;
@@ -19,7 +22,10 @@ use Inertia\Response;
 
 class ResidentController extends Controller
 {
-    public function __construct(protected TenantContext $context) {}
+    public function __construct(
+        protected TenantContext $context,
+        protected DunningService $dunningService,
+    ) {}
 
     public function index(string $community_slug): Response
     {
@@ -44,10 +50,23 @@ class ResidentController extends Controller
 
         $units = $community->units()->orderBy('identifier')->get(['id', 'identifier']);
 
+        // Compute which unit IDs are currently in arrears so the admin can see at a glance.
+        $setting = FinancialSetting::where('community_id', $community->id)->first();
+        $restrictedUnitIds = [];
+
+        if ($setting && $setting->hasDunningEnabled()) {
+            $restrictedUnitIds = Unit::where('community_id', $community->id)
+                ->get()
+                ->filter(fn (Unit $unit) => $this->dunningService->isUnitInArrears($unit, $setting))
+                ->pluck('id')
+                ->toArray();
+        }
+
         return Inertia::render('Tenant/Admin/Core/Residents/Index', [
             'residents' => $residents,
             'filters' => request()->only(['search', 'status']),
             'units' => $units,
+            'restricted_unit_ids' => $restrictedUnitIds,
         ]);
     }
 

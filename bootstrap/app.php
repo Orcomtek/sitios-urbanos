@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\CheckCommunityRole;
+use App\Http\Middleware\EnforceDunningRestrictions;
 use App\Http\Middleware\EnsureTenantHasFeature;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\TenantMiddleware;
@@ -63,6 +64,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'tenant.feature' => EnsureTenantHasFeature::class,
             'role' => CheckCommunityRole::class,
+            'dunning' => EnforceDunningRestrictions::class,
         ]);
 
         $middleware->redirectUsersTo(function (Request $request) {

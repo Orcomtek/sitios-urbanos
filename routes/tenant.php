@@ -150,11 +150,11 @@ Route::domain('{community_slug}.'.$centralDomain)
             });
 
             Route::prefix('logistics')->name('logistics.')->group(function () {
-                Route::get('/moves', [MoveRequestController::class, 'index'])->name('moves.index');
-                Route::post('/moves', [MoveRequestController::class, 'store'])->name('moves.store');
+                Route::get('/moves', [MoveRequestController::class, 'index'])->middleware('dunning:restrict_moving_permits')->name('moves.index');
+                Route::post('/moves', [MoveRequestController::class, 'store'])->middleware('dunning:restrict_moving_permits')->name('moves.store');
             });
 
-            Route::prefix('governance')->name('governance.')->group(function () {
+            Route::prefix('governance')->name('governance.')->middleware('dunning:restrict_pqrs')->group(function () {
                 Route::get('/pqrs', [TicketController::class, 'index'])->name('pqrs');
                 Route::get('/pqrs/{ticket}', [TicketController::class, 'show'])->name('pqrs.show');
                 Route::post('/pqrs/{ticket}/reply', [TicketController::class, 'reply'])->name('pqrs.reply');
@@ -182,7 +182,7 @@ Route::domain('{community_slug}.'.$centralDomain)
                 Route::delete('/pets/{pet}', [CensusController::class, 'destroyPet'])->name('pets.destroy');
             });
 
-            Route::prefix('ecosystem')->name('ecosystem.')->group(function () {
+            Route::prefix('ecosystem')->name('ecosystem.')->middleware('dunning:restrict_ecosystem')->group(function () {
                 Route::get('/', [EcosystemController::class, 'index'])->name('index');
                 Route::get('/providers', [ResidentProviderController::class, 'index'])->name('providers');
             });

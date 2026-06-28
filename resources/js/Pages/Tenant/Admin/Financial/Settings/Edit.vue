@@ -22,6 +22,7 @@ watch(() => page.props.errors, (errors) => {
 const props = defineProps({
     settings: Object,
     billingConcepts: Array,
+    dunning_policies: Object,
 });
 
 const getInitialAccounts = () => {
@@ -37,9 +38,21 @@ const form = useForm({
     due_day: String(props.settings.due_day || 10),
     bank_account_details: getInitialAccounts(),
     epayco_allied_account_id: props.settings.epayco_allied_account_id || '',
-    commission_type: props.settings.commission_type || 'fixed',
-    commission_value: String(props.settings.commission_value ?? 1500),
+    dunning_policies: {
+        enabled: props.dunning_policies?.enabled ?? false,
+        grace_period_days: props.dunning_policies?.grace_period_days ?? 0,
+        restrictions: {
+            restrict_ecosystem: props.dunning_policies?.restrictions?.restrict_ecosystem ?? false,
+            restrict_pqrs: props.dunning_policies?.restrictions?.restrict_pqrs ?? false,
+            restrict_moving_permits: props.dunning_policies?.restrictions?.restrict_moving_permits ?? false,
+            restrict_amenities: props.dunning_policies?.restrictions?.restrict_amenities ?? false,
+        },
+    },
 });
+
+// Read-only display values for commission — controlled exclusively by Sitios Urbanos.
+const commissionTypeDisplay = props.settings.commission_type || 'fixed';
+const commissionValueDisplay = String(props.settings.commission_value ?? 1500);
 
 const addAccount = () => form.bank_account_details.push({ bank_name: '', account_type: '', account_number: '' });
 
@@ -282,39 +295,176 @@ const executeConceptDeletion = () => {
                                 <InputError class="mt-2" :message="form.errors.epayco_allied_account_id" />
                             </div>
 
-                            <!-- Tipo de Comisión -->
+                            <!-- Tipo de Comisión (solo lectura — gestionado por Sitios Urbanos) -->
                             <div>
-                                <InputLabel for="commission_type" value="Tipo de Comisión" />
+                                <div class="flex items-center justify-between mb-1">
+                                    <InputLabel for="commission_type" value="Tipo de Comisión" />
+                                    <span class="inline-flex items-center gap-1 text-xs font-medium text-indigo-700 bg-indigo-50 border border-indigo-200 rounded-full px-2 py-0.5">
+                                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 1a4.5 4.5 0 00-4.5 4.5V9H5a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5V5.5A4.5 4.5 0 0010 1zm3 8V5.5a3 3 0 10-6 0V9h6z" clip-rule="evenodd" /></svg>
+                                        Configurado por Sitios Urbanos
+                                    </span>
+                                </div>
                                 <select
                                     id="commission_type"
-                                    v-model="form.commission_type"
-                                    class="mt-1 block w-full border-gray-300 focus:border-emerald-500 focus:ring-emerald-500 rounded-md shadow-sm"
+                                    :model-value="commissionTypeDisplay"
+                                    disabled
+                                    class="mt-1 block w-full border-gray-200 bg-gray-50 text-gray-500 rounded-md shadow-sm cursor-not-allowed opacity-75"
                                 >
                                     <option value="fixed">Fija (COP)</option>
                                     <option value="percentage">Porcentaje (%)</option>
                                 </select>
-                                <InputError class="mt-2" :message="form.errors.commission_type" />
                             </div>
 
-                            <!-- Valor de Comisión -->
+                            <!-- Valor de Comisión (solo lectura — gestionado por Sitios Urbanos) -->
                             <div>
-                                <InputLabel for="commission_value" :value="form.commission_type === 'percentage' ? 'Valor de Comisión (centésimas de %)' : 'Valor de Comisión (COP)'" />
+                                <div class="flex items-center justify-between mb-1">
+                                    <InputLabel for="commission_value" :value="commissionTypeDisplay === 'percentage' ? 'Valor de Comisión (centésimas de %)' : 'Valor de Comisión (COP)'" />
+                                    <span class="inline-flex items-center gap-1 text-xs font-medium text-indigo-700 bg-indigo-50 border border-indigo-200 rounded-full px-2 py-0.5">
+                                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 1a4.5 4.5 0 00-4.5 4.5V9H5a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5V5.5A4.5 4.5 0 0010 1zm3 8V5.5a3 3 0 10-6 0V9h6z" clip-rule="evenodd" /></svg>
+                                        Configurado por Sitios Urbanos
+                                    </span>
+                                </div>
                                 <TextInput
                                     id="commission_value"
                                     type="number"
-                                    class="mt-1 block w-full focus:ring-emerald-500 focus:border-emerald-500"
-                                    v-model="form.commission_value"
-                                    required
-                                    min="0"
+                                    :model-value="commissionValueDisplay"
+                                    readonly
+                                    class="mt-1 block w-full bg-gray-50 text-gray-500 border-gray-200 cursor-not-allowed opacity-75"
                                 />
                                 <p class="mt-1 text-xs text-slate-400">
-                                    {{ form.commission_type === 'percentage' ? 'Ej: 350 = 3.50% de comisión por transacción.' : 'Ej: 1500 = $1.500 COP fijos por transacción.' }}
+                                    {{ commissionTypeDisplay === 'percentage' ? 'Ej: 350 = 3.50% de comisión por transacción.' : 'Ej: 1500 = $1.500 COP fijos por transacción.' }}
                                 </p>
-                                <InputError class="mt-2" :message="form.errors.commission_value" />
                             </div>
 
                         </div>
                     </div>
+
+                    <!-- =====================================================
+                         SECCIÓN: Políticas de Cobro (Dunning)
+                         ===================================================== -->
+                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg border border-slate-200">
+                        <div class="p-6 border-b border-slate-200 bg-slate-50 flex items-start justify-between">
+                            <div>
+                                <h3 class="text-lg font-medium text-slate-900">Políticas de Cobro</h3>
+                                <p class="mt-1 text-sm text-slate-500">Configura restricciones de acceso a módulos para residentes con obligaciones vencidas. <span class="font-medium text-amber-700">De acuerdo con la Ley 675 de 2001, ninguna restricción aplica automáticamente. El administrador debe habilitarlas explícitamente.</span></p>
+                            </div>
+                            <!-- Master enable toggle -->
+                            <button
+                                type="button"
+                                id="dunning-master-toggle"
+                                @click="form.dunning_policies.enabled = !form.dunning_policies.enabled"
+                                class="ml-4 flex-shrink-0 relative inline-flex h-6 w-11 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
+                                :class="form.dunning_policies.enabled ? 'bg-emerald-500' : 'bg-gray-200'"
+                                :aria-checked="form.dunning_policies.enabled"
+                                role="switch"
+                            >
+                                <span class="sr-only">Activar restricciones de cobro</span>
+                                <span
+                                    class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"
+                                    :class="form.dunning_policies.enabled ? 'translate-x-5' : 'translate-x-0'"
+                                />
+                            </button>
+                        </div>
+
+                        <div class="p-6">
+                            <div v-if="form.dunning_policies.enabled" class="space-y-6">
+                                <!-- Grace period -->
+                                <div class="max-w-xs">
+                                    <InputLabel for="grace_period_days" value="Días de Gracia" />
+                                    <p class="text-xs text-gray-500 mb-1">Número de días después del vencimiento antes de que aplique la restricción. Recomendado: 5–15 días.</p>
+                                    <TextInput
+                                        id="grace_period_days"
+                                        type="number"
+                                        min="0"
+                                        max="90"
+                                        v-model="form.dunning_policies.grace_period_days"
+                                        class="mt-1 block w-full focus:ring-emerald-500 focus:border-emerald-500"
+                                    />
+                                    <InputError class="mt-1" :message="form.errors['dunning_policies.grace_period_days']" />
+                                </div>
+
+                                <!-- Module restriction toggles -->
+                                <div>
+                                    <p class="text-sm font-medium text-gray-700 mb-3">Módulos restringidos para residentes en mora</p>
+                                    <div class="space-y-3">
+
+                                        <div class="flex items-start gap-4 p-3 rounded-lg border border-gray-200">
+                                            <button
+                                                type="button"
+                                                id="dunning-restrict-ecosystem"
+                                                @click="form.dunning_policies.restrictions.restrict_ecosystem = !form.dunning_policies.restrictions.restrict_ecosystem"
+                                                class="mt-0.5 relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2"
+                                                :class="form.dunning_policies.restrictions.restrict_ecosystem ? 'bg-amber-500' : 'bg-gray-200'"
+                                                role="switch" :aria-checked="form.dunning_policies.restrictions.restrict_ecosystem"
+                                            >
+                                                <span class="pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out" :class="form.dunning_policies.restrictions.restrict_ecosystem ? 'translate-x-4' : 'translate-x-0'" />
+                                            </button>
+                                            <div>
+                                                <p class="text-sm font-medium text-gray-900">Ecosistema (Marketplace y Proveedores)</p>
+                                                <p class="text-xs text-gray-500">Restringe el acceso al marketplace y directorio de proveedores para residentes en mora.</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="flex items-start gap-4 p-3 rounded-lg border border-gray-200">
+                                            <button
+                                                type="button"
+                                                id="dunning-restrict-pqrs"
+                                                @click="form.dunning_policies.restrictions.restrict_pqrs = !form.dunning_policies.restrictions.restrict_pqrs"
+                                                class="mt-0.5 relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2"
+                                                :class="form.dunning_policies.restrictions.restrict_pqrs ? 'bg-amber-500' : 'bg-gray-200'"
+                                                role="switch" :aria-checked="form.dunning_policies.restrictions.restrict_pqrs"
+                                            >
+                                                <span class="pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out" :class="form.dunning_policies.restrictions.restrict_pqrs ? 'translate-x-4' : 'translate-x-0'" />
+                                            </button>
+                                            <div>
+                                                <p class="text-sm font-medium text-gray-900">PQRS (Peticiones y Quejas)</p>
+                                                <p class="text-xs text-gray-500">Restringe el envío y consulta de PQRS. Nota: la Ley 675 puede limitar esta restricción en ciertos casos.</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="flex items-start gap-4 p-3 rounded-lg border border-gray-200">
+                                            <button
+                                                type="button"
+                                                id="dunning-restrict-moving-permits"
+                                                @click="form.dunning_policies.restrictions.restrict_moving_permits = !form.dunning_policies.restrictions.restrict_moving_permits"
+                                                class="mt-0.5 relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2"
+                                                :class="form.dunning_policies.restrictions.restrict_moving_permits ? 'bg-amber-500' : 'bg-gray-200'"
+                                                role="switch" :aria-checked="form.dunning_policies.restrictions.restrict_moving_permits"
+                                            >
+                                                <span class="pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out" :class="form.dunning_policies.restrictions.restrict_moving_permits ? 'translate-x-4' : 'translate-x-0'" />
+                                            </button>
+                                            <div>
+                                                <p class="text-sm font-medium text-gray-900">Permisos de Mudanza</p>
+                                                <p class="text-xs text-gray-500">Restringe la solicitud de permisos de mudanza para residentes en mora.</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="flex items-start gap-4 p-3 rounded-lg border border-gray-200 opacity-60">
+                                            <button
+                                                type="button"
+                                                id="dunning-restrict-amenities"
+                                                disabled
+                                                class="mt-0.5 relative inline-flex h-5 w-9 flex-shrink-0 cursor-not-allowed rounded-full border-2 border-transparent bg-gray-200"
+                                                role="switch" aria-checked="false"
+                                            >
+                                                <span class="pointer-events-none inline-block h-4 w-4 translate-x-0 transform rounded-full bg-white shadow ring-0" />
+                                            </button>
+                                            <div>
+                                                <p class="text-sm font-medium text-gray-900">Reserva de Amenidades <span class="ml-1 text-xs text-gray-400 font-normal">(Próximamente)</span></p>
+                                                <p class="text-xs text-gray-500">Restringe la reserva de zonas comunes. Disponible cuando el módulo de amenidades esté activo.</p>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div v-else class="rounded-md bg-gray-50 border border-gray-200 p-4">
+                                <p class="text-sm text-gray-500 text-center">Las políticas de cobro están <strong>desactivadas</strong>. Los residentes con obligaciones vencidas tendrán acceso completo a todos los módulos.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /DUNNING -->
 
                     <div class="flex items-center justify-end">
                         <transition leave-active-class="transition ease-in duration-1000" leave-from-class="opacity-100" leave-to-class="opacity-0">

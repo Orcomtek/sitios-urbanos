@@ -3,6 +3,7 @@
 namespace App\Models\Financial;
 
 use App\Enums\InvoiceStatus;
+use App\Enums\PaymentStatus;
 use App\Models\Community;
 use App\Models\Payment;
 use App\Models\Traits\TenantScoped;
@@ -70,6 +71,32 @@ class Invoice extends Model
     public function payments(): HasMany
     {
         return $this->hasMany(Payment::class);
+    }
+
+    /**
+     * The true outstanding balance on this invoice, accounting for partial payments.
+     *
+     * Subtracts all CONFIRMED payments from the invoice total so the dunning engine
+     * and the resident statement always reflect the actual amount still owed — not
+     * the original billed amount.
+     *
+     * Uses the pre-loaded `payments_sum_amount` aggregate when available (set by
+     * `withSum('payments', 'amount')`) to avoid N+1 queries, falling back to
+     * an in-memory sum over the loaded relationship otherwise.
+     */
+    public function getOutstandingBalanceAttribute(): float
+    {
+        // Fast path: aggregate already loaded by the query builder.
+        if (isset($this->attributes['payments_sum_amount'])) {
+            $paid = (float) $this->attributes['payments_sum_amount'];
+        } else {
+            // Fallback: sum CONFIRMED payments from the loaded (or lazy-loaded) relation.
+            $paid = $this->payments
+                ->where('status', PaymentStatus::CONFIRMED)
+                ->sum('amount');
+        }
+
+        return max(0.0, (float) $this->total - $paid);
     }
 
     /**
